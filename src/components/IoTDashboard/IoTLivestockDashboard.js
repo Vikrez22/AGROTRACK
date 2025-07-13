@@ -158,7 +158,7 @@ const DrawControl = ({ onCreated, onDeleted, drawType }) => {
 // -----------------------------------------------------------------------------
 // Main IoT Livestock Dashboard Component
 // -----------------------------------------------------------------------------
-const IoTLivestockDashboard = ({ userRole = 'farmer' }) => {
+const IoTLivestockDashboard = ({ userRole = 'Admin' }) => {
   const [livestockData, setLivestockData] = useState({}); // Stores all livestock data from Firebase
   const [grazingAreas, setGrazingAreas] = useState([]); // Stores defined grazing polygons
   const [nonGrazingAreas, setNonGrazingAreas] = useState([]); // Stores defined non-grazing polygons
@@ -295,25 +295,6 @@ const IoTLivestockDashboard = ({ userRole = 'farmer' }) => {
             };
             checkGeofencing(key, position); // Use the 'offline_XXXXX' key as ID
           }
-          // If there's a 'gps_data' node and it contains nested animal data (assuming structure like gps_data/animalId/latest_position)
-          // This part would need further refinement if 'gps_data' actually holds multiple animal data directly.
-          // For now, we'll assume individual animals are at the root or main_device is at root.
-          // If your `gps_data` node also contains animal positions, you'd need another `onValue` or
-          // iterate through `data.gps_data` here.
-          // Example for iterating gps_data if it contains sub-animal IDs:
-          /*
-          else if (key === 'gps_data' && typeof data[key] === 'object') {
-              Object.keys(data[key]).forEach(animalGpsId => {
-                  if (data[key][animalGpsId]?.latest_position?.latitude && data[key][animalGpsId]?.latest_position?.longitude) {
-                      const position = {
-                          lat: data[key][animalGpsId].latest_position.latitude,
-                          lng: data[key][animalGpsId].latest_position.longitude
-                      };
-                      checkGeofencing(animalGpsId, position);
-                  }
-              });
-          }
-          */
         });
       } else {
         // If snapshot doesn't exist, data is empty
@@ -523,8 +504,9 @@ const IoTLivestockDashboard = ({ userRole = 'farmer' }) => {
             <div className="text-center sm:text-left mb-4 sm:mb-0">
               <img
                 src={logo}
-                alt="AgroRithm Platform"
+                alt="AgroTrack Platform"
                 className="nav-logo"
+                style={{ width: '250px', height: '90px'}}
               />
               <h1 className="text-4xl sm:text-5xl font-bold mb-2 tracking-tight">
                IoT Livestock Dashboard
@@ -534,6 +516,13 @@ const IoTLivestockDashboard = ({ userRole = 'farmer' }) => {
               </p>
             </div>
             <div className="flex items-center space-x-4">
+              <button>
+                <a href="/" 
+                  className="nav-button primary"
+                >
+                  Home
+                </a> 
+              </button>
               <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
                 <div className="w-2 h-2 bg-[#3cb371] rounded-full animate-pulse"></div>
                 <span className="text-white text-sm font-medium">Live</span>
@@ -754,6 +743,8 @@ const IoTLivestockDashboard = ({ userRole = 'farmer' }) => {
                 onDeleted={handleDeleted}
               />
             )}
+
+
           </MapContainer>
         </div>
       </div>
@@ -796,10 +787,10 @@ const IoTLivestockDashboard = ({ userRole = 'farmer' }) => {
           {Object.keys(livestockData).length > 0 ? (
             <code>{JSON.stringify(livestockData, null, 2)}</code>
           ) : (
-            <p className="text-white/70">No raw data received from Firebase yet. Ensure your IoT devices are sending data to the configured Realtime Database paths (e.g., `latest_position`, `offline_XXXXX`).</p>
+            <p className="text-white/70">No raw data received from Database yet. Ensure your IoT devices are sending data to the configured Realtime Database paths (e.g., `latest_position`, `offline_XXXXX`).</p>
           )}
         </pre>
-        <p className="mt-4">This section displays the full JSON object as received by the dashboard from your Firebase Realtime Database.</p>
+        <p className="mt-4">This section displays the full JSON object as received from the Realtime Database.</p>
       </div>
 
       {/* Custom Scrollbar Styling for overflow-y-auto */}
