@@ -158,7 +158,7 @@ const DrawControl = ({ onCreated, onDeleted, drawType }) => {
 // -----------------------------------------------------------------------------
 // Main IoT Livestock Dashboard Component
 // -----------------------------------------------------------------------------
-const IoTLivestockDashboard = ({ userRole = 'Admin' }) => {
+const IoTLivestockDashboard = ({ userRole = 'farmer' }) => {
   const [livestockData, setLivestockData] = useState({}); // Stores all livestock data from Firebase
   const [grazingAreas, setGrazingAreas] = useState([]); // Stores defined grazing polygons
   const [nonGrazingAreas, setNonGrazingAreas] = useState([]); // Stores defined non-grazing polygons
@@ -678,12 +678,8 @@ const IoTLivestockDashboard = ({ userRole = 'Admin' }) => {
           Real-time Livestock Map
         </h3>
         <div className="w-full h-[600px] bg-gray-800"> {/* Map container must have defined height */}
-          <MapContainer center={mapCenter} zoom={15} scrollWheelZoom={true} className="h-full w-full rounded-b-2xl">
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
-            />
-
+        <MapContainer center={mapCenter} zoom={13} style={{ height: '500px', width: '100%' }}>
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
             {/* Animal Markers */}
             {animalMarkers.map((animal) => (
               <Marker
@@ -743,8 +739,6 @@ const IoTLivestockDashboard = ({ userRole = 'Admin' }) => {
                 onDeleted={handleDeleted}
               />
             )}
-
-
           </MapContainer>
         </div>
       </div>
