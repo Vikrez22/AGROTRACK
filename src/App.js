@@ -13,6 +13,7 @@ import FarmerDashboard from './components/Dashboard/FarmerDashboard';
 import withUserId from './components/Cowtracking/PrivateDashboardWrapper';
 
 import IoTLivestockDashboard from './components/IoTDashboard/IoTLivestockDashboard';
+import Marketplace from './components/Marketplace/marketplace';
 
 const AdminDashboardWithUser = withUserId(AdminDashboard);
 const HerderDashboardWithUser = withUserId(HerderDashboard);
@@ -28,6 +29,7 @@ const App = () => (
     <Route path="/herder-dashboard" element={<HerderDashboardWithUser />} />
     <Route path="/farmer-dashboard" element={<FarmerDashboardWithUser />} />
     <Route path="/iot-dashboard" element={<IoTLivestockDashboard />} />
+    <Route path="/marketplace" element={<Marketplace />} />
   </Routes>
 );
 

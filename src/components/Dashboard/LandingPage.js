@@ -170,9 +170,14 @@ const LandingPage = () => {
                   <span className="button-arrow">→</span>
                 </a>
               </button>
-              <button className="cta-button secondary">
-                Marketplace 
-                <span className="button-arrow">🛒</span>
+              <button>
+                <a 
+                  href="/marketplace" 
+                  className="cta-button secondary"
+                >
+                  Marketplace
+                  <span className="button-arrow">🛒</span>
+                </a>
               </button>
             </div>
           </div>
