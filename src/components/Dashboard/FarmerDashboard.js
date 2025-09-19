@@ -1,23 +1,23 @@
-import React from 'react';
-import GeoTracker from '../Cowtracking/GeoTracker';
+import React from "react";
+import GeoTracker from "../Cowtracking/GeoTracker";
 import ChatBox from "../Cowtracking/ChatBox";
-import AgroTrackChatBot from '../Cowtracking/AgroTrackChatBot';
-import './AdminDashboard.css'; // Reuse this same CSS file
+import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
+import "./FarmerDashboard.css"; //css fire
 
 const FarmerDashboard = () => {
   const userId = "farmer-1";
 
   return (
-    <div className="admin-dashboard">
-      <div className="admin-header">
+    <div className="farmer-dashboard">
+      <div className="farmer-header">
         <h2>Welcome to the Farmer Dashboard</h2>
         <p>View Grazing and Non-Grazing Areas</p>
       </div>
 
-      <div className="admin-main">
+      <div className="farmer-main">
         <GeoTracker userRole="farmer" />
 
-        <div style={{ display: 'flex', gap: '20px' }}>
+        <div style={{ display: "flex", gap: "20px" }}>
           <div style={{ flex: 1 }}>
             <AgroTrackChatBot />
           </div>

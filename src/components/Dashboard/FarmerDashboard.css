@@ -1,0 +1,82 @@
+:root {
+  /* Base */
+  --color-text-dark: #333;
+  --color-bg-dark: #0f172a;
+  --color-bg-darker: #1e293b;
+
+  /* Brand Greens */
+  --color-green: #22c55e;
+  --color-green-dark: #16a34a;
+
+  /* Grays */
+  --color-gray-light: #e2e8f0;
+  --color-gray-soft: #cbd5e1;
+  --color-gray-medium: #94a3b8;
+  --color-gray-muted: #64748b;
+
+  /* Alerts */
+  --color-red: #ef4444;
+
+  /* Accent Blue */
+  --color-blue: #3b82f6;
+
+  /* RGB for rgba usage */
+  --color-green-rgb: 34, 197, 94;
+  --color-red-rgb: 239, 68, 68;
+  --color-blue-rgb: 59, 130, 246;
+  --color-white-rgb: 255, 255, 255;
+}
+.farmer-dashboard {
+  background-color: #1e3d2f; /* Deep forest green */
+  min-height: 100vh;
+  padding: 40px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #ffffff;
+}
+
+.farmer-header {
+  text-align: left;
+  margin-bottom: 30px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.farmer-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: white; /* Light mint green for good contrast */
+}
+
+.farmer-header p {
+  font-size: 13px;
+  color: #dbeedd;
+  font-weight: 600;
+}
+
+.farmer-main {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 20px;
+  border-radius: 10px;
+}
+.farmer-main h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  line-height: 26px;
+}
+.grazing-area {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.grazing-area input {
+  margin-right: 5px;
+}
+.grazing-area label {
+  color: var(color-gray-medium);
+}
