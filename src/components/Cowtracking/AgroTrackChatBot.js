@@ -25,48 +25,51 @@ const AgroTrackChatBot = () => {
     ha: { name: 'Hausa', code: 'ha-NG', flag: '🇳🇬' }
   };
 
-  // Mock AI response function - Replace with your chosen API
+  // Groq AI API integration
   const fetchAIResponse = async (userMessage) => {
-    // This is a mock function - replace with actual API call
-    const mockResponses = {
-      en: {
-        greeting: "Hello! I can help you with farming techniques, pest control, livestock management, and market prices. What would you like to know?",
-        pest: "For pest control, I recommend integrated pest management (IPM). Start with crop rotation, use beneficial insects, and apply organic pesticides only when necessary.",
-        livestock: "For livestock management, ensure proper grazing rotation, regular health checks, and GPS tracking to prevent conflicts with farmers.",
-        market: "Current market prices vary by region. I can help you find the best markets for your produce and connect you with buyers through our platform."
-      },
-      ig: {
-        greeting: "Ndewo! Enwere m ike inyere gị aka na usoro ọrụ ugbo, nlekọta anụmanụ, na ọnụahịa ahịa. Gịnị ka ị chọrọ ịmata?",
-        pest: "Maka ịchụ ahụhụ, a na-akwado usoro njikwa ahụhụ jikọrọ ọnụ. Malite site na ntụgharị ihe ọkụkụ, jiri ụmụ ahụhụ bara uru, ma tinye ọgwụ ahụhụ naanị mgbe ọ dị mkpa.",
-        livestock: "Maka nlekọta anụmanụ, hụ na ntụgharị ịta nri, nlele ahụike mgbe niile, na GPS tracking iji gbochie esemokwu na ndị ọrụ ugbo."
-      },
-      yo: {
-        greeting: "Bawo! Mo le ran e lowo pelu awon ona ogbin, itoju ọsin, ati awon idiyele ọja. Kini o fe mo?",
-        pest: "Fun iṣakoso kokoro, Mo ṣeduro iṣakoso kokoro amuṣọpọ (IPM). Bẹrẹ pẹlu yiyi irugbin, lo awọn kokoro to wulo, ki o si lo awọn oogun kokoro alaye nikan nigba ti o ba ṣe pataki.",
-        livestock: "Fun iṣakoso ẹranko, rii daju pe o yi ibijẹun, ayẹwo ilera deede, ati GPS tracking lati ṣe idiwọ ija pẹlu awọn agbe."
-      },
-      ha: {
-        greeting: "Sannu! Zan iya taimaka muku da fasahar noma, kula da dabbobi, da farashin kasuwa. Me kike so ka sani?",
-        pest: "Don magance kwari, ina ba da shawarar tsarin sarrafa kwari (IPM). Fara da juyar amfanin gona, yi amfani da kwari masu amfani, kuma ka shafa magungunan kwari na halitta kawai idan ya cancanta.",
-        livestock: "Don kula da dabbobi, tabbatar da jujjuyawar kiwo na yau da kullun, bincike na kiwon lafiya na yau da kullun, da bin diddigin GPS don hana rikici da manoma."
+    try {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.REACT_APP_GROQ_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'openai/gpt-oss-20b', // Good multilingual model
+          messages: [
+            {
+              role: 'system',
+              content: `You are an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Focus on farming techniques, pest control, livestock management, market information, and conflict resolution between farmers and herders. Keep responses concise and practical.`
+            },
+            {
+              role: 'user',
+              content: userMessage
+            }
+          ],
+          max_tokens: 500,
+          temperature: 0.7
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
-
-    // Simple keyword matching for demo
-    const userLower = userMessage.toLowerCase();
-    let response = mockResponses[language]?.greeting || mockResponses.en.greeting;
-    
-    if (userLower.includes('pest') || userLower.includes('kwari') || userLower.includes('kokoro') || userLower.includes('ahụhụ')) {
-      response = mockResponses[language]?.pest || mockResponses.en.pest;
-    } else if (userLower.includes('livestock') || userLower.includes('animal') || userLower.includes('dabbobi') || userLower.includes('ẹranko')) {
-      response = mockResponses[language]?.livestock || mockResponses.en.livestock;
-    } else if (userLower.includes('market') || userLower.includes('price') || userLower.includes('kasuwa') || userLower.includes('ọja')) {
-      response = mockResponses[language]?.market || mockResponses.en.market;
+      
+      const data = await response.json();
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error('Groq API error:', error);
+      
+      // Fallback responses based on language
+      const fallbackResponses = {
+        en: "I'm having trouble connecting to my AI service right now. Please try again in a moment. In the meantime, remember that AgroTrack helps prevent farmer-herder conflicts through smart geo-fencing and livestock tracking.",
+        ig: "Enwere m nsogbu ijikọ na ọrụ AI m ugbu a. Biko nwaa ọzọ n'oge na-adịghị anya. Ka a na-eche, cheta na AgroTrack na-enyere aka igbochi esemokwu ndị ọrụ ugbo na ndị ọzụzụ anụmanụ site na geo-fencing amamihe na nsoso anụmanụ.",
+        yo: "Mo ni wahala lati so si iṣẹ AI mi ni bayi. Jọwọ gbiyanju lẹẹkansi ni akoko diẹ. Lakoko yii, ranti pe AgroTrack ṣe iranlọwọ lati ṣe idiwọ awọn ija agbe-darandaran nipasẹ geo-fencing ati wiwa ẹranko.",
+        ha: "Ina da matsala ta haɗuwa da sabis na AI a yanzu. Da fatan za a sake gwadawa nan ba da jimawa ba. A yayin da, ku tuna cewa AgroTrack yana taimakawa wajen hana rikice-rikice tsakanin manoma da makiyaya ta hanyar geo-fencing da bin diddigin dabbobi."
+      };
+      
+      return fallbackResponses[language] || fallbackResponses.en;
     }
-
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-    return response;
   };
 
   const sendMessage = async () => {
@@ -248,7 +251,7 @@ const AgroTrackChatBot = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && !loading && sendMessage()}
             placeholder={`Ask about farming, livestock, markets... (${languages[language].name})`}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+            className="flex-1 px-3 py-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
             disabled={loading}
           />
           
