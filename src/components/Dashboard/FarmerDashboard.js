@@ -1,7 +1,7 @@
 import React from 'react';
 import GeoTracker from '../Cowtracking/GeoTracker';
 import ChatBox from "../Cowtracking/ChatBox";
-import AIChatBotFarmer from "../Cowtracking/AIChatbotFarmer";
+import AgroTrackChatBot from '../Cowtracking/AgroTrackChatBot';
 import './AdminDashboard.css'; // Reuse this same CSS file
 
 const FarmerDashboard = () => {
@@ -11,7 +11,7 @@ const FarmerDashboard = () => {
     <div className="admin-dashboard">
       <div className="admin-header">
         <h2>Welcome to the Farmer Dashboard</h2>
-        <p>Draw Grazing and Non-Grazing Areas</p>
+        <p>View Grazing and Non-Grazing Areas</p>
       </div>
 
       <div className="admin-main">
@@ -19,7 +19,7 @@ const FarmerDashboard = () => {
 
         <div style={{ display: 'flex', gap: '20px' }}>
           <div style={{ flex: 1 }}>
-            <AIChatBotFarmer />
+            <AgroTrackChatBot />
           </div>
           <div style={{ flex: 1 }}>
             <ChatBox userId={userId} role="farmer" />
