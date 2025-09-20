@@ -32,12 +32,12 @@ const ResponsiveChatBox = ({ userId, role }) => (
 
 // Responsive wrapper for AgroTrackChatBot
 const ResponsiveAgroTrackChatBot = () => (
-  <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
+    <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
     <div className="flex items-center gap-2 mb-4">
-      <Bot className="text-purple-600" size={24} />
-      <h3 className="text-xl font-semibold">AI Agricultural Assistant</h3>
+      <Users className="text-blue-600" size={24} />
+      <h3 className="text-xl font-semibold">AgroTrack AI</h3>
     </div>
-    <div className="flex-1 rounded-lg overflow-hidden border min-h-0">
+    <div className="flex-1 min-h-0">
       <AgroTrackChatBot />
     </div>
   </div>
