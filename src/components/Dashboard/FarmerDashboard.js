@@ -1,118 +1,44 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, MessageSquare, Bot, Menu, X, Tractor, Users, Map } from 'lucide-react';
+import GeoTracker from '../Cowtracking/GeoTracker';
+import ChatBox from "../Cowtracking/ChatBox";
+import AgroTrackChatBot from '../Cowtracking/AgroTrackChatBot';
 
-// Mock GeoTracker Component
-const GeoTracker = ({ userRole }) => (
+// Responsive wrapper for GeoTracker
+const ResponsiveGeoTracker = ({ userRole }) => (
   <div className="bg-white rounded-lg shadow-lg p-6">
     <div className="flex items-center gap-2 mb-4">
       <Map className="text-green-600" size={24} />
       <h3 className="text-xl font-semibold">Livestock Tracking & Geo-fencing</h3>
     </div>
-    <div className="bg-gray-100 rounded-lg h-80 flex items-center justify-center">
-      <div className="text-center">
-        <MapPin className="mx-auto mb-2 text-green-600" size={48} />
-        <p className="text-gray-600">Interactive Map Component</p>
-        <p className="text-sm text-gray-500 mt-1">Track livestock and manage grazing areas</p>
-      </div>
-    </div>
-    <div className="mt-4 flex gap-4 text-sm">
-      <div className="flex items-center gap-2">
-        <div className="w-3 h-3 bg-green-500 rounded"></div>
-        <span>Grazing Areas</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="w-3 h-3 bg-red-500 rounded"></div>
-        <span>Restricted Areas</span>
-      </div>
+    <div className="rounded-lg overflow-hidden border">
+      <GeoTracker userRole={userRole} />
     </div>
   </div>
 );
 
-// Mock ChatBox Component
-const ChatBox = ({ userId, role }) => {
-  const [message, setMessage] = useState('');
-  const [chatMessages, setChatMessages] = useState([
-    { userId: 'farmer-2', role: 'farmer', message: 'Has anyone seen cattle near sector 3?', timestamp: new Date() },
-    { userId: 'herder-1', role: 'herder', message: 'Yes, my cattle are grazing there. Moving them out now.', timestamp: new Date() },
-    { userId: userId, role: role, message: 'Thank you for the update!', timestamp: new Date() }
-  ]);
-
-  const sendMessage = () => {
-    if (!message.trim()) return;
-    setChatMessages([...chatMessages, {
-      userId,
-      role,
-      message,
-      timestamp: new Date()
-    }]);
-    setMessage('');
-  };
-
-  return (
-    <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
-      <div className="flex items-center gap-2 mb-4">
-        <Users className="text-blue-600" size={24} />
-        <h3 className="text-xl font-semibold">Community Chat</h3>
-      </div>
-      
-      <div className="flex-1 overflow-y-auto mb-4 space-y-3 min-h-64">
-        {chatMessages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`p-3 rounded-lg max-w-xs ${
-              msg.userId === userId
-                ? 'bg-green-500 text-white ml-auto'
-                : 'bg-gray-100 text-gray-800'
-            }`}
-          >
-            <div className="text-xs opacity-70 mb-1">{msg.role}</div>
-            <div className="text-sm">{msg.message}</div>
-          </div>
-        ))}
-      </div>
-      
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          placeholder="Type a message..."
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
-        <button
-          onClick={sendMessage}
-          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-        >
-          Send
-        </button>
-      </div>
+// Responsive wrapper for ChatBox
+const ResponsiveChatBox = ({ userId, role }) => (
+  <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
+    <div className="flex items-center gap-2 mb-4">
+      <Users className="text-blue-600" size={24} />
+      <h3 className="text-xl font-semibold">Community Chat</h3>
     </div>
-  );
-};
+    <div className="flex-1 min-h-0">
+      <ChatBox userId={userId} role={role} />
+    </div>
+  </div>
+);
 
-// Mock AgroTrackChatBot Component
-const AgroTrackChatBot = () => (
+// Responsive wrapper for AgroTrackChatBot
+const ResponsiveAgroTrackChatBot = () => (
   <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
     <div className="flex items-center gap-2 mb-4">
       <Bot className="text-purple-600" size={24} />
       <h3 className="text-xl font-semibold">AI Agricultural Assistant</h3>
     </div>
-    
-    <div className="flex-1 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-4 min-h-64 flex items-center justify-center">
-      <div className="text-center">
-        <Bot className="mx-auto mb-3 text-purple-600" size={48} />
-        <p className="text-gray-600 mb-2">AI Chatbot Ready</p>
-        <p className="text-sm text-gray-500">Get farming advice in multiple languages</p>
-      </div>
-    </div>
-    
-    <div className="mt-4">
-      <input
-        type="text"
-        placeholder="Ask about farming, pests, livestock..."
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-      />
+    <div className="flex-1 rounded-lg overflow-hidden border min-h-0">
+      <AgroTrackChatBot />
     </div>
   </div>
 );
@@ -170,7 +96,7 @@ const FarmerDashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <GeoTracker userRole="farmer" />
+              <ResponsiveGeoTracker userRole="farmer" />
               <div className="space-y-6">
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-xl font-semibold mb-4">Recent Activity</h3>
@@ -212,7 +138,7 @@ const FarmerDashboard = () => {
                 Monitor livestock movements and manage grazing areas to prevent conflicts.
               </p>
             </div>
-            <GeoTracker userRole="farmer" />
+            <ResponsiveGeoTracker userRole="farmer" />
           </div>
         );
 
@@ -226,7 +152,7 @@ const FarmerDashboard = () => {
               </p>
             </div>
             <div className="h-96">
-              <ChatBox userId={userId} role="farmer" />
+              <ResponsiveChatBox userId={userId} role="farmer" />
             </div>
           </div>
         );
@@ -241,7 +167,7 @@ const FarmerDashboard = () => {
               </p>
             </div>
             <div className="h-96">
-              <AgroTrackChatBot />
+              <ResponsiveAgroTrackChatBot />
             </div>
           </div>
         );
