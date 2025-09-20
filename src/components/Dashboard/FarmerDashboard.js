@@ -1,30 +1,274 @@
-import React from "react";
-import GeoTracker from "../Cowtracking/GeoTracker";
+import React, { useState, useEffect, useRef } from 'react';
+import { MapPin, MessageSquare, Bot, Menu, X, Tractor, Users, Map } from 'lucide-react';
+import GeoTracker from '../Cowtracking/GeoTracker';
 import ChatBox from "../Cowtracking/ChatBox";
-import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
-import "./FarmerDashboard.css"; //css fire
+import AgroTrackChatBot from '../Cowtracking/AgroTrackChatBot';
+
+// Responsive wrapper for GeoTracker
+const ResponsiveGeoTracker = ({ userRole }) => (
+  <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="flex items-center gap-2 mb-4">
+      <Map className="text-green-600" size={24} />
+      <h3 className="text-xl font-semibold">Livestock Tracking & Geo-fencing</h3>
+    </div>
+    <div className="rounded-lg overflow-hidden border">
+      <GeoTracker userRole={userRole} />
+    </div>
+  </div>
+);
+
+// Responsive wrapper for ChatBox
+const ResponsiveChatBox = ({ userId, role }) => (
+  <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
+    <div className="flex items-center gap-2 mb-4">
+      <Users className="text-blue-600" size={24} />
+      <h3 className="text-xl font-semibold">Community Chat</h3>
+    </div>
+    <div className="flex-1 min-h-0">
+      <ChatBox userId={userId} role={role} />
+    </div>
+  </div>
+);
+
+// Responsive wrapper for AgroTrackChatBot
+const ResponsiveAgroTrackChatBot = () => (
+    <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
+    <div className="flex items-center gap-2 mb-4">
+      <Users className="text-blue-600" size={24} />
+      <h3 className="text-xl font-semibold">AgroTrack AI</h3>
+    </div>
+    <div className="flex-1 min-h-0">
+      <AgroTrackChatBot />
+    </div>
+  </div>
+);
 
 const FarmerDashboard = () => {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const userId = "farmer-1";
 
-  return (
-    <div className="farmer-dashboard">
-      <div className="farmer-header">
-        <h2>Welcome to the Farmer Dashboard</h2>
-        <p>View Grazing and Non-Grazing Areas</p>
-      </div>
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: Tractor },
+    { id: 'tracking', label: 'Livestock Tracking', icon: MapPin },
+    { id: 'chat', label: 'Community', icon: MessageSquare },
+    { id: 'ai-assistant', label: 'AI Assistant', icon: Bot }
+  ];
 
-      <div className="farmer-main">
-        <GeoTracker userRole="farmer" />
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">Active Alerts</h3>
+                    <p className="text-3xl font-bold mt-2">3</p>
+                  </div>
+                  <MapPin size={48} className="opacity-80" />
+                </div>
+                <p className="text-sm mt-2 opacity-90">Livestock near restricted areas</p>
+              </div>
 
-        <div style={{ display: "flex", gap: "20px" }}>
-          <div style={{ flex: 1 }}>
-            <AgroTrackChatBot />
+              <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">Grazing Areas</h3>
+                    <p className="text-3xl font-bold mt-2">5</p>
+                  </div>
+                  <Tractor size={48} className="opacity-80" />
+                </div>
+                <p className="text-sm mt-2 opacity-90">Designated safe zones</p>
+              </div>
+
+              <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">Messages</h3>
+                    <p className="text-3xl font-bold mt-2">12</p>
+                  </div>
+                  <MessageSquare size={48} className="opacity-80" />
+                </div>
+                <p className="text-sm mt-2 opacity-90">Community updates</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ResponsiveGeoTracker userRole="farmer" />
+              <div className="space-y-6">
+                <div className="bg-white rounded-lg shadow-lg p-6">
+                  <h3 className="text-xl font-semibold mb-4">Recent Activity</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">Livestock detected in sector 7</p>
+                        <p className="text-xs text-gray-500">2 minutes ago</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">New grazing area approved</p>
+                        <p className="text-xs text-gray-500">1 hour ago</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">Message from herder in your area</p>
+                        <p className="text-xs text-gray-500">3 hours ago</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div style={{ flex: 1 }}>
-            <ChatBox userId={userId} role="farmer" />
+        );
+
+      case 'tracking':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-4">Livestock Tracking & Geo-fencing</h2>
+              <p className="text-gray-600 mb-6">
+                Monitor livestock movements and manage grazing areas to prevent conflicts.
+              </p>
+            </div>
+            <ResponsiveGeoTracker userRole="farmer" />
+          </div>
+        );
+
+      case 'chat':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-4">Community Communication</h2>
+              <p className="text-gray-600 mb-6">
+                Connect with herders and other farmers in your area for better coordination.
+              </p>
+            </div>
+            <div className="h-96">
+              <ResponsiveChatBox userId={userId} role="farmer" />
+            </div>
+          </div>
+        );
+
+      case 'ai-assistant':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-4">AI Agricultural Assistant</h2>
+              <p className="text-gray-600 mb-6">
+                Get expert farming advice, pest control tips, and market information in multiple languages.
+              </p>
+            </div>
+            <div className="h-96">
+              <ResponsiveAgroTrackChatBot />
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <div className={`bg-white shadow-lg transition-all duration-300 ${
+        sidebarOpen ? 'w-64' : 'w-16'
+      } lg:w-64 flex flex-col`}>
+        
+        {/* Header */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+              <Tractor className="text-white" size={20} />
+            </div>
+            <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block`}>
+              <h1 className="font-bold text-lg text-gray-800">AgroTrack</h1>
+              <p className="text-sm text-gray-500">Farmer Dashboard</p>
+            </div>
           </div>
         </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-4">
+          <div className="space-y-2">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-green-500 text-white shadow-lg'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <Icon size={20} />
+                  <span className={`${sidebarOpen ? 'block' : 'hidden'} lg:block font-medium`}>
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </nav>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-200">
+          <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block`}>
+            <div className="text-center">
+              <p className="text-xs text-gray-500">AgroTrack v1.0</p>
+              <p className="text-xs text-gray-400">Peace through Technology</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Top Bar */}
+        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
+              >
+                {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {tabs.find(tab => tab.id === activeTab)?.label}
+                </h2>
+                <p className="text-sm text-gray-500">Welcome back, Farmer</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-2 text-sm text-gray-600">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span>System Online</span>
+              </div>
+              <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-bold">F</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 p-6 overflow-auto">
+          {renderContent()}
+        </main>
       </div>
     </div>
   );

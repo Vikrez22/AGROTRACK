@@ -166,7 +166,7 @@ const AgroTrackChatBot = () => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-gradient-to-br from-green-50 to-blue-50 shadow-2xl">
+    <div className="flex flex-col h-full bg-white rounded-lg shadow-lg border border-gray-200">
       {/* Header */}
       <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 rounded-t-lg">
         <div className="flex items-center justify-between">
