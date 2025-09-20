@@ -2,12 +2,12 @@
   background-color: #1e3d2f; /* Deep forest green */
   min-height: 100vh;
   padding: 40px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #ffffff;
 }
 
 .admin-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: 30px;
   background-color: rgba(255, 255, 255, 0.1);
   padding: 20px;
@@ -16,12 +16,14 @@
 
 .admin-header h2 {
   font-size: 28px;
-  color: #c2f0c2; /* Light mint green for good contrast */
+  font-weight: 700;
+  color: white; /* Light mint green for good contrast */
 }
 
 .admin-header p {
-  font-size: 16px;
+  font-size: 13px;
   color: #dbeedd;
+  font-weight: 600;
 }
 
 .admin-main {
