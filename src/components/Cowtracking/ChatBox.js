@@ -9,6 +9,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import "./ChatBox.css";
+import { MessageCircle } from "lucide-react";
 
 const ChatBox = ({ userId, role }) => {
   const [message, setMessage] = useState("");
@@ -16,7 +17,10 @@ const ChatBox = ({ userId, role }) => {
   const chatRef = useRef(null);
 
   useEffect(() => {
-    const q = query(collection(db, "chatMessages"), orderBy("timestamp", "asc"));
+    const q = query(
+      collection(db, "chatMessages"),
+      orderBy("timestamp", "asc")
+    );
     const unsub = onSnapshot(q, (snapshot) => {
       setChatMessages(snapshot.docs.map((doc) => doc.data()));
     });
@@ -45,7 +49,11 @@ const ChatBox = ({ userId, role }) => {
 
   return (
     <div className="chat-container">
-      <div className="chat-header">💬 Community Chat</div>
+      <div className="chat-header">
+        <MessageCircle />
+        Community Chat
+      </div>
+
       <div className="chat-messages">
         {chatMessages.map((msg, idx) => (
           <div
