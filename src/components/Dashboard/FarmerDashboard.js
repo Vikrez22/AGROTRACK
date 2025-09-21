@@ -67,6 +67,9 @@ const FarmerDashboard = () => {
     { id: "ai-assistant", label: "AI Assistant", icon: Bot },
   ];
 
+  //replace my name with the actual username
+  const farmerUsername = "munachi";
+
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
@@ -212,7 +215,7 @@ const FarmerDashboard = () => {
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <div
-        className={`bg-white shadow-lg transition-all duration-300 overflow-y-hidden ${
+        className={`bg-white shadow-lg transition-all duration-300 h-screen fixed top-0 left-0 overflow-y-hidden ${
           sidebarOpen ? "w-64" : "w-16"
         } lg:w-64 flex flex-col`}
       >
@@ -272,9 +275,17 @@ const FarmerDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div
+        className={`flex-1 flex flex-col transition-all duration-300 ${
+          sidebarOpen ? "ml-64" : "ml-16"
+        } lg:ml-64`}
+      >
         {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-4 py-0.5">
+        <header
+          className={`bg-white shadow-sm border-b border-gray-200 px-4 ${
+            sidebarOpen ? "py-1.5" : "py-0.5"
+          }`}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
@@ -287,7 +298,10 @@ const FarmerDashboard = () => {
                 <h2 className="text-xl font-semibold text-gray-800">
                   {tabs.find((tab) => tab.id === activeTab)?.label}
                 </h2>
-                <p className="text-sm text-gray-500">Welcome back, Farmer</p>
+                <p className="text-sm text-gray-500">
+                  Welcome back, Farmer{" "}
+                  <span className="capitalize">{farmerUsername}</span>
+                </p>
               </div>
             </div>
 
@@ -297,7 +311,9 @@ const FarmerDashboard = () => {
                 <span>System Online</span>
               </div>
               <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-bold">F</span>
+                <span className="text-white text-sm font-bold uppercase">
+                  {farmerUsername[0]}
+                </span>
               </div>
             </div>
           </div>
