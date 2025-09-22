@@ -33,10 +33,12 @@ const ResponsiveGeoTracker = ({ userRole }) => (
 
 // Responsive wrapper for ChatBox
 const ResponsiveChatBox = ({ userId, role }) => (
-  <div className="bg-[#0f172a] rounded-lg shadow-lg p-6 h-full flex flex-col">
+  <div className="bg-[#0f172a] rounded-lg shadow-lg p-5 mb-5 h-full flex flex-col">
     <div className="flex items-center gap-2 mb-4">
-      <Users className="text-[#3b82f6]" size={24} />
-      <h3 className="text-xl font-semibold text-[#e2e8f0]">Community Chat</h3>
+      <Users className="text-[#3b82f6]" size={20} />
+      <h3 className="text-base sm:text-xl font-semibold text-[#e2e8f0]">
+        Community Chat
+      </h3>
     </div>
     <div className="flex-1 min-h-0">
       <ChatBox userId={userId} role={role} />
@@ -184,16 +186,16 @@ const FarmerDashboard = () => {
       case "chat":
         return (
           <div className="space-y-6">
-            <div className="bg-[var(--color-bg-dark)] rounded-lg shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-[var(--color-gray-light)] mb-4">
+            <div className="bg-[var(--color-bg-dark)] rounded-lg shadow-lg p-4 sm:p-6">
+              <h2 className="text-lg sm:text-2xl font-bold text-[var(--color-gray-light)] mb-4">
                 Community Communication
               </h2>
-              <p className="text-[var(--color-gray-medium)] mb-6">
+              <p className="text-[var(--color-gray-medium)] mb-6 sm:text-base text-sm">
                 Connect with herders and other farmers in your area for better
                 coordination.
               </p>
             </div>
-            <div className="h-96">
+            <div className="min-h-[400px]">
               <ResponsiveChatBox userId={userId} role="farmer" />
             </div>
           </div>
@@ -313,7 +315,7 @@ const FarmerDashboard = () => {
           }`}
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="lg:hidden p-2 rounded-lg hover:bg-[#2f3e55] text-[#fff]"
@@ -321,10 +323,10 @@ const FarmerDashboard = () => {
                 {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
               <div>
-                <h2 className="text-xl font-semibold text-[var(--color-gray-light)]">
+                <h2 className="text-lg sm:text-xl font-semibold text-[var(--color-gray-light)]">
                   {tabs.find((tab) => tab.id === activeTab)?.label}
                 </h2>
-                <p className="text-sm text-[var(--color-gray-muted)]">
+                <p className="text-sm text-[var(--color-gray-muted)] leading-5">
                   Welcome back, Farmer{" "}
                   <span className="capitalize">{farmerUsername}</span>
                 </p>
@@ -346,7 +348,9 @@ const FarmerDashboard = () => {
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-6 overflow-auto">{renderContent()}</main>
+        <main className="flex-1 p-3 md:p-6 overflow-auto mt-14">
+          {renderContent()}
+        </main>
       </div>
     </div>
   );
