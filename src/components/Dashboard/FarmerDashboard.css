@@ -21,10 +21,10 @@
   --color-blue: #3b82f6;
 
   /* RGB for rgba usage */
-  --color-green-rgb: rgb(34, 197, 94);
-  --color-red-rgb: rgb(239, 68, 68);
-  --color-blue-rgb: rgb(59, 130, 246);
-  --color-white-rgb: rgb(255, 255, 255);
+  --color-green-rgb: #22c55e;
+  --color-red-rgb: #ef4444;
+  --color-blue-rgb: #3b82f6;
+  --color-white-rgb: #ffffff;
 }
 .farmer-dashboard {
   background-color: #1e3d2f; /* Deep forest green */
