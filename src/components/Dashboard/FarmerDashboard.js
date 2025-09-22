@@ -8,6 +8,7 @@ import {
   Tractor,
   Users,
   Map,
+  Settings,
 } from "lucide-react";
 import GeoTracker from "../Cowtracking/GeoTracker";
 import ChatBox from "../Cowtracking/ChatBox";
@@ -20,7 +21,7 @@ const ResponsiveGeoTracker = ({ userRole }) => (
   <div className="bg-[#0f172a] rounded-lg shadow-lg p-6">
     <div className="flex items-center gap-2 mb-4">
       <Map className="text-[#22c55e]" size={24} />
-      <h3 className="text-xl font-semibold text-[#e2e8f0]">
+      <h3 className="text-lg sm:text-xl font-semibold text-[#e2e8f0]">
         Livestock Tracking & Geo-fencing
       </h3>
     </div>
@@ -69,6 +70,7 @@ const FarmerDashboard = () => {
     { id: "tracking", label: "Livestock Tracking", icon: MapPin },
     { id: "chat", label: "Community", icon: MessageSquare },
     { id: "ai-assistant", label: "AI Assistant", icon: Bot },
+    { id: "settings", label: "Settings", icon: Settings },
   ];
 
   const renderContent = () => {
@@ -215,6 +217,13 @@ const FarmerDashboard = () => {
           </div>
         );
 
+      case "settings":
+        return (
+          <div>
+            <h1>Settings Page</h1>
+          </div>
+        );
+
       default:
         return null;
     }
@@ -299,7 +308,7 @@ const FarmerDashboard = () => {
       >
         {/* Top Bar */}
         <header
-          className={`bg-[var(--color-bg-dark)] shadow-sm border-b border-[#cbd5e1]/50 px-4 ${
+          className={`bg-[var(--color-bg-dark)] shadow-sm border-b border-[#cbd5e1]/50 md:px-4 px-2.5 ${
             sidebarOpen ? "py-1.5" : "py-0.5"
           }`}
         >
