@@ -168,7 +168,7 @@ const GeoTracker = ({ userRole }) => {
 
   return (
     <div className="p-3">
-      <h2 className="text-xl text-[#e2e8f0] font-semibold">
+      <h2 className="text-xl text-[#e2e8f0] font-semibold leading-6 mb-2">
         Track Cow & Your Location
       </h2>
 
@@ -206,7 +206,8 @@ const GeoTracker = ({ userRole }) => {
       <MapContainer
         center={mapCenter}
         zoom={6}
-        style={{ height: "600px", width: "100%" }}
+        style={{ width: "100%" }}
+        className="w-full h-[400px]"
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
