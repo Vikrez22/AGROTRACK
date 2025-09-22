@@ -167,33 +167,23 @@ const GeoTracker = ({ userRole }) => {
       : [9.082, 8.6753]);
 
   return (
-    <div className="p-3">
-      <h2 className="text-xl text-[#e2e8f0] font-semibold leading-6 mb-2">
-        Track Cow & Your Location
-      </h2>
+    <div>
+      <h2>Track Cow & Your Location</h2>
 
       {(userRole === "admin" || userRole === "farmer") && (
         <div className="grazing-area">
-          <label
-            htmlFor="grazing"
-            className="text-[#cbd5e1] font-medium text-sm"
-          >
+          <label>
             <input
               type="radio"
               value="grazing"
               checked={drawType === "grazing"}
-              id="grazing"
               onChange={() => setDrawType("grazing")}
             />
             Grazing Area
           </label>{" "}
-          <label
-            htmlFor="non-grazing"
-            className="text-[#cbd5e1] font-medium text-sm"
-          >
+          <label>
             <input
               type="radio"
-              id="non-grazing"
               value="non-grazing"
               checked={drawType === "non-grazing"}
               onChange={() => setDrawType("non-grazing")}
