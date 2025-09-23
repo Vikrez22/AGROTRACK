@@ -339,43 +339,39 @@ const HerderDashboard = ({ userId }) => {
 
       {/* Main Content */}
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
+        className={`flex-1 flex flex-col transition-all duration-300 relative ${
           sidebarOpen ? "ml-64" : "ml-16"
         } lg:ml-64`}
       >
         {/* Top Bar */}
-        <header
-          className={`bg-white shadow-sm border-b border-gray-200 px-4 py-0.5`}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
-              >
-                {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-              </button>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {tabs.find((tab) => tab.id === activeTab)?.label}
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Welcome back,
-                  <span className="capitalize">{herderUsername}</span>
-                </p>
-              </div>
+        <header className="bg-white shadow-sm border-b border-gray-200 px-4 py-0.5 sticky top-0 right-0 flex items-center justify-between z-50">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
+            >
+              {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800">
+                {tabs.find((tab) => tab.id === activeTab)?.label}
+              </h2>
+              <p className="text-sm text-gray-500">
+                Welcome back,
+                <span className="capitalize">{herderUsername}</span>
+              </p>
             </div>
+          </div>
 
-            <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>GPS Active</span>
-              </div>
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-bold uppercase">
-                  {herderUsername[0]}
-                </span>
-              </div>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-2 text-sm text-gray-600">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>GPS Active</span>
+            </div>
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm font-bold uppercase">
+                {herderUsername[0]}
+              </span>
             </div>
           </div>
         </header>
