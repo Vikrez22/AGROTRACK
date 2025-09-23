@@ -14,7 +14,7 @@ import {
 import GeoTrackerHerder from "../Cowtracking/GeotrackerHerder";
 import ChatBox from "../Cowtracking/ChatBox";
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
-import sideBarLogo from "../../assets/sidebar_logo_white.png";
+import sideBarLogo from "../../assets/sidebar_logo_blue.png";
 
 // Responsive wrapper for GeoTrackerHerder
 const ResponsiveGeoTrackerHerder = ({ userId }) => (
@@ -66,6 +66,7 @@ const ResponsiveAgroTrackChatBot = () => (
 const HerderDashboard = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const herderUsername = "munachi";
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Navigation },
@@ -279,11 +280,13 @@ const HerderDashboard = ({ userId }) => {
         {/* Header */}
         <div className="p-1.5 border-b border-gray-200 flex items-center">
           <div className={`flex items-center ${sidebarOpen ? "gap-3" : ""}`}>
-            <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2">
+            <div className="w-11 h-10 bg-sky-200 rounded-lg flex items-center justify-center p-2">
               <img src={sideBarLogo} alt="agrotrack_sidebar" />
             </div>
             <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
-              <h1 className="font-bold text-lg text-gray-800">AgroTrack</h1>
+              <h1 className="font-bold text-lg text-blue-500 leading-5">
+                AgroTrack
+              </h1>
               <p className="text-sm text-gray-500">Farmer Dashboard</p>
             </div>
           </div>
@@ -332,9 +335,17 @@ const HerderDashboard = ({ userId }) => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div
+        className={`flex-1 flex flex-col transition-all duration-300 ${
+          sidebarOpen ? "ml-64" : "ml-16"
+        } lg:ml-64`}
+      >
         {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+        <header
+          className={`bg-white shadow-sm border-b border-gray-200 px-4 ${
+            sidebarOpen ? "py-1.5" : "py-0.5"
+          }`}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
@@ -347,7 +358,10 @@ const HerderDashboard = ({ userId }) => {
                 <h2 className="text-xl font-semibold text-gray-800">
                   {tabs.find((tab) => tab.id === activeTab)?.label}
                 </h2>
-                <p className="text-sm text-gray-500">Welcome back, Herder</p>
+                <p className="text-sm text-gray-500">
+                  Welcome back,
+                  <span className="capitalize">{herderUsername}</span>
+                </p>
               </div>
             </div>
 
@@ -357,7 +371,9 @@ const HerderDashboard = ({ userId }) => {
                 <span>GPS Active</span>
               </div>
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-bold">H</span>
+                <span className="text-white text-sm font-bold uppercase">
+                  {herderUsername[0]}
+                </span>
               </div>
             </div>
           </div>
