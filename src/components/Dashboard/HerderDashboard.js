@@ -240,9 +240,7 @@ const HerderDashboard = ({ userId }) => {
                 and share important updates.
               </p>
             </div>
-            <div className="h-96">
-              <ResponsiveChatBox userId={userId} role="herder" />
-            </div>
+            <ResponsiveChatBox userId={userId} role="herder" />
           </div>
         );
 
@@ -258,9 +256,14 @@ const HerderDashboard = ({ userId }) => {
                 and conflict resolution.
               </p>
             </div>
-            <div className="h-96">
-              <ResponsiveAgroTrackChatBot />
-            </div>
+            <ResponsiveAgroTrackChatBot />
+          </div>
+        );
+
+      case "settings":
+        return (
+          <div>
+            <h1>The Settings Page</h1>
           </div>
         );
 
