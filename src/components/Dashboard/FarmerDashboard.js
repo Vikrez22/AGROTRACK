@@ -233,7 +233,7 @@ const FarmerDashboard = () => {
               <img src={sideBarLogo} alt="agrotrack_sidebar" />
             </div>
             <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
-              <h1 className="font-bold text-lg text-green-500 leading-5 text-gray-800">
+              <h1 className="font-bold text-lg leading-5 text-gray-800">
                 AgroTrack
               </h1>
               <p className="text-sm text-gray-500">Farmer Dashboard</p>
@@ -291,9 +291,7 @@ const FarmerDashboard = () => {
       >
         {/* Top Bar */}
         <header
-          className={`bg-white shadow-sm border-b border-gray-200 px-4 ${
-            sidebarOpen ? "py-1.5" : "py-0.5"
-          }`}
+          className={`bg-white shadow-sm border-b border-gray-200 px-4 py-0.5`}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">

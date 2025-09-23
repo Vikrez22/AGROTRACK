@@ -342,9 +342,7 @@ const HerderDashboard = ({ userId }) => {
       >
         {/* Top Bar */}
         <header
-          className={`bg-white shadow-sm border-b border-gray-200 px-4 ${
-            sidebarOpen ? "py-1.5" : "py-0.5"
-          }`}
+          className={`bg-white shadow-sm border-b border-gray-200 px-4 py-0.5`}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">

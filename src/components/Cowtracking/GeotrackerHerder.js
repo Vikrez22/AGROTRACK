@@ -139,7 +139,7 @@ const GeoTrackerHerder = ({ userId }) => {
   }, [checkGeofence]);
 
   return (
-    <div>
+    <div className="p-2">
       <h3 style={{ fontSize: "22px", fontWeight: "700" }}>
         Your Live Location
       </h3>
