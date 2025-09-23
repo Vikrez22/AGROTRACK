@@ -233,7 +233,9 @@ const FarmerDashboard = () => {
               <img src={sideBarLogo} alt="agrotrack_sidebar" />
             </div>
             <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
-              <h1 className="font-bold text-lg text-gray-800">AgroTrack</h1>
+              <h1 className="font-bold text-lg text-green-500 leading-5 text-gray-800">
+                AgroTrack
+              </h1>
               <p className="text-sm text-gray-500">Farmer Dashboard</p>
             </div>
           </div>
