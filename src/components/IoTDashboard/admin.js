@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 // Mock components - replace with your actual imports
-const IoTLivestockMap = ({ userRole }) => (
+const IoTLivestockMap = ({ admin }) => (
   <div className="h-full w-full bg-gray-100 rounded-lg flex items-center justify-center border">
     <div className="text-center">
       <Map className="mx-auto mb-2 text-gray-600" size={48} />
