@@ -50,9 +50,7 @@ const ResponsiveAgroTrackChatBot = () => (
       <Users className="text-blue-600" size={24} />
       <h3 className="text-xl font-semibold">AgroTrack AI</h3>
     </div>
-    <div className="flex-1 min-h-0">
-      <AgroTrackChatBot />
-    </div>
+    <AgroTrackChatBot />
   </div>
 );
 
@@ -202,7 +200,7 @@ const FarmerDashboard = () => {
                 information in multiple languages.
               </p>
             </div>
-            <div className="h-96">
+            <div className="min-h-[400px]">
               <ResponsiveAgroTrackChatBot />
             </div>
           </div>
