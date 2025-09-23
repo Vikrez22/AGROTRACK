@@ -184,7 +184,7 @@ const FarmerDashboard = () => {
                 coordination.
               </p>
             </div>
-            <div className="h-96">
+            <div className="min-h-[400px]">
               <ResponsiveChatBox userId={userId} role="farmer" />
             </div>
           </div>
