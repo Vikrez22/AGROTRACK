@@ -13,8 +13,6 @@ import 'leaflet/dist/leaflet.css'; // Leaflet base CSS
 // Leaflet Draw for drawing tools (polygons for geofencing)
 import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet-draw';
-
-// Lucide React for icons (ensure you have installed it: npm install lucide-react)
 import { MapPin, Zap, Users, AlertTriangle, Shield, Activity, Wifi, Battery, Navigation,Volume2} from 'lucide-react';
 
 // Firebase imports for Realtime Database
@@ -638,7 +636,6 @@ const IoTLivestockDashboard = ({ userRole = 'farmer' }) => {
           </div>
         </div>
       )}
-
       
       {/* Interactive Map */}
       <div className="mx-4 mb-6 md:mx-8 lg:mx-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl overflow-hidden shadow-xl">
