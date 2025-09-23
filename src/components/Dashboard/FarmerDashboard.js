@@ -184,7 +184,7 @@ const FarmerDashboard = () => {
                 coordination.
               </p>
             </div>
-            <div className="min-h-[400px]">
+            <div className="h-96">
               <ResponsiveChatBox userId={userId} role="farmer" />
             </div>
           </div>
@@ -296,7 +296,7 @@ const FarmerDashboard = () => {
           }`}
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
@@ -329,9 +329,7 @@ const FarmerDashboard = () => {
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-3 md:p-6 overflow-auto mt-14">
-          {renderContent()}
-        </main>
+        <main className="flex-1 p-6 overflow-auto">{renderContent()}</main>
       </div>
     </div>
   );
