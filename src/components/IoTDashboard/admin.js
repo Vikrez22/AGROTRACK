@@ -5,95 +5,511 @@ import {
   Bell, Settings, Radio, Car, FileText, Clock
 } from 'lucide-react';
 
-// Mock components - replace with your actual imports
-const IoTLivestockMap = ({ admin }) => (
-  <div className="h-full w-full bg-gray-100 rounded-lg flex items-center justify-center border">
-    <div className="text-center">
-      <Map className="mx-auto mb-2 text-gray-600" size={48} />
-      <p className="text-gray-600">Real-time Livestock Tracking Map</p>
-      <p className="text-sm text-gray-500 mt-1">IoT devices and geofencing zones</p>
-    </div>
-  </div>
-);
+// Import Leaflet components
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Polygon,
+  useMap
+} from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-draw/dist/leaflet.draw.css';
+import 'leaflet-draw';
 
-const AgroTrackChatBot = () => (
-  <div className="h-full w-full bg-gray-50 rounded-lg flex items-center justify-center">
-    <div className="text-center">
-      <Bot className="mx-auto mb-2 text-purple-600" size={48} />
-      <p className="text-gray-600">AI Assistant Ready</p>
-      <p className="text-sm text-gray-500">Get agricultural insights</p>
-    </div>
-  </div>
-);
+// Firebase imports for Realtime Database
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, onValue, set, push, remove } from 'firebase/database';
 
-const ChatBox = ({ userId, role }) => (
-  <div className="h-full w-full bg-gray-50 rounded-lg flex items-center justify-center">
-    <div className="text-center">
-      <MessageSquare className="mx-auto mb-2 text-blue-600" size={48} />
-      <p className="text-gray-600">Community Communication</p>
-      <p className="text-sm text-gray-500">Coordinate with stakeholders</p>
-    </div>
-  </div>
-);
+const iotFirebaseConfig = {
+  apiKey: "AIzaSyDaw8OdK1eaMCcOJgB6lHDFGn_hb9YIEdM", 
+  authDomain: "agrorithm-f4d87.firebaseapp.com", 
+  databaseURL: "https://agrorithm-f4d87-default-rtdb.firebaseio.com", 
+  projectId: "agrorithm-f4d87", 
+  storageBucket: "agrorithm-f4d87.firebasestorage.app", 
+  messagingSenderId: "1084500546652", 
+  appId: "1:1084500546652:web:c2a251d9585f7211448299" 
+};
 
-// Responsive wrapper components
-const ResponsiveIoTMap = ({ userRole }) => (
-  <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-    <div className="p-6 border-b border-gray-200">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-500 rounded-lg">
-            <Eye className="text-white" size={20} />
+const iotApp = initializeApp(iotFirebaseConfig, 'iot-app');
+const iotDb = getDatabase(iotApp);
+
+// Fix Leaflet default markers
+if (typeof window !== 'undefined') {
+  delete L.Icon.Default.prototype._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  });
+}
+
+// Custom cow marker icon
+const cowIcon = new L.Icon({
+  iconUrl: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+      <circle cx="16" cy="16" r="14" fill="#8B4513" stroke="#654321" stroke-width="2"/>
+      <circle cx="16" cy="16" r="10" fill="#A0522D"/>
+      <text x="16" y="20" text-anchor="middle" fill="white" font-size="10" font-weight="bold">🐄</text>
+    </svg>
+  `),
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+  popupAnchor: [0, -16],
+});
+
+// Alarm icon for restricted areas
+const alarmIcon = new L.Icon({
+  iconUrl: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+      <circle cx="16" cy="16" r="14" fill="#FF0000" stroke="#CC0000" stroke-width="2"/>
+      <polygon points="16,6 12,22 20,22" fill="white"/>
+      <circle cx="16" cy="26" r="2" fill="white"/>
+    </svg>
+  `),
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+  popupAnchor: [0, -16],
+});
+
+// Draw Control Component (for admin/farmer roles)
+const DrawControl = ({ onCreated, onDeleted, drawType }) => {
+  const map = useMap();
+  const drawnItemsRef = useRef(new L.FeatureGroup());
+
+  useEffect(() => {
+    if (!map) return;
+
+    map.addLayer(drawnItemsRef.current);
+    const drawControl = new L.Control.Draw({
+      draw: {
+        polygon: {
+          shapeOptions: {
+            color: drawType === 'grazing' ? 'green' : 'red',
+            fillOpacity: 0.4,
+          },
+        },
+        polyline: false,
+        rectangle: false,
+        circle: false,
+        circlemarker: false,
+        marker: false,
+      },
+      edit: {
+        featureGroup: drawnItemsRef.current,
+        remove: true,
+      },
+    });
+
+    map.addControl(drawControl);
+
+    map.on(L.Draw.Event.CREATED, (e) => {
+      const layer = e.layer;
+      drawnItemsRef.current.addLayer(layer);
+      const latlngs = layer.getLatLngs()[0].map((latlng) => ({
+        lat: latlng.lat,
+        lng: latlng.lng,
+      }));
+      onCreated(latlngs, drawType);
+    });
+
+    map.on(L.Draw.Event.DELETED, (e) => {
+      e.layers.eachLayer((layer) => {
+        onDeleted(layer);
+      });
+    });
+
+    return () => {
+      map.off(L.Draw.Event.CREATED);
+      map.off(L.Draw.Event.DELETED);
+      map.removeControl(drawControl);
+      map.removeLayer(drawnItemsRef.current);
+    };
+  }, [map, onCreated, onDeleted, drawType]);
+
+  return null;
+};
+
+// Real Map Component with Leaflet
+const LiveTrackingMap = ({ center, markers, grazingAreas, nonGrazingAreas, userRole, onCreated, onDeleted, drawType }) => (
+  <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
+    <TileLayer 
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
+      attribution="&copy; OpenStreetMap contributors" 
+    />
+    
+    {/* Animal Markers */}
+    {markers.map((animal) => (
+      <Marker
+        key={animal.id}
+        position={animal.position}
+        icon={animal.isInRestrictedArea ? alarmIcon : cowIcon}
+      >
+        <Popup>
+          <div className="p-2 text-gray-800">
+            <h4 className="font-bold text-lg mb-2">
+              {animal.name || `Animal ${animal.id}`}
+            </h4>
+            <div className="space-y-1 text-sm">
+              <p><strong>Coordinates:</strong> {animal.data.latitude?.toFixed(6)}, {animal.data.longitude?.toFixed(6)}</p>
+              <p><strong>Altitude:</strong> {animal.data.altitude}m</p>
+              <p><strong>Speed:</strong> {animal.data.speed_kmph} km/h</p>
+              <p><strong>Course:</strong> {animal.data.course}°</p>
+              <p><strong>Satellites:</strong> {animal.data.satellites}</p>
+              <p><strong>Date:</strong> {animal.data.date}</p>
+              <p><strong>Time:</strong> {animal.data.time}</p>
+              {animal.isInRestrictedArea && (
+                <p className="text-red-600 font-bold mt-2">⚠️ IN RESTRICTED AREA!</p>
+              )}
+            </div>
           </div>
-          <div>
-            <h3 className="text-xl font-semibold">Real-time Monitoring</h3>
-            <p className="text-sm text-gray-500">Live livestock tracking & alerts</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 text-sm text-green-600">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span>Live</span>
-        </div>
-      </div>
-    </div>
-    <div className="h-96">
-      <IoTLivestockMap userRole={userRole} />
-    </div>
-  </div>
+        </Popup>
+      </Marker>
+    ))}
+
+    {/* Grazing Areas Polygons */}
+    {grazingAreas.map(({ id, coords }) => (
+      <Polygon
+        key={id}
+        positions={coords.map((pt) => [pt.lat, pt.lng])}
+        pathOptions={{ color: '#2e8b57', fillColor: '#2e8b57', fillOpacity: 0.3, weight: 2 }}
+      >
+        <Popup>Grazing Area</Popup>
+      </Polygon>
+    ))}
+
+    {/* Non-Grazing Areas Polygons */}
+    {nonGrazingAreas.map(({ id, coords }) => (
+      <Polygon
+        key={id}
+        positions={coords.map((pt) => [pt.lat, pt.lng])}
+        pathOptions={{ color: 'red', fillColor: 'red', fillOpacity: 0.3, weight: 2 }}
+      >
+        <Popup>Restricted Area</Popup>
+      </Polygon>
+    ))}
+
+    {/* Draw Controls - only for admin/farmer roles */}
+    {(userRole === 'admin' || userRole === 'farmer') && (
+      <DrawControl
+        drawType={drawType}
+        onCreated={onCreated}
+        onDeleted={onDeleted}
+      />
+    )}
+  </MapContainer>
 );
 
-const ResponsiveChatBox = ({ userId, role }) => (
-  <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
-    <div className="flex items-center gap-2 mb-4">
-      <Radio className="text-orange-600" size={24} />
-      <h3 className="text-xl font-semibold">Command Center</h3>
-    </div>
-    <div className="flex-1 min-h-0">
-      <ChatBox userId={userId} role={role} />
-    </div>
-  </div>
-);
+const IoTLivestockDashboard = ({ userRole = 'law-enforcement' }) => {
+  const [livestockData, setLivestockData] = useState({});
+  const [grazingAreas, setGrazingAreas] = useState([]);
+  const [nonGrazingAreas, setNonGrazingAreas] = useState([]);
+  const [drawType, setDrawType] = useState('grazing');
+  const [alarms, setAlarms] = useState([]);
+  const [messageBox, setMessageBox] = useState({ visible: false, message: '', type: '' });
 
-const ResponsiveAgroTrackChatBot = () => (
-  <div className="h-full flex flex-col bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-    <AgroTrackChatBot />
+  const showMessageBox = (message, type) => {
+    setMessageBox({ visible: true, message, type });
+    setTimeout(() => setMessageBox({ visible: false, message: '', type: '' }), 5000);
+  };
+
+  const playAlarmSound = useCallback(() => {
+    if (typeof Audio !== 'undefined') {
+      try {
+        const audio = new Audio('/agrorithm_alarm.mp3');
+        audio.volume = 0.7;
+        audio.play()
+          .then(() => console.log('Alarm sound played successfully.'))
+          .catch(e => {
+            console.error('Error playing alarm sound:', e);
+            showMessageBox('Alarm sound blocked by browser (autoplay policy). Please click anywhere on the page to enable sound.', 'warning');
+          });
+      } catch (e) {
+        console.error('Failed to create Audio object:', e);
+        showMessageBox('Audio playback not supported or file not found.', 'error');
+      }
+    } else {
+      console.log('Audio notification not available in this environment.');
+    }
+  }, []);
+
+  const isPointInPolygon = useCallback((point, polygon) => {
+    const x = point.lat, y = point.lng;
+    let inside = false;
+    
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      const xi = polygon[i].lat, yi = polygon[i].lng;
+      const xj = polygon[j].lat, yj = polygon[j].lng;
+      
+      const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }, []);
+
+  const checkGeofencing = useCallback((animalId, position) => {
+    let isViolating = false;
+    for (const area of nonGrazingAreas) {
+      if (isPointInPolygon(position, area.coords)) {
+        isViolating = true;
+        const alarmExists = alarms.some(alarm => alarm.animalId === animalId && alarm.type === 'RESTRICTED_AREA_VIOLATION');
+        if (!alarmExists) {
+          const alarmId = `${animalId}_${Date.now()}`;
+          const newAlarm = {
+            id: alarmId,
+            animalId,
+            position,
+            timestamp: new Date().toISOString(),
+            type: 'RESTRICTED_AREA_VIOLATION',
+            message: `Animal ${animalId} entered restricted area!`
+          };
+          setAlarms(prev => [...prev, newAlarm]);
+          playAlarmSound();
+          showMessageBox(`Alert: Animal ${animalId} entered restricted area!`, 'error');
+        }
+        break;
+      }
+    }
+    if (!isViolating) {
+      setAlarms(prev => prev.filter(alarm => !(alarm.animalId === animalId && alarm.type === 'RESTRICTED_AREA_VIOLATION')));
+    }
+  }, [nonGrazingAreas, alarms, isPointInPolygon, playAlarmSound]);
+
+  // Effect to listen to IoT livestock data from Firebase
+  useEffect(() => {
+    const livestockRef = ref(iotDb, '/');
+    const unsubscribe = onValue(livestockRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        setLivestockData(data);
+        
+        Object.keys(data).forEach(key => {
+          if (key === 'latest_position' && data[key]?.latitude && data[key]?.longitude) {
+            const position = {
+              lat: data[key].latitude,
+              lng: data[key].longitude
+            };
+            checkGeofencing('main_device', position);
+          }
+          else if (key.startsWith('offline_') && data[key]?.latest_position?.latitude && data[key]?.latest_position?.longitude) {
+            const position = {
+              lat: data[key].latest_position.latitude,
+              lng: data[key].latest_position.longitude
+            };
+            checkGeofencing(key, position);
+          }
+        });
+      } else {
+        setLivestockData({});
+        setAlarms([]);
+      }
+    }, (error) => {
+      console.error("Error fetching livestock data from Firebase:", error);
+      showMessageBox(`Failed to load livestock data: ${error.message}`, 'error');
+    });
+
+    return () => unsubscribe();
+  }, [checkGeofencing]);
+
+  // Effect to listen to geofencing areas from Firebase
+  useEffect(() => {
+    const areasRef = ref(iotDb, 'geofencing_areas');
+    const unsubscribe = onValue(areasRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const areas = snapshot.val();
+        const grazing = [], nonGrazing = [];
+        
+        Object.keys(areas).forEach(areaId => {
+          const area = areas[areaId];
+          if (area.type === 'grazing') {
+            grazing.push({ id: areaId, coords: area.coordinates });
+          } else if (area.type === 'non-grazing') {
+            nonGrazing.push({ id: areaId, coords: area.coordinates });
+          }
+        });
+        
+        setGrazingAreas(grazing);
+        setNonGrazingAreas(nonGrazing);
+      } else {
+        setGrazingAreas([]);
+        setNonGrazingAreas([]);
+      }
+    }, (error) => {
+      console.error("Error fetching geofencing areas from Firebase:", error);
+      showMessageBox(`Failed to load geofencing areas: ${error.message}`, 'error');
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Handle polygon creation and deletion for drawing tools
+  const handleCreated = useCallback(async (latlngs, type) => {
+    try {
+      const areasRef = ref(iotDb, 'geofencing_areas');
+      const newAreaRef = push(areasRef);
+      await set(newAreaRef, {
+        type: type,
+        coordinates: latlngs,
+        created_at: new Date().toISOString(),
+      });
+      showMessageBox(`New ${type} area saved successfully!`, 'success');
+    } catch (err) {
+      console.error("Error saving polygon to Firebase:", err);
+      showMessageBox(`Error saving area: ${err.message}`, 'error');
+    }
+  }, []);
+
+  const handleDeleted = useCallback(async (layer) => {
+    const latlngs = layer.getLatLngs()[0].map((ll) => ({
+      lat: ll.lat,
+      lng: ll.lng,
+    }));
+    
+    const allAreas = [...grazingAreas, ...nonGrazingAreas];
+    for (const area of allAreas) {
+      if (area.coords.length === latlngs.length) {
+        const matched = area.coords.every((pt, i) =>
+          Math.abs(pt.lat - latlngs[i].lat) < 0.00001 &&
+          Math.abs(pt.lng - latlngs[i].lng) < 0.00001
+        );
+        if (matched) {
+          try {
+            const areaRef = ref(iotDb, `geofencing_areas/${area.id}`);
+            await remove(areaRef);
+            showMessageBox(`Area deleted successfully!`, 'success');
+            break;
+          } catch (err) {
+            console.error("Error deleting polygon from Firebase:", err);
+            showMessageBox(`Error deleting area: ${err.message}`, 'error');
+          }
+        }
+      }
+    }
+  }, [grazingAreas, nonGrazingAreas]);
+
+  const getMapCenter = useCallback(() => {
+    if (livestockData.latest_position) {
+      return [livestockData.latest_position.latitude, livestockData.latest_position.longitude];
+    }
+    
+    const animalIds = Object.keys(livestockData).filter(id => id.startsWith('offline_') && livestockData[id]?.latest_position);
+    if (animalIds.length > 0) {
+      const firstAnimalPos = livestockData[animalIds[0]].latest_position;
+      return [firstAnimalPos.latitude, firstAnimalPos.longitude];
+    }
+    
+    return [9.0820, 8.6753]; // Default to Nigeria coordinate
+  }, [livestockData]);
+
+  const getAnimalMarkers = useCallback(() => {
+    const markers = [];
+    
+    if (livestockData.latest_position) {
+      const pos = livestockData.latest_position;
+      const isInRestrictedArea = nonGrazingAreas.some(area => 
+        isPointInPolygon({ lat: pos.latitude, lng: pos.longitude }, area.coords)
+      );
+      
+      markers.push({
+        id: 'main_device',
+        name: 'Main Device',
+        position: [pos.latitude, pos.longitude],
+        data: pos,
+        isInRestrictedArea,
+      });
+    }
+    
+    Object.keys(livestockData).forEach(animalId => {
+      if (animalId.startsWith('offline_') && livestockData[animalId]?.latest_position) {
+        const pos = livestockData[animalId].latest_position;
+        const animalName = `Animal ${animalId.replace('offline_', '')}`;
+        const isInRestrictedArea = nonGrazingAreas.some(area => 
+          isPointInPolygon({ lat: pos.latitude, lng: pos.longitude }, area.coords)
+        );
+        
+        markers.push({
+          id: animalId,
+          name: animalName,
+          position: [pos.latitude, pos.longitude],
+          data: pos,
+          isInRestrictedArea,
+        });
+      }
+    });
+    
+    return markers;
+  }, [livestockData, nonGrazingAreas, isPointInPolygon]);
+
+  const dismissAlarm = (alarmId) => {
+    setAlarms(prev => prev.filter(alarm => alarm.id !== alarmId));
+    showMessageBox(`Alarm dismissed.`, 'info');
+  };
+
+  const animalMarkers = getAnimalMarkers();
+  const mapCenter = getMapCenter();
+
+  return {
+    livestockData,
+    grazingAreas,
+    nonGrazingAreas,
+    alarms,
+    animalMarkers,
+    mapCenter,
+    dismissAlarm,
+    messageBox,
+    showMessageBox,
+    drawType,
+    setDrawType,
+    handleCreated,
+    handleDeleted
+  };
+};
+
+const MockChatBox = ({ title, icon: Icon, description }) => (
+  <div className="h-full w-full bg-gray-50 rounded-lg flex items-center justify-center border">
+    <div className="text-center p-6">
+      <Icon className="mx-auto mb-4 text-blue-600" size={48} />
+      <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
+      <p className="text-sm text-gray-500">{description}</p>
+    </div>
   </div>
 );
 
 const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [alerts, setAlerts] = useState([
-    { id: 1, type: 'conflict', message: 'Potential conflict reported in Sector 7', priority: 'high', time: '2 min ago' },
-    { id: 2, type: 'livestock', message: 'Livestock in restricted area - Zone B', priority: 'medium', time: '5 min ago' }
-  ]);
+  
+  // Get real-time data from Firebase
+  const {
+    livestockData,
+    grazingAreas,
+    nonGrazingAreas,
+    alarms,
+    animalMarkers,
+    mapCenter,
+    dismissAlarm,
+    messageBox,
+    showMessageBox,
+    drawType,
+    setDrawType,
+    handleCreated,
+    handleDeleted
+  } = IoTLivestockDashboard({ userRole: 'law-enforcement' });
 
-  // Mock statistics
+  // Calculate statistics from real data
   const stats = {
-    activeIncidents: 3,
-    livestockTracked: 147,
-    alertsToday: 8,
-    patrolUnits: 5
+    activeIncidents: alarms.length,
+    livestockTracked: animalMarkers.length,
+    alertsToday: alarms.filter(alarm => {
+      const alarmDate = new Date(alarm.timestamp);
+      const today = new Date();
+      return alarmDate.toDateString() === today.toDateString();
+    }).length,
+    patrolUnits: 5 // This could be dynamic from Firebase too
   };
 
   const tabs = [
@@ -109,6 +525,18 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
       case 'overview':
         return (
           <div className="space-y-6">
+            {/* Message Box */}
+            {messageBox.visible && (
+              <div className={`p-4 rounded-lg border-l-4 ${
+                messageBox.type === 'error' ? 'bg-red-50 border-red-500 text-red-700' :
+                messageBox.type === 'warning' ? 'bg-yellow-50 border-yellow-500 text-yellow-700' :
+                messageBox.type === 'success' ? 'bg-green-50 border-green-500 text-green-700' :
+                'bg-blue-50 border-blue-500 text-blue-700'
+              }`}>
+                <p>{messageBox.message}</p>
+              </div>
+            )}
+
             {/* Statistics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-gradient-to-r from-red-500 to-red-600 text-white p-6 rounded-lg shadow-lg">
@@ -157,30 +585,27 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
             </div>
 
             {/* Active Alerts Panel */}
-            {alerts.length > 0 && (
+            {alarms.length > 0 && (
               <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-red-500">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-semibold text-gray-800 flex items-center">
                     <AlertTriangle className="w-6 h-6 text-red-500 mr-2" />
-                    Active Alerts ({alerts.length})
+                    Active Alerts ({alarms.length})
                   </h3>
                   <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
                     View All
                   </button>
                 </div>
                 <div className="space-y-3">
-                  {alerts.map(alert => (
-                    <div key={alert.id} className="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-200">
+                  {alarms.slice(0, 3).map(alarm => (
+                    <div key={alarm.id} className="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-200">
                       <div className="flex items-center gap-3">
-                        <div className={`w-3 h-3 rounded-full ${
-                          alert.priority === 'high' ? 'bg-red-500 animate-pulse' : 
-                          alert.priority === 'medium' ? 'bg-orange-500' : 'bg-yellow-500'
-                        }`}></div>
+                        <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
                         <div>
-                          <p className="font-medium text-gray-800">{alert.message}</p>
+                          <p className="font-medium text-gray-800">{alarm.message}</p>
                           <p className="text-sm text-gray-600 flex items-center gap-2">
                             <Clock size={12} />
-                            {alert.time}
+                            {new Date(alarm.timestamp).toLocaleTimeString()}
                           </p>
                         </div>
                       </div>
@@ -188,7 +613,10 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                         <button className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
                           Respond
                         </button>
-                        <button className="px-3 py-1 bg-gray-300 text-gray-700 text-sm rounded hover:bg-gray-400">
+                        <button 
+                          onClick={() => dismissAlarm(alarm.id)}
+                          className="px-3 py-1 bg-gray-300 text-gray-700 text-sm rounded hover:bg-gray-400"
+                        >
                           Dismiss
                         </button>
                       </div>
@@ -200,9 +628,22 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
 
             {/* Map and Quick Actions */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <ResponsiveIoTMap userRole="law-enforcement" />
+              <div className="lg:col-span-2 bg-white rounded-lg shadow-lg p-6">
+                <h3 className="text-xl font-semibold mb-4">Live Tracking Map</h3>
+                <div className="h-96">
+                  <LiveTrackingMap 
+                    center={mapCenter}
+                    markers={animalMarkers}
+                    grazingAreas={grazingAreas}
+                    nonGrazingAreas={nonGrazingAreas}
+                    userRole="law-enforcement"
+                    onCreated={handleCreated}
+                    onDeleted={handleDeleted}
+                    drawType={drawType}
+                  />
+                </div>
               </div>
+              
               <div className="space-y-6">
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
@@ -257,8 +698,8 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600">IoT Sensors</span>
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                        <span className="text-sm text-yellow-600">147/150 Active</span>
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-sm text-green-600">{stats.livestockTracked}/150 Active</span>
                       </div>
                     </div>
                   </div>
@@ -282,25 +723,38 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                     <Eye className="text-blue-600" size={20} />
                     <span className="font-medium text-blue-800">Active Monitoring</span>
                   </div>
-                  <p className="text-sm text-blue-600">147 devices being tracked</p>
+                  <p className="text-sm text-blue-600">{animalMarkers.length} devices being tracked</p>
                 </div>
                 <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Shield className="text-green-600" size={20} />
                     <span className="font-medium text-green-800">Safe Zones</span>
                   </div>
-                  <p className="text-sm text-green-600">12 designated areas</p>
+                  <p className="text-sm text-green-600">{grazingAreas.length} designated areas</p>
                 </div>
                 <div className="p-4 bg-red-50 rounded-lg border border-red-200">
                   <div className="flex items-center gap-2 mb-2">
                     <AlertTriangle className="text-red-600" size={20} />
                     <span className="font-medium text-red-800">Alert Zones</span>
                   </div>
-                  <p className="text-sm text-red-600">5 restricted areas</p>
+                  <p className="text-sm text-red-600">{nonGrazingAreas.length} restricted areas</p>
                 </div>
               </div>
             </div>
-            <ResponsiveIoTMap userRole="law-enforcement" />
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className="h-96">
+                <LiveTrackingMap 
+                  center={mapCenter}
+                  markers={animalMarkers}
+                  grazingAreas={grazingAreas}
+                  nonGrazingAreas={nonGrazingAreas}
+                  userRole="law-enforcement"
+                  onCreated={handleCreated}
+                  onDeleted={handleDeleted}
+                  drawType={drawType}
+                />
+              </div>
+            </div>
           </div>
         );
 
@@ -313,8 +767,12 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 Coordinate with patrol units, farmers, herders, and other stakeholders for effective conflict prevention.
               </p>
             </div>
-            <div className="h-96">
-              <ResponsiveChatBox userId={userId} role="law-enforcement" />
+            <div className="bg-white rounded-lg shadow-lg p-6 h-96">
+              <MockChatBox 
+                title="Communication Hub" 
+                icon={Radio}
+                description="Multi-stakeholder coordination platform"
+              />
             </div>
           </div>
         );
@@ -328,8 +786,12 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 Get intelligent insights for conflict prediction, resource allocation, and strategic decision making.
               </p>
             </div>
-            <div className="h-96">
-              <ResponsiveAgroTrackChatBot />
+            <div className="bg-white rounded-lg shadow-lg p-6 h-96">
+              <MockChatBox 
+                title="AI Assistant" 
+                icon={Bot}
+                description="Advanced analytics and predictive insights"
+              />
             </div>
           </div>
         );
@@ -449,9 +911,16 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span>Systems Online</span>
               </div>
-              <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                <Bell size={20} />
-              </button>
+              <div className="relative">
+                <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+                  <Bell size={20} />
+                </button>
+                {alarms.length > 0 && (
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {alarms.length}
+                  </div>
+                )}
+              </div>
               <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
                 <Settings size={20} />
               </button>
