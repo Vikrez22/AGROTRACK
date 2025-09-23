@@ -21,10 +21,24 @@
   --color-blue: #3b82f6;
 
   /* RGB for rgba usage */
+<<<<<<< HEAD
+<<<<<<< HEAD
+  --color-green-rgb: #22c55e;
+  --color-red-rgb: #ef4444;
+  --color-blue-rgb: #3b82f6;
+  --color-white-rgb: #ffffff;
+=======
+  --color-green-rgb: 34, 197, 94;
+  --color-red-rgb: 239, 68, 68;
+  --color-blue-rgb: 59, 130, 246;
+  --color-white-rgb: 255, 255, 255;
+>>>>>>> parent of ddd4ad2 (updated the color scheme of the farmer dashboard and added a bit of styling in the GeoTracker text)
+=======
   --color-green-rgb: rgb(34, 197, 94);
   --color-red-rgb: rgb(239, 68, 68);
   --color-blue-rgb: rgb(59, 130, 246);
   --color-white-rgb: rgb(255, 255, 255);
+>>>>>>> parent of 86ff703 (making things responsive on small screens and fixed the color dynamic)
 }
 .farmer-dashboard {
   background-color: #1e3d2f; /* Deep forest green */
