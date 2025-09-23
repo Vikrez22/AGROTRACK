@@ -167,36 +167,28 @@ const GeoTracker = ({ userRole }) => {
       : [9.082, 8.6753]);
 
   return (
-    <div className="p-3">
-      <h2 className="text-xl text-[#e2e8f0] font-semibold">
-        Track Cow & Your Location
-      </h2>
+    <div className="p-2 sm:p-3">
+      <h2 className="font-semibold">Track your Cow & Their Location</h2>
 
       {(userRole === "admin" || userRole === "farmer") && (
-        <div className="grazing-area">
-          <label
-            htmlFor="grazing"
-            className="text-[#cbd5e1] font-medium text-sm"
-          >
+        <div className="grazing-area flex items-center gap-3">
+          <label>
             <input
               type="radio"
               value="grazing"
               checked={drawType === "grazing"}
-              id="grazing"
               onChange={() => setDrawType("grazing")}
+              className="mr-1"
             />
             Grazing Area
           </label>{" "}
-          <label
-            htmlFor="non-grazing"
-            className="text-[#cbd5e1] font-medium text-sm"
-          >
+          <label>
             <input
               type="radio"
-              id="non-grazing"
               value="non-grazing"
               checked={drawType === "non-grazing"}
               onChange={() => setDrawType("non-grazing")}
+              className="mr-1"
             />
             Non-Grazing Area
           </label>
@@ -206,7 +198,8 @@ const GeoTracker = ({ userRole }) => {
       <MapContainer
         center={mapCenter}
         zoom={6}
-        style={{ height: "600px", width: "100%" }}
+        style={{ width: "100%" }}
+        className="w-full h-[400px]"
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
