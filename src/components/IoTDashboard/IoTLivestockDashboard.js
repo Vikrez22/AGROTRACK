@@ -13,15 +13,12 @@ import 'leaflet/dist/leaflet.css'; // Leaflet base CSS
 // Leaflet Draw for drawing tools (polygons for geofencing)
 import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet-draw';
-
-// Lucide React for icons (ensure you have installed it: npm install lucide-react)
 import { MapPin, Zap, Users, AlertTriangle, Shield, Activity, Wifi, Battery, Navigation,Volume2} from 'lucide-react';
 
 // Firebase imports for Realtime Database
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue, set, push, remove } from 'firebase/database';
 
-// 🚨🚨🚨 IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIGURATION 🚨🚨🚨
 const iotFirebaseConfig = {
   apiKey: "AIzaSyDaw8OdK1eaMCcOJgB6lHDFGn_hb9YIEdM", 
   authDomain: "agrorithm-f4d87.firebaseapp.com", 
@@ -37,15 +34,6 @@ const iotFirebaseConfig = {
 const iotApp = initializeApp(iotFirebaseConfig, 'iot-app');
 const iotDb = getDatabase(iotApp);
 
-// -----------------------------------------------------------------------------
-// LEAFLET ICON FIXES AND CUSTOM ICONS
-// -----------------------------------------------------------------------------
-
-// Due to potential issues with `require` in some environments or direct CDN use,
-// it's safer to use imports or direct URLs for the default Leaflet icons if they are not picked up.
-// For a standard React project using a bundler like Webpack or Vite, the default
-// `import 'leaflet/dist/leaflet.css'` often correctly resolves these image paths.
-// If not, you might need specific loader configurations or manually set the URLs like below:
 if (typeof window !== 'undefined') {
   delete L.Icon.Default.prototype._getIconUrl;
   L.Icon.Default.mergeOptions({
@@ -84,9 +72,7 @@ const alarmIcon = new L.Icon({
   popupAnchor: [0, -16],
 });
 
-// -----------------------------------------------------------------------------
-// Leaflet Draw Control Component
-// -----------------------------------------------------------------------------
+
 const DrawControl = ({ onCreated, onDeleted, drawType }) => {
   const map = useMap(); // Get the Leaflet map instance
   const drawnItemsRef = useRef(new L.FeatureGroup()); // Ref to store drawn layers
@@ -96,9 +82,6 @@ const DrawControl = ({ onCreated, onDeleted, drawType }) => {
 
     // Add FeatureGroup to map to manage drawn layers
     map.addLayer(drawnItemsRef.current);
-
-    // Initialize Leaflet.draw control
-    // Only allow drawing polygons for now, edit and delete for existing layers
     const drawControl = new L.Control.Draw({
       draw: {
         polygon: {
@@ -154,10 +137,7 @@ const DrawControl = ({ onCreated, onDeleted, drawType }) => {
   return null;
 };
 
-
-// -----------------------------------------------------------------------------
-// Main IoT Livestock Dashboard Component
-// -----------------------------------------------------------------------------
+//Dashboard
 const IoTLivestockDashboard = ({ userRole = 'farmer' }) => {
   const [livestockData, setLivestockData] = useState({}); // Stores all livestock data from Firebase
   const [grazingAreas, setGrazingAreas] = useState([]); // Stores defined grazing polygons
@@ -656,21 +636,7 @@ const IoTLivestockDashboard = ({ userRole = 'farmer' }) => {
           </div>
         </div>
       )}
-
-        {/* Test Alarm Sound Button */}
-      {/* <div className="mx-4 mb-6 md:mx-8 lg:mx-12 text-center">
-        <button
-          onClick={playAlarmSound}
-          className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-[#2e8b57] hover:bg-[#3cb371] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2e8b57] transition-all duration-200"
-        >
-          <Volume2 className="h-5 w-5 mr-2" />
-          Test Alarm Sound
-        </button>
-        <p className="mt-2 text-white/70 text-xs">If you can hear this, the MP3 file is accessible. Automatic alarms might be blocked by browser autoplay policies.</p>
-      </div> */}
-
       
-
       {/* Interactive Map */}
       <div className="mx-4 mb-6 md:mx-8 lg:mx-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl overflow-hidden shadow-xl">
         <h3 className="text-xl font-semibold text-white p-6 pb-4 flex items-center">
