@@ -230,16 +230,17 @@ const ChatBox = ({ userId, role }) => {
       </div>
 
       {/* Input */}
-      <div className="p-4 bg-[var(--color-bg-dark)] rounded-b-lg">
-        <div className="flex items-center gap-1 sm:gap-3">
+      <div className="p-4 border-t border-[var(--color-gray-soft)] bg-[var(--color-bg-dark)] rounded-b-lg">
+        <div className="flex items-center gap-3">
           <div className="flex-1">
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message... (Press Enter to send)"
-              className="w-full px-2 sm:px-4 py-1.5 sm:py-3 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[#22c55e]/70 transition-all focus:border-transparent text-xs sm:text-sm bg-[var(--color-bg-darker)] text-[var(--color-gray-light)] min-h-8"
+              className="w-full px-4 py-3 border border-[var(--color-gray-soft)] rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-transparent text-sm bg-[var(--color-bg-darker)] text-[var(--color-gray-light)]"
               rows="1"
+              style={{ maxHeight: "120px", minHeight: "44px" }}
               disabled={isTyping}
             />
           </div>
@@ -247,7 +248,7 @@ const ChatBox = ({ userId, role }) => {
           <button
             onClick={sendMessage}
             disabled={!message.trim() || isTyping}
-            className="px-0.5 py-1.5 sm:p-3 bg-[#1b753d] hover:bg-[#14582e] disabled:bg-[#0d3b1f] disabled:text-white/70 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center min-w-[44px]"
+            className="p-3 bg-[var(--color-green)] hover:bg-[var(--color-green-dark)] disabled:bg-[var(--color-gray-medium)] disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center min-w-[44px]"
             title="Send message"
           >
             {isTyping ? (

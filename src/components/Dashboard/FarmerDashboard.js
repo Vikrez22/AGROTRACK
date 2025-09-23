@@ -329,7 +329,7 @@ const FarmerDashboard = () => {
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-3 md:p-6 overflow-auto">
+        <main className="flex-1 p-3 md:p-6 overflow-auto mt-14">
           {renderContent()}
         </main>
       </div>
