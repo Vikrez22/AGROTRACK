@@ -24,7 +24,7 @@ const ResponsiveGeoTrackerHerder = ({ userId }) => (
       <h3 className="text-xl font-semibold">Live Location Tracking</h3>
     </div>
     <div className="rounded-lg overflow-hidden border">
-      <GeoTrackerHerder userId={userId} />
+      <GeoTrackerHerder userRole="herder" userId={userId} />
     </div>
     <div className="mt-4 flex gap-4 text-sm">
       <div className="flex items-center gap-2">
@@ -61,7 +61,7 @@ const ResponsiveAgroTrackChatBot = () => (
   <div className="h-full flex flex-col bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
     <AgroTrackChatBot />
   </div>
-);
+);      
 
 const HerderDashboard = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("overview");
