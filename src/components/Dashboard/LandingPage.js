@@ -151,21 +151,6 @@ const LandingPage = () => {
               sustainable agriculture.
             </p>
 
-            {/* <div className="hero-stats">
-              <div className="stat-item">
-                <span className="stat-number">85%</span>
-                <span className="stat-label">Conflict Reduction</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">1000+</span>
-                <span className="stat-label">Animals Tracked</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">50+</span>
-                <span className="stat-label">Communities Served</span>
-              </div>
-            </div> */}
-
             <div className="hero-actions">
               <button>
                 <a href="/iot-dashboard" className="cta-button primary">
