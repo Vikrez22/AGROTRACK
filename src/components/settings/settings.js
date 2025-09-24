@@ -444,10 +444,10 @@ const AdvancedSettingsPanel = () => {
               "Vital signs monitoring and disease outbreak prediction",
           },
           {
-            key: "automaticReporting",
-            label: "Auto Report Generation",
-            icon: FileText,
-            description: "Automated compliance and insurance reports",
+            key: 'automaticReporting',
+            label: 'Auto Report Generation',
+            icon: Activity,
+            description: 'Automated compliance and insurance reports'
           },
           {
             key: "blockchainLogging",
