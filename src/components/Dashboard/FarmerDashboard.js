@@ -14,6 +14,7 @@ import GeoTracker from "../Cowtracking/GeoTracker";
 import ChatBox from "../Cowtracking/ChatBox";
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
 import sideBarLogo from "../../assets/sidebar_logo_white.png";
+import AdvancedSettingsPanel from "../settings/settings";
 
 // Responsive wrapper for GeoTracker
 const ResponsiveGeoTracker = ({ userRole }) => (
@@ -74,7 +75,7 @@ const FarmerDashboard = () => {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="space-y-6">
+          <div className="space-y-6 m-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
@@ -156,7 +157,7 @@ const FarmerDashboard = () => {
 
       case "tracking":
         return (
-          <div className="space-y-6">
+          <div className="space-y-6 m-6">
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-4">
                 Livestock Tracking & Geo-fencing
@@ -172,7 +173,7 @@ const FarmerDashboard = () => {
 
       case "chat":
         return (
-          <div className="space-y-6">
+          <div className="space-y-6 m-6">
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-4">
                 Community Communication
@@ -190,7 +191,7 @@ const FarmerDashboard = () => {
 
       case "ai-assistant":
         return (
-          <div className="space-y-6">
+          <div className="space-y-6 m-6">
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-4">
                 AI Agricultural Assistant
@@ -207,11 +208,7 @@ const FarmerDashboard = () => {
         );
 
       case "settings":
-        return (
-          <div>
-            <h1>Settings Page</h1>
-          </div>
-        );
+        return <div>{<AdvancedSettingsPanel sidebar={sidebarOpen} />}</div>;
 
       default:
         return null;
@@ -224,7 +221,7 @@ const FarmerDashboard = () => {
       <div
         className={`bg-white shadow-lg transition-all duration-300 h-screen fixed top-0 left-0 overflow-y-hidden ${
           sidebarOpen ? "w-64" : "w-16"
-        } lg:w-64 flex flex-col`}
+        } lg:w-64 flex flex-col border-r border-gray-200/30`}
       >
         {/* Header */}
         <div className="p-1.5 border-b border-gray-200 flex items-center">
@@ -323,7 +320,7 @@ const FarmerDashboard = () => {
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-6 overflow-auto">{renderContent()}</main>
+        <main className="flex-1 overflow-auto">{renderContent()}</main>
       </div>
     </div>
   );
