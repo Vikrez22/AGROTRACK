@@ -14,13 +14,14 @@ import {
 import GeoTrackerHerder from "../Cowtracking/GeotrackerHerder";
 import ChatBox from "../Cowtracking/ChatBox";
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
-import sideBarLogo from "../../assets/sidebar_logo_blue.png";
+import sideBarLogo from "../../assets/sidebar_logo_white.png";
+import AdvancedSettingsPanel from "../settings/settings";
 
 // Responsive wrapper for GeoTrackerHerder
 const ResponsiveGeoTrackerHerder = ({ userId }) => (
   <div className="bg-white rounded-lg shadow-lg p-6">
     <div className="flex items-center gap-2 mb-4">
-      <Map className="text-blue-600" size={24} />
+      <Map className="text-green-600" size={24} />
       <h3 className="text-xl font-semibold">Live Location Tracking</h3>
     </div>
     <div className="rounded-lg overflow-hidden border">
@@ -36,7 +37,7 @@ const ResponsiveGeoTrackerHerder = ({ userId }) => (
         <span>Restricted Areas</span>
       </div>
       <div className="flex items-center gap-2">
-        <div className="w-3 h-3 bg-blue-500 rounded"></div>
+        <div className="w-3 h-3 bg-green-500 rounded"></div>
         <span>Your Location</span>
       </div>
     </div>
@@ -61,7 +62,7 @@ const ResponsiveAgroTrackChatBot = () => (
   <div className="h-full flex flex-col bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
     <AgroTrackChatBot />
   </div>
-);      
+);
 
 const HerderDashboard = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -80,9 +81,9 @@ const HerderDashboard = ({ userId }) => {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="space-y-6">
+          <div className="space-y-6 m-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg">
+              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">Location Status</h3>
@@ -135,8 +136,8 @@ const HerderDashboard = ({ userId }) => {
                         <p className="text-xs text-gray-500">Just now</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       <div className="flex-1">
                         <p className="text-sm font-medium">
                           Entered safe grazing zone
@@ -173,8 +174,8 @@ const HerderDashboard = ({ userId }) => {
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       </div>
                       <div>
                         <p className="font-medium">Stay in green zones</p>
@@ -203,7 +204,7 @@ const HerderDashboard = ({ userId }) => {
 
       case "tracking":
         return (
-          <div className="space-y-6">
+          <div className="space-y-6 m-6">
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-4">
                 Live Location Tracking
@@ -212,8 +213,8 @@ const HerderDashboard = ({ userId }) => {
                 Share your live location to help prevent conflicts and
                 coordinate with farmers in your area.
               </p>
-              <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-lg">
-                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+              <div className="flex items-center gap-4 p-4 bg-green-50 rounded-lg">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
                   <Navigation className="text-white" size={20} />
                 </div>
                 <div>
@@ -230,7 +231,7 @@ const HerderDashboard = ({ userId }) => {
 
       case "chat":
         return (
-          <div className="space-y-6">
+          <div className="space-y-6 m-6">
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-4">
                 Community Communication
@@ -246,7 +247,7 @@ const HerderDashboard = ({ userId }) => {
 
       case "ai-assistant":
         return (
-          <div className="space-y-6">
+          <div className="space-y-6 m-6">
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-4">
                 AI Agricultural Assistant
@@ -263,7 +264,7 @@ const HerderDashboard = ({ userId }) => {
       case "settings":
         return (
           <div>
-            <h1>The Settings Page</h1>
+            <AdvancedSettingsPanel sidebar={sidebarOpen} />
           </div>
         );
 
@@ -278,16 +279,16 @@ const HerderDashboard = ({ userId }) => {
       <div
         className={`bg-white shadow-lg transition-all duration-300 h-screen fixed top-0 left-0 overflow-y-hidden ${
           sidebarOpen ? "w-64" : "w-16"
-        } lg:w-64 flex flex-col`}
+        } lg:w-64 flex flex-col border-r border-gray-200/30`}
       >
         {/* Header */}
         <div className="p-1.5 border-b border-gray-200 flex items-center">
           <div className={`flex items-center ${sidebarOpen ? "gap-3" : ""}`}>
-            <div className="w-11 h-10 bg-sky-200 rounded-lg flex items-center justify-center p-2">
+            <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2">
               <img src={sideBarLogo} alt="agrotrack_sidebar" />
             </div>
             <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
-              <h1 className="font-bold text-lg text-blue-500 leading-5">
+              <h1 className="font-bold text-lg text-green-500 leading-5">
                 AgroTrack
               </h1>
               <p className="text-sm text-gray-500">Farmer Dashboard</p>
@@ -308,7 +309,7 @@ const HerderDashboard = ({ userId }) => {
                     sidebarOpen ? "w-full" : "w-fit"
                   } flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     activeTab === tab.id
-                      ? "bg-blue-500 text-white shadow-lg"
+                      ? "bg-green-500 text-white shadow-lg"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
                 >
@@ -368,7 +369,7 @@ const HerderDashboard = ({ userId }) => {
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span>GPS Active</span>
             </div>
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-bold uppercase">
                 {herderUsername[0]}
               </span>
@@ -377,7 +378,7 @@ const HerderDashboard = ({ userId }) => {
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-6 overflow-auto">{renderContent()}</main>
+        <main className="flex-1 overflow-auto">{renderContent()}</main>
       </div>
     </div>
   );
