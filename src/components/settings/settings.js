@@ -350,7 +350,7 @@ const AdvancedSettingsPanel = () => {
           {
             key: 'automaticReporting',
             label: 'Auto Report Generation',
-            // icon: ,
+            icon: Activity,
             description: 'Automated compliance and insurance reports'
           },
           {
