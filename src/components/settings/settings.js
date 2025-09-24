@@ -84,7 +84,7 @@ const mockFarmers = [
   },
 ];
 
-const AdvancedSettingsPanel = () => {
+const AdvancedSettingsPanel = (props) => {
   const [activeSection, setActiveSection] = useState("notifications");
   const [settings, setSettings] = useState({
     // Notification Settings
@@ -230,7 +230,7 @@ const AdvancedSettingsPanel = () => {
           <div key={key} className="bg-gray-50 p-4 rounded-lg border">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
-                <Icon className="text-blue-600" size={20} />
+                <Icon className="text-green-600" size={20} />
                 <span className="font-medium text-gray-800">{label}</span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
@@ -240,7 +240,7 @@ const AdvancedSettingsPanel = () => {
                   onChange={(e) => updateSetting(key, e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none z-10 peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
               </label>
             </div>
             <p className="text-sm text-gray-600">{description}</p>
@@ -264,7 +264,7 @@ const AdvancedSettingsPanel = () => {
                 onChange={(e) => setTestMode(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none z-10 peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
             </label>
           </div>
           {testMode && (
@@ -284,7 +284,7 @@ const AdvancedSettingsPanel = () => {
                     <div className="flex gap-2">
                       <button
                         onClick={() => sendTestAlert(farmer, "sms")}
-                        className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                        className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-700"
                         disabled={!settings.smsEnabled}
                       >
                         Test SMS
@@ -458,7 +458,7 @@ const AdvancedSettingsPanel = () => {
         ].map(({ key, label, icon: Icon, description }) => (
           <div
             key={key}
-            className="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200"
+            className="bg-gradient-to-br from-green-50 to-purple-50 p-4 rounded-lg border border-green-200"
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
@@ -472,7 +472,7 @@ const AdvancedSettingsPanel = () => {
                   onChange={(e) => updateSetting(key, e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none z-10 peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
               </label>
             </div>
             <p className="text-sm text-gray-600">{description}</p>
@@ -480,7 +480,7 @@ const AdvancedSettingsPanel = () => {
         ))}
       </div>
 
-      <div className="mt-6 bg-gradient-to-r from-green-100 to-blue-100 p-6 rounded-lg border">
+      <div className="mt-6 bg-gradient-to-r from-green-100 to-green-100 p-6 rounded-lg border">
         <h4 className="text-lg font-semibold text-gray-800 mb-3">
           🏆 Competitive Edge Features
         </h4>
@@ -585,7 +585,7 @@ const AdvancedSettingsPanel = () => {
           </div>
 
           <div className="mt-4 flex gap-2">
-            <button className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+            <button className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-700">
               Edit Profile
             </button>
             <button className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700">
@@ -620,15 +620,16 @@ const AdvancedSettingsPanel = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200 p-6">
+      <div
+        className={`bg-white shadow-sm border-b border-gray-200 px-4 py-3 fixed top-0 right-0 left-0 mt-[53px] z-50 ${
+          props.sidebar ? "ml-64" : "ml-16"
+        }`}
+      >
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Advanced Settings
-            </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 mt-1 font-semibold">
               Configure notifications, alerts, and competitive features
             </p>
           </div>
@@ -640,7 +641,7 @@ const AdvancedSettingsPanel = () => {
             )}
             <button
               onClick={saveSettings}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
             >
               <Save size={16} />
               Save Settings
@@ -651,7 +652,9 @@ const AdvancedSettingsPanel = () => {
 
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 bg-white shadow-sm h-screen overflow-y-auto">
+        <div
+          className={`fixed top-[120px] w-64 bg-white shadow-sm h-screen overflow-y-auto`}
+        >
           <nav className="p-4">
             <div className="space-y-2">
               {[
@@ -663,7 +666,7 @@ const AdvancedSettingsPanel = () => {
                   onClick={() => setActiveSection(id)}
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     activeSection === id
-                      ? "bg-blue-600 text-white"
+                      ? "bg-green-500 text-white"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
                 >
@@ -676,7 +679,7 @@ const AdvancedSettingsPanel = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-6">{renderContent()}</div>
+        <div className="flex-1 p-6 ml-[256px] pt-[98px]">{renderContent()}</div>
       </div>
     </div>
   );
