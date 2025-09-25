@@ -404,17 +404,17 @@ const AgroTrackLandingPage = () => {
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Ready to End the Conflicts?
+            Ready to Build Peace Through Technology?
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Join thousands of farmers and herders already using AgroTrack to protect their communities
+            Be among the first to experience AgroTrack and help us revolutionize how farmers and herders coexist peacefully across Nigeria.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
-              href="/iot-dashboard" 
+              href="/" 
               className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors"
             >
-              Start Free Trial
+              Get Started
             </a>
             <button
               onClick={() => setReportModalOpen(true)}
