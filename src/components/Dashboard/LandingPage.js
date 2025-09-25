@@ -448,22 +448,22 @@ const AgroTrackLandingPage = () => {
                 <a href="#problem" className="text-gray-400 hover:text-white transition-colors block">Problem</a>
                 <a href="#solution" className="text-gray-400 hover:text-white transition-colors block">Solution</a>
                 <a href="#features" className="text-gray-400 hover:text-white transition-colors block">Features</a>
-                <a href="/iot-dashboard" className="text-gray-400 hover:text-white transition-colors block">Dashboard</a>
+                {/* <a href="/iot-dashboard" className="text-gray-400 hover:text-white transition-colors block">Dashboard</a> */}
               </div>
             </div>
 
             <div>
               <h3 className="text-lg font-semibold mb-4">Contact</h3>
               <div className="space-y-2 text-gray-400">
-                <p>support@agrotrack.ng</p>
-                <p>+234 800 AGROTRACK</p>
-                <p>Lagos, Nigeria</p>
+                <p>teamagrotrack@gmail.com</p>
+                <p>AGROTRACK</p>
+                <p>Enugu, Nigeria</p>
               </div>
             </div>
           </div>
           
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 AgroTrack. Built with technology for peace.</p>
+            <p>&copy; 2025 AgroTrack. Peace through Technology.</p>
           </div>
         </div>
       </footer>
