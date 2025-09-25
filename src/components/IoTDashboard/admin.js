@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
 import { 
   MapPin, MessageSquare, Bot, Menu, X, Shield, Users, Map, 
   AlertTriangle, Activity, Wifi, Navigation, Volume2, Eye,
@@ -787,11 +788,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
               </p>
             </div>
             <div className="bg-white rounded-lg shadow-lg p-6 h-96">
-              <MockChatBox 
-                title="AI Assistant" 
-                icon={Bot}
-                description="Advanced analytics and predictive insights"
-              />
+              <AgroTrackChatBot/>
             </div>
           </div>
         );
