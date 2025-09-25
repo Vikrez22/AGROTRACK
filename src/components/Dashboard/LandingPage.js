@@ -404,17 +404,17 @@ const AgroTrackLandingPage = () => {
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Ready to End the Conflicts?
+            Ready to Build Peace Through Technology?
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Join thousands of farmers and herders already using AgroTrack to protect their communities
+            Be among the first to experience AgroTrack and help us revolutionize how farmers and herders coexist peacefully across Nigeria.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
-              href="/iot-dashboard" 
+              href="/" 
               className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors"
             >
-              Start Free Trial
+              Get Started
             </a>
             <button
               onClick={() => setReportModalOpen(true)}
@@ -448,22 +448,22 @@ const AgroTrackLandingPage = () => {
                 <a href="#problem" className="text-gray-400 hover:text-white transition-colors block">Problem</a>
                 <a href="#solution" className="text-gray-400 hover:text-white transition-colors block">Solution</a>
                 <a href="#features" className="text-gray-400 hover:text-white transition-colors block">Features</a>
-                <a href="/iot-dashboard" className="text-gray-400 hover:text-white transition-colors block">Dashboard</a>
+                {/* <a href="/iot-dashboard" className="text-gray-400 hover:text-white transition-colors block">Dashboard</a> */}
               </div>
             </div>
 
             <div>
               <h3 className="text-lg font-semibold mb-4">Contact</h3>
               <div className="space-y-2 text-gray-400">
-                <p>support@agrotrack.ng</p>
-                <p>+234 800 AGROTRACK</p>
-                <p>Lagos, Nigeria</p>
+                <p>teamagrotrack@gmail.com</p>
+                <p>AGROTRACK</p>
+                <p>Enugu, Nigeria</p>
               </div>
             </div>
           </div>
           
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 AgroTrack. Built with technology for peace.</p>
+            <p>&copy; 2025 AgroTrack. Peace through Technology.</p>
           </div>
         </div>
       </footer>
