@@ -518,7 +518,8 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
     { id: 'monitoring', label: 'Live Monitoring', icon: Eye },
     { id: 'communications', label: 'Communications', icon: Radio },
     { id: 'ai-support', label: 'AI Support', icon: Bot },
-    { id: 'reports', label: 'Reports', icon: FileText }
+    { id: 'reports', label: 'Reports', icon: FileText },
+    { id: 'settings', label: 'Settings', icon: Settings}
   ];
 
   const renderContent = () => {
@@ -824,6 +825,11 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
               </div>
             </div>
           </div>
+        );
+
+      case 'settings':
+        return (
+          <p>Settings page under construction.</p>
         );
 
       default:
