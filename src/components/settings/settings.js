@@ -623,16 +623,11 @@ const AdvancedSettingsPanel = (props) => {
     <div className="min-h-screen bg-gray-50 relative">
       {/* Header */}
       <div
-        className={`bg-white shadow-sm border-b border-gray-200 px-4 py-3 fixed top-0 right-0 left-0 mt-[53px] z-50 ${
+        className={`px-4 py-3 fixed top-0 right-0 left-50 mt-[73px] z-50 ${
           props.sidebar ? "ml-64" : "ml-16"
         }`}
       >
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-gray-600 mt-1 font-semibold">
-              Configure notifications, alerts, and competitive features
-            </p>
-          </div>
           <div className="flex items-center gap-4">
             {lastSaved && (
               <span className="text-sm text-green-600">
