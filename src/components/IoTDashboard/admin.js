@@ -817,7 +817,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                   <p className="text-sm text-gray-600">Pattern recognition insights</p>
                 </div>
                 <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                  <MapPin className="text-purple-600 mb-2" size={24} />
+                  <MapPin className="text-green-600 mb-2" size={24} />
                   <h3 className="font-medium text-gray-800">Geographic Analysis</h3>
                   <p className="text-sm text-gray-600">Location-based statistics</p>
                 </div>
@@ -914,7 +914,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
               </div>
               <div className="relative">
                 <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                  <Bell size={20} />
+                   <Bell size={20} />
                 </button>
                 {alarms.length > 0 && (
                   <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
@@ -923,7 +923,9 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 )}
               </div>
               <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                <Settings size={20} />
+                <a href="/settings">
+                  <Settings size={20} />
+                </a>
               </button>
               <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-green-700 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-bold">LE</span>
