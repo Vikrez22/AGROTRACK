@@ -829,7 +829,21 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
         );
 
       case "settings":
-        return <div>{<AdvancedSettingsPanel sidebar={sidebarOpen} />}</div>;
+        return <div>
+                    <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-4">General Settings</h2>
+              <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 mt-1 font-semibold">
+              Configure notifications, alerts, and custom features
+            </p>
+              </p>
+            </div>
+            <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
+              {<AdvancedSettingsPanel sidebar={sidebarOpen} />}
+            </div>
+          </div>
+        </div>;
 
       default:
         return null;
