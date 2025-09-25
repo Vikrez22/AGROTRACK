@@ -194,7 +194,7 @@ const LiveTrackingMap = ({ center, markers, grazingAreas, nonGrazingAreas, userR
     ))}
 
     {/* Draw Controls - only for admin/farmer roles */}
-    {(userRole === 'admin' || userRole === 'farmer') && (
+    {(userRole === 'law-enforcement' || userRole === 'farmer') && (
       <DrawControl
         drawType={drawType}
         onCreated={onCreated}
@@ -481,7 +481,7 @@ const MockChatBox = ({ title, icon: Icon, description }) => (
   </div>
 );
 
-const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
+const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
@@ -744,6 +744,35 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 </div>
               </div>
             </div>
+
+          {/* Geofencing Controls for Monitoring */}
+            <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Geofencing Controls</h3>
+              <p className="text-gray-600 text-sm mb-4">Select an area type to draw on the map. Use the drawing tools to create new zones or modify existing ones.</p>
+              <div className="flex flex-wrap gap-4">
+                <label className="flex items-center text-gray-700 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="grazing"
+                    checked={drawType === 'grazing'}
+                    onChange={() => setDrawType('grazing')}
+                    className="mr-2 h-4 w-4 text-green-600 border-gray-300 focus:ring-green-500"
+                  />
+                  <span className="text-green-600 font-medium">Grazing Area</span>
+                </label>
+                <label className="flex items-center text-gray-700 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="non-grazing"
+                    checked={drawType === 'non-grazing'}
+                    onChange={() => setDrawType('non-grazing')}
+                    className="mr-2 h-4 w-4 text-red-500 border-gray-300 focus:ring-red-500"
+                  />
+                  <span className="text-red-400 font-medium">Restricted Area</span>
+                </label>
+              </div>
+            </div>
+
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="h-96">
                 <LiveTrackingMap 
@@ -831,16 +860,16 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
       case "settings":
         return <div>
                     <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            {/* <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-4">General Settings</h2>
               <p className="text-gray-600 mb-6">
                 <p className="text-gray-600 mt-1 font-semibold">
               Configure notifications, alerts, and custom features
             </p>
               </p>
-            </div>
+            </div> */}
             <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
-              {<AdvancedSettingsPanel sidebar={sidebarOpen} />}
+              {<AdvancedSettingsPanel sidebar={sidebarOpen} className="fixed" />}
             </div>
           </div>
         </div>;
