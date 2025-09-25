@@ -787,8 +787,12 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 Get intelligent insights for conflict prediction, resource allocation, and strategic decision making.
               </p>
             </div>
-            <div className="bg-white rounded-lg shadow-lg p-6 h-96">
-              <AgroTrackChatBot/>
+            <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <Users className="text-blue-600" size={24} />
+                <h3 className="text-xl font-semibold">AgroTrack AI</h3>
+              </div>
+              <AgroTrackChatBot />
             </div>
           </div>
         );
