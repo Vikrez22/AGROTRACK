@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
+import AdvancedSettingsPanel from "../settings/settings";
 import { 
   MapPin, MessageSquare, Bot, Menu, X, Shield, Users, Map, 
   AlertTriangle, Activity, Wifi, Navigation, Volume2, Eye,
@@ -473,7 +474,7 @@ const IoTLivestockDashboard = ({ userRole = 'law-enforcement' }) => {
 const MockChatBox = ({ title, icon: Icon, description }) => (
   <div className="h-full w-full bg-gray-50 rounded-lg flex items-center justify-center border">
     <div className="text-center p-6">
-      <Icon className="mx-auto mb-4 text-blue-600" size={48} />
+      <Icon className="mx-auto mb-4 text-green-600" size={48} />
       <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
       <p className="text-sm text-gray-500">{description}</p>
     </div>
@@ -518,7 +519,8 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
     { id: 'monitoring', label: 'Live Monitoring', icon: Eye },
     { id: 'communications', label: 'Communications', icon: Radio },
     { id: 'ai-support', label: 'AI Support', icon: Bot },
-    { id: 'reports', label: 'Reports', icon: FileText }
+    { id: 'reports', label: 'Reports', icon: FileText },
+    { id: 'settings', label: 'Settings', icon: Settings}
   ];
 
   const renderContent = () => {
@@ -532,7 +534,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 messageBox.type === 'error' ? 'bg-red-50 border-red-500 text-red-700' :
                 messageBox.type === 'warning' ? 'bg-yellow-50 border-yellow-500 text-yellow-700' :
                 messageBox.type === 'success' ? 'bg-green-50 border-green-500 text-green-700' :
-                'bg-blue-50 border-blue-500 text-blue-700'
+                'bg-green-50 border-green-500 text-green-700'
               }`}>
                 <p>{messageBox.message}</p>
               </div>
@@ -551,7 +553,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 <p className="text-sm mt-2 opacity-90">Requiring immediate attention</p>
               </div>
 
-              <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg">
+              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">Livestock Tracked</h3>
@@ -593,7 +595,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                     <AlertTriangle className="w-6 h-6 text-red-500 mr-2" />
                     Active Alerts ({alarms.length})
                   </h3>
-                  <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                  <button className="text-green-600 hover:text-green-700 text-sm font-medium">
                     View All
                   </button>
                 </div>
@@ -611,7 +613,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <button className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                        <button className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700">
                           Respond
                         </button>
                         <button 
@@ -658,12 +660,12 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                         </div>
                       </div>
                     </button>
-                    <button className="w-full p-3 text-left bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors">
+                    <button className="w-full p-3 text-left bg-green-50 hover:bg-green-100 rounded-lg border border-green-200 transition-colors">
                       <div className="flex items-center gap-3">
-                        <Radio className="text-blue-600" size={20} />
+                        <Radio className="text-green-600" size={20} />
                         <div>
-                          <p className="font-medium text-blue-800">Dispatch Units</p>
-                          <p className="text-sm text-blue-600">Coordinate patrol deployment</p>
+                          <p className="font-medium text-green-800">Dispatch Units</p>
+                          <p className="text-sm text-green-600">Coordinate patrol deployment</p>
                         </div>
                       </div>
                     </button>
@@ -719,12 +721,12 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 Real-time tracking of livestock movements, geofencing violations, and potential conflict zones.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                   <div className="flex items-center gap-2 mb-2">
-                    <Eye className="text-blue-600" size={20} />
-                    <span className="font-medium text-blue-800">Active Monitoring</span>
+                    <Eye className="text-green-600" size={20} />
+                    <span className="font-medium text-green-800">Active Monitoring</span>
                   </div>
-                  <p className="text-sm text-blue-600">{animalMarkers.length} devices being tracked</p>
+                  <p className="text-sm text-green-600">{animalMarkers.length} devices being tracked</p>
                 </div>
                 <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                   <div className="flex items-center gap-2 mb-2">
@@ -789,7 +791,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
             </div>
             <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
               <div className="flex items-center gap-2 mb-4">
-                <Users className="text-blue-600" size={24} />
+                <Users className="text-green-600" size={24} />
                 <h3 className="text-xl font-semibold">AgroTrack AI</h3>
               </div>
               <AgroTrackChatBot />
@@ -807,7 +809,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                  <FileText className="text-blue-600 mb-2" size={24} />
+                  <FileText className="text-green-600 mb-2" size={24} />
                   <h3 className="font-medium text-gray-800">Daily Incident Report</h3>
                   <p className="text-sm text-gray-600">Summary of today's activities</p>
                 </div>
@@ -817,7 +819,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                   <p className="text-sm text-gray-600">Pattern recognition insights</p>
                 </div>
                 <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                  <MapPin className="text-purple-600 mb-2" size={24} />
+                  <MapPin className="text-green-600 mb-2" size={24} />
                   <h3 className="font-medium text-gray-800">Geographic Analysis</h3>
                   <p className="text-sm text-gray-600">Location-based statistics</p>
                 </div>
@@ -825,6 +827,23 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
             </div>
           </div>
         );
+
+      case "settings":
+        return <div>
+                    <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-4">General Settings</h2>
+              <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 mt-1 font-semibold">
+              Configure notifications, alerts, and custom features
+            </p>
+              </p>
+            </div>
+            <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
+              {<AdvancedSettingsPanel sidebar={sidebarOpen} />}
+            </div>
+          </div>
+        </div>;
 
       default:
         return null;
@@ -841,7 +860,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
         {/* Header */}
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-green-700 rounded-lg flex items-center justify-center">
               <Shield className="text-white" size={20} />
             </div>
             <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block`}>
@@ -862,7 +881,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     activeTab === tab.id
-                      ? 'bg-blue-600 text-white shadow-lg'
+                      ? 'bg-green-600 text-white shadow-lg'
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
@@ -914,7 +933,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
               </div>
               <div className="relative">
                 <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                  <Bell size={20} />
+                   <Bell size={20} />
                 </button>
                 {alarms.length > 0 && (
                   <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
@@ -923,9 +942,11 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 )}
               </div>
               <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                <Settings size={20} />
+                <a href="/settings">
+                  <Settings size={20} />
+                </a>
               </button>
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-green-700 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-bold">LE</span>
               </div>
             </div>
