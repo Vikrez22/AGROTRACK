@@ -813,14 +813,14 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                     </div>
                     <div className="space-y-1 text-sm text-gray-600">
                       <p>📍<strong>Last Known Position:</strong> {device.data.latitude?.toFixed(6)}, {device.data.longitude?.toFixed(6)}</p>
-                      <p><strong>Speed:</strong> {device.data.speed_kmph || 'N/A'} km/h</p>
-                      <p><strong>Course:</strong> {device.data.course || 'N/A'}°</p>
-                      <p><strong>Satellites:</strong> {device.data.satellites || 'N/A'}</p>
+                      <p>🏃<strong>Speed:</strong> {device.data.speed_kmph || 'N/A'} km/h</p>
+                      <p>🧭<strong>Course:</strong> {device.data.course || 'N/A'}°</p>
+                      <p>🛰️<strong>Satellites:</strong> {device.data.satellites || 'N/A'}</p>
                       <p>🏔️<strong>Altitude:</strong> {device.data.altitude || 'N/A'}</p>
                       {/* <p><strong>Date:</strong> {device.data.date || 'N/A'}</p> */}
-                      <p><strong>Battery:</strong> {device.data.battery || 'N/A'}%</p>
-                      <p><strong>Status:</strong> {device.isInRestrictedArea ? <span className="text-red-600 font-bold">In Restricted Area</span> : <span className="text-green-600">Normal</span>}</p>
-                      <p><strong>Last Update:</strong> {device.data.time || 'N/A'}</p>
+                      <p>🔋<strong>Battery:</strong> {device.data.battery || 'N/A'}%</p>
+                      <p>⚡<strong>Status:</strong> {device.isInRestrictedArea ? <span className="text-red-600 font-bold">In Restricted Area</span> : <span className="text-green-600">Normal</span>}</p>
+                      <p>⏲️<strong>Last Update:</strong> {device.data.time || 'N/A'}</p>
                     </div>
                   </div>
                 ))}
