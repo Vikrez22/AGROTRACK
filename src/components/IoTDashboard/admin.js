@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
 import { 
   MapPin, MessageSquare, Bot, Menu, X, Shield, Users, Map, 
   AlertTriangle, Activity, Wifi, Navigation, Volume2, Eye,
@@ -786,12 +787,12 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 Get intelligent insights for conflict prediction, resource allocation, and strategic decision making.
               </p>
             </div>
-            <div className="bg-white rounded-lg shadow-lg p-6 h-96">
-              <MockChatBox 
-                title="AI Assistant" 
-                icon={Bot}
-                description="Advanced analytics and predictive insights"
-              />
+            <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <Users className="text-blue-600" size={24} />
+                <h3 className="text-xl font-semibold">AgroTrack AI</h3>
+              </div>
+              <AgroTrackChatBot />
             </div>
           </div>
         );
