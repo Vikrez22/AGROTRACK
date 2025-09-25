@@ -151,9 +151,9 @@ const AgroTrackLandingPage = () => {
               <div className="inline-flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium mb-6">
                 Smart AgriTech Solution
               </div>
-              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                Stop Farmer-Herder
-                <span className="text-green-600 block">Conflicts Today</span>
+              <h1 className="text-3xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                Ending Farmer-Herder
+                <span className="text-green-600 block">Conflicts with Technology</span>
               </h1>
               <p className="text-xl text-gray-600 mt-6 leading-relaxed">
                 AgroTrack uses IoT technology to prevent conflicts before they start. 
