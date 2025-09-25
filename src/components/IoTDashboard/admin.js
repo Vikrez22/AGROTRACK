@@ -77,20 +77,38 @@ const alarmIcon = new L.Icon({
 });
 
 // Draw Control Component (for admin/farmer roles)
+// Draw Control Component with improved synchronization
 const DrawControl = ({ onCreated, onDeleted, drawType }) => {
   const map = useMap();
   const drawnItemsRef = useRef(new L.FeatureGroup());
+  const drawControlRef = useRef(null);
 
   useEffect(() => {
     if (!map) return;
 
-    map.addLayer(drawnItemsRef.current);
+    // Only add if not already added
+    if (!map.hasLayer(drawnItemsRef.current)) {
+      map.addLayer(drawnItemsRef.current);
+    }
+
+    // Remove existing control if it exists
+    if (drawControlRef.current) {
+      map.removeControl(drawControlRef.current);
+    }
+
     const drawControl = new L.Control.Draw({
       draw: {
         polygon: {
           shapeOptions: {
-            color: drawType === 'grazing' ? 'green' : 'red',
-            fillOpacity: 0.4,
+            color: drawType === 'grazing' ? '#2e8b57' : '#ff0000',
+            fillColor: drawType === 'grazing' ? '#2e8b57' : '#ff0000',
+            fillOpacity: 0.3,
+            weight: 2,
+          },
+          allowIntersection: false,
+          drawError: {
+            color: '#e1e100',
+            message: '<strong>Error:</strong> Shape edges cannot cross!'
           },
         },
         polyline: false,
@@ -102,32 +120,63 @@ const DrawControl = ({ onCreated, onDeleted, drawType }) => {
       edit: {
         featureGroup: drawnItemsRef.current,
         remove: true,
+        edit: true,
       },
     });
 
+    drawControlRef.current = drawControl;
     map.addControl(drawControl);
 
-    map.on(L.Draw.Event.CREATED, (e) => {
+    const handleCreated = (e) => {
       const layer = e.layer;
+      
+      // Add a unique ID to the layer for tracking
+      layer._agrotrackId = `temp_${Date.now()}`;
       drawnItemsRef.current.addLayer(layer);
+      
       const latlngs = layer.getLatLngs()[0].map((latlng) => ({
-        lat: latlng.lat,
-        lng: latlng.lng,
+        lat: parseFloat(latlng.lat.toFixed(6)),
+        lng: parseFloat(latlng.lng.toFixed(6)),
       }));
+      
       onCreated(latlngs, drawType);
-    });
+    };
 
-    map.on(L.Draw.Event.DELETED, (e) => {
+    const handleDeleted = (e) => {
       e.layers.eachLayer((layer) => {
         onDeleted(layer);
       });
-    });
+    };
+
+    const handleEdited = (e) => {
+      e.layers.eachLayer((layer) => {
+        const latlngs = layer.getLatLngs()[0].map((latlng) => ({
+          lat: parseFloat(latlng.lat.toFixed(6)),
+          lng: parseFloat(latlng.lng.toFixed(6)),
+        }));
+        
+        // Trigger update - you may want to add an onEdited callback
+        console.log('Area edited:', latlngs);
+      });
+    };
+
+    map.on(L.Draw.Event.CREATED, handleCreated);
+    map.on(L.Draw.Event.DELETED, handleDeleted);
+    map.on(L.Draw.Event.EDITED, handleEdited);
 
     return () => {
-      map.off(L.Draw.Event.CREATED);
-      map.off(L.Draw.Event.DELETED);
-      map.removeControl(drawControl);
-      map.removeLayer(drawnItemsRef.current);
+      map.off(L.Draw.Event.CREATED, handleCreated);
+      map.off(L.Draw.Event.DELETED, handleDeleted);
+      map.off(L.Draw.Event.EDITED, handleEdited);
+      
+      if (drawControlRef.current) {
+        try {
+          map.removeControl(drawControlRef.current);
+        } catch (e) {
+          // Control may have already been removed
+          console.warn('Control removal error:', e);
+        }
+      }
     };
   }, [map, onCreated, onDeleted, drawType]);
 
