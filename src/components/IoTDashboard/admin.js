@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
+import AdvancedSettingsPanel from "../settings/settings";
 import { 
   MapPin, MessageSquare, Bot, Menu, X, Shield, Users, Map, 
   AlertTriangle, Activity, Wifi, Navigation, Volume2, Eye,
@@ -827,10 +828,8 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
           </div>
         );
 
-      case 'settings':
-        return (
-          <p>Settings page under construction.</p>
-        );
+      case "settings":
+        return <div>{<AdvancedSettingsPanel sidebar={sidebarOpen} />}</div>;
 
       default:
         return null;
