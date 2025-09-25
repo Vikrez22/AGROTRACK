@@ -77,20 +77,38 @@ const alarmIcon = new L.Icon({
 });
 
 // Draw Control Component (for admin/farmer roles)
+// Draw Control Component with improved synchronization
 const DrawControl = ({ onCreated, onDeleted, drawType }) => {
   const map = useMap();
   const drawnItemsRef = useRef(new L.FeatureGroup());
+  const drawControlRef = useRef(null);
 
   useEffect(() => {
     if (!map) return;
 
-    map.addLayer(drawnItemsRef.current);
+    // Only add if not already added
+    if (!map.hasLayer(drawnItemsRef.current)) {
+      map.addLayer(drawnItemsRef.current);
+    }
+
+    // Remove existing control if it exists
+    if (drawControlRef.current) {
+      map.removeControl(drawControlRef.current);
+    }
+
     const drawControl = new L.Control.Draw({
       draw: {
         polygon: {
           shapeOptions: {
-            color: drawType === 'grazing' ? 'green' : 'red',
-            fillOpacity: 0.4,
+            color: drawType === 'grazing' ? '#2e8b57' : '#ff0000',
+            fillColor: drawType === 'grazing' ? '#2e8b57' : '#ff0000',
+            fillOpacity: 0.3,
+            weight: 2,
+          },
+          allowIntersection: false,
+          drawError: {
+            color: '#e1e100',
+            message: '<strong>Error:</strong> Shape edges cannot cross!'
           },
         },
         polyline: false,
@@ -102,32 +120,63 @@ const DrawControl = ({ onCreated, onDeleted, drawType }) => {
       edit: {
         featureGroup: drawnItemsRef.current,
         remove: true,
+        edit: true,
       },
     });
 
+    drawControlRef.current = drawControl;
     map.addControl(drawControl);
 
-    map.on(L.Draw.Event.CREATED, (e) => {
+    const handleCreated = (e) => {
       const layer = e.layer;
+      
+      // Add a unique ID to the layer for tracking
+      layer._agrotrackId = `temp_${Date.now()}`;
       drawnItemsRef.current.addLayer(layer);
+      
       const latlngs = layer.getLatLngs()[0].map((latlng) => ({
-        lat: latlng.lat,
-        lng: latlng.lng,
+        lat: parseFloat(latlng.lat.toFixed(6)),
+        lng: parseFloat(latlng.lng.toFixed(6)),
       }));
+      
       onCreated(latlngs, drawType);
-    });
+    };
 
-    map.on(L.Draw.Event.DELETED, (e) => {
+    const handleDeleted = (e) => {
       e.layers.eachLayer((layer) => {
         onDeleted(layer);
       });
-    });
+    };
+
+    const handleEdited = (e) => {
+      e.layers.eachLayer((layer) => {
+        const latlngs = layer.getLatLngs()[0].map((latlng) => ({
+          lat: parseFloat(latlng.lat.toFixed(6)),
+          lng: parseFloat(latlng.lng.toFixed(6)),
+        }));
+        
+        // Trigger update - you may want to add an onEdited callback
+        console.log('Area edited:', latlngs);
+      });
+    };
+
+    map.on(L.Draw.Event.CREATED, handleCreated);
+    map.on(L.Draw.Event.DELETED, handleDeleted);
+    map.on(L.Draw.Event.EDITED, handleEdited);
 
     return () => {
-      map.off(L.Draw.Event.CREATED);
-      map.off(L.Draw.Event.DELETED);
-      map.removeControl(drawControl);
-      map.removeLayer(drawnItemsRef.current);
+      map.off(L.Draw.Event.CREATED, handleCreated);
+      map.off(L.Draw.Event.DELETED, handleDeleted);
+      map.off(L.Draw.Event.EDITED, handleEdited);
+      
+      if (drawControlRef.current) {
+        try {
+          map.removeControl(drawControlRef.current);
+        } catch (e) {
+          // Control may have already been removed
+          console.warn('Control removal error:', e);
+        }
+      }
     };
   }, [map, onCreated, onDeleted, drawType]);
 
@@ -194,7 +243,7 @@ const LiveTrackingMap = ({ center, markers, grazingAreas, nonGrazingAreas, userR
     ))}
 
     {/* Draw Controls - only for admin/farmer roles */}
-    {(userRole === 'admin' || userRole === 'farmer') && (
+    {(userRole === 'law-enforcement' || userRole === 'farmer') && (
       <DrawControl
         drawType={drawType}
         onCreated={onCreated}
@@ -481,7 +530,7 @@ const MockChatBox = ({ title, icon: Icon, description }) => (
   </div>
 );
 
-const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
+const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
@@ -517,6 +566,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: Shield },
     { id: 'monitoring', label: 'Live Monitoring', icon: Eye },
+    { id: 'iotdevices', label: 'IoT Devices', icon: Wifi },
     { id: 'communications', label: 'Communications', icon: Radio },
     { id: 'ai-support', label: 'AI Support', icon: Bot },
     { id: 'reports', label: 'Reports', icon: FileText },
@@ -744,6 +794,35 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
                 </div>
               </div>
             </div>
+
+          {/* Geofencing Controls for Monitoring */}
+            <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Geofencing Controls</h3>
+              <p className="text-gray-600 text-sm mb-4">Select an area type to draw on the map. Use the drawing tools to create new zones or modify existing ones.</p>
+              <div className="flex flex-wrap gap-4">
+                <label className="flex items-center text-gray-700 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="grazing"
+                    checked={drawType === 'grazing'}
+                    onChange={() => setDrawType('grazing')}
+                    className="mr-2 h-4 w-4 text-green-600 border-gray-300 focus:ring-green-500"
+                  />
+                  <span className="text-green-600 font-medium">Grazing Area</span>
+                </label>
+                <label className="flex items-center text-gray-700 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="non-grazing"
+                    checked={drawType === 'non-grazing'}
+                    onChange={() => setDrawType('non-grazing')}
+                    className="mr-2 h-4 w-4 text-red-500 border-gray-300 focus:ring-red-500"
+                  />
+                  <span className="text-red-400 font-medium">Restricted Area</span>
+                </label>
+              </div>
+            </div>
+
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="h-96">
                 <LiveTrackingMap 
@@ -760,6 +839,45 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
             </div>
           </div>
         );
+
+      case 'iotdevices':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-4">IoT Device Management</h2>
+              <p className="text-gray-600 mb-6">
+                Monitor device status, battery levels, and connectivity for all deployed livestock trackers.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {animalMarkers.map(device => (
+                  <div key={device.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <Users className="text-green-600" size={24} />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-gray-800">{device.name}</h3>
+                        <p className="text-sm text-gray-600">ID: {device.id}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-1 text-sm text-gray-600">
+                      <p>📍<strong>Last Known Position:</strong> {device.data.latitude?.toFixed(6)}, {device.data.longitude?.toFixed(6)}</p>
+                      <p>🏃<strong>Speed:</strong> {device.data.speed_kmph || 'N/A'} km/h</p>
+                      <p>🧭<strong>Course:</strong> {device.data.course || 'N/A'}°</p>
+                      <p>🛰️<strong>Satellites:</strong> {device.data.satellites || 'N/A'}</p>
+                      <p>🏔️<strong>Altitude:</strong> {device.data.altitude || 'N/A'}</p>
+                      {/* <p><strong>Date:</strong> {device.data.date || 'N/A'}</p> */}
+                      <p>🔋<strong>Battery:</strong> {device.data.battery || 'N/A'}%</p>
+                      <p>⚡<strong>Status:</strong> {device.isInRestrictedArea ? <span className="text-red-600 font-bold">In Restricted Area</span> : <span className="text-green-600">Normal</span>}</p>
+                      <p>⏲️<strong>Last Update:</strong> {device.data.time || 'N/A'}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
 
       case 'communications':
         return (
@@ -831,16 +949,16 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement-001" }) => {
       case "settings":
         return <div>
                     <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            {/* <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-4">General Settings</h2>
               <p className="text-gray-600 mb-6">
                 <p className="text-gray-600 mt-1 font-semibold">
               Configure notifications, alerts, and custom features
             </p>
               </p>
-            </div>
+            </div> */}
             <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
-              {<AdvancedSettingsPanel sidebar={sidebarOpen} />}
+              {<AdvancedSettingsPanel sidebar={sidebarOpen} className="fixed" />}
             </div>
           </div>
         </div>;

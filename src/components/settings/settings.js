@@ -634,13 +634,13 @@ const AdvancedSettingsPanel = (props) => {
                 Last saved: {lastSaved}
               </span>
             )}
-            <button
+            {/* <button
               onClick={saveSettings}
               className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
             >
               <Save size={16} />
               Save Settings
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
@@ -648,7 +648,7 @@ const AdvancedSettingsPanel = (props) => {
       <div className="flex">
         {/* Sidebar */}
         <div
-          className={`fixed top-[120px] w-64 bg-white shadow-sm h-screen overflow-y-auto`}
+          className={`fixed top-[120px] bottom-0 w-64 bg-white shadow-sm overflow-y-auto`}
         >
           <nav className="p-4">
             <div className="space-y-2">
