@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { MessageCircle, Mic, MicOff, Volume2, Send, Globe } from "lucide-react";
+import { MessageCircle, Mic, MicOff, Volume2, Send, Globe, Plus, ChevronDown } from "lucide-react";
 
 const AgroTrackChatBot = () => {
   const [messages, setMessages] = useState([
@@ -26,9 +26,13 @@ const AgroTrackChatBot = () => {
     ha: { name: "Hausa", code: "ha-NG", flag: "🇳🇬" },
   };
 
-  // Groq AI API integration
-  const fetchAIResponse = async (userMessage) => {
+  // Groq AI API integration with improved prompting
+  const fetchAIResponse = async (userMessage, isDetailed = false) => {
     try {
+      const systemPrompt = isDetailed 
+        ? `You are an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Provide detailed, step-by-step information about farming techniques, pest control, livestock management, market information, and conflict resolution. Use simple, clear language that farmers can understand. Avoid complex tables, formatting, or technical jargon. Break information into numbered steps when helpful.`
+        : `You are an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Give SHORT, SIMPLE answers (2-3 sentences maximum) using basic words that farmers can understand. Focus on practical advice. Avoid tables, formatting, and complex explanations. If the topic needs more detail, mention that more information is available if they ask.`;
+
       const response = await fetch(
         "https://api.groq.com/openai/v1/chat/completions",
         {
@@ -38,18 +42,18 @@ const AgroTrackChatBot = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "openai/gpt-oss-20b", // Good multilingual model
+            model: "openai/gpt-oss-20b", 
             messages: [
               {
                 role: "system",
-                content: `You are an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Focus on farming techniques, pest control, livestock management, market information, and conflict resolution between farmers and herders. Keep responses concise and practical.`,
+                content: systemPrompt,
               },
               {
                 role: "user",
                 content: userMessage,
               },
             ],
-            max_tokens: 500,
+            max_tokens: isDetailed ? 800 : 200,
             temperature: 0.7,
           }),
         }
@@ -60,43 +64,70 @@ const AgroTrackChatBot = () => {
       }
 
       const data = await response.json();
-      return data.choices[0].message.content;
+      let content = data.choices[0].message.content;
+      
+      // Clean up any markdown formatting that might slip through
+      content = content
+        .replace(/\|.*\|/g, '') // Remove table rows
+        .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold formatting
+        .replace(/\*(.*?)\*/g, '$1') // Remove italic formatting
+        .replace(/---+/g, '') // Remove horizontal rules
+        .replace(/#{1,6}\s*/g, '') // Remove headers
+        .replace(/\n{3,}/g, '\n\n') // Reduce multiple newlines
+        .trim();
+
+      return content;
     } catch (error) {
       console.error("Groq API error:", error);
 
       // Fallback responses based on language
       const fallbackResponses = {
-        en: "I'm having trouble connecting to my AI service right now. Please try again in a moment. In the meantime, remember that AgroTrack helps prevent farmer-herder conflicts through smart geo-fencing and livestock tracking.",
-        ig: "Enwere m nsogbu ijikọ na ọrụ AI m ugbu a. Biko nwaa ọzọ n'oge na-adịghị anya. Ka a na-eche, cheta na AgroTrack na-enyere aka igbochi esemokwu ndị ọrụ ugbo na ndị ọzụzụ anụmanụ site na geo-fencing amamihe na nsoso anụmanụ.",
-        yo: "Mo ni wahala lati so si iṣẹ AI mi ni bayi. Jọwọ gbiyanju lẹẹkansi ni akoko diẹ. Lakoko yii, ranti pe AgroTrack ṣe iranlọwọ lati ṣe idiwọ awọn ija agbe-darandaran nipasẹ geo-fencing ati wiwa ẹranko.",
-        ha: "Ina da matsala ta haɗuwa da sabis na AI a yanzu. Da fatan za a sake gwadawa nan ba da jimawa ba. A yayin da, ku tuna cewa AgroTrack yana taimakawa wajen hana rikice-rikice tsakanin manoma da makiyaya ta hanyar geo-fencing da bin diddigin dabbobi.",
+        en: "I'm having trouble connecting right now. Please try again. AgroTrack helps prevent farmer-herder conflicts through smart tracking.",
+        ig: "Enwere m nsogbu ijikọ ugbu a. Biko nwaa ọzọ. AgroTrack na-enyere aka igbochi esemokwu ndị ọrụ ugbo na ndị ọzụzụ anụmanụ.",
+        yo: "Mo ni wahala lati so ni bayi. Jọwọ gbiyanju lẹẹkansi. AgroTrack ṣe iranlọwọ lati ṣe idiwọ awọn ija agbe-darandaran.",
+        ha: "Ina da matsala ta haɗuwa a yanzu. Da fatan za a sake gwadawa. AgroTrack yana taimakawa wajen hana rikice-rikice tsakanin manoma da makiyaya.",
       };
 
       return fallbackResponses[language] || fallbackResponses.en;
     }
   };
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
+  const sendMessage = async (isDetailed = false) => {
+    if (!input.trim() && !isDetailed) return;
 
     setError("");
-    const userMessage = {
-      role: "user",
-      content: input.trim(),
-      timestamp: new Date(),
-    };
+    
+    let userMessage;
+    if (isDetailed) {
+      // For detailed requests, use the last user message
+      const lastUserMessage = messages.filter(m => m.role === 'user').slice(-1)[0];
+      if (!lastUserMessage) return;
+      
+      userMessage = {
+        role: "user",
+        content: `Please give me more detailed information about: ${lastUserMessage.content}`,
+        timestamp: new Date(),
+      };
+    } else {
+      userMessage = {
+        role: "user",
+        content: input.trim(),
+        timestamp: new Date(),
+      };
+    }
 
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
-    setInput("");
+    if (!isDetailed) setInput("");
     setLoading(true);
 
     try {
-      const response = await fetchAIResponse(userMessage.content);
+      const response = await fetchAIResponse(userMessage.content, isDetailed);
       const aiMessage = {
         role: "assistant",
         content: response,
         timestamp: new Date(),
+        hasMoreInfo: !isDetailed, // Show "More Info" button for simple responses
       };
       setMessages([...newMessages, aiMessage]);
 
@@ -110,8 +141,50 @@ const AgroTrackChatBot = () => {
     }
   };
 
+  const getDetailedResponse = async (messageIndex) => {
+    const message = messages[messageIndex];
+    if (message.role !== 'assistant') return;
+
+    // Find the user message that prompted this response
+    let userMessage = null;
+    for (let i = messageIndex - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') {
+        userMessage = messages[i];
+        break;
+      }
+    }
+
+    if (!userMessage) return;
+
+    setLoading(true);
+    try {
+      const detailedResponse = await fetchAIResponse(userMessage.content, true);
+      
+      // Update the specific message to show detailed info
+      const updatedMessages = [...messages];
+      updatedMessages[messageIndex] = {
+        ...message,
+        content: detailedResponse,
+        hasMoreInfo: false,
+        isDetailed: true
+      };
+      setMessages(updatedMessages);
+      
+      // Speak the detailed response
+      speak(detailedResponse);
+    } catch (error) {
+      setError("Failed to get detailed response. Please try again.");
+      console.error("Detailed response error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const speak = (text) => {
     if ("speechSynthesis" in window) {
+      // Stop any currently speaking utterances
+      speechSynthesis.cancel();
+      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = languages[language].code;
       utterance.rate = 0.8;
@@ -170,6 +243,34 @@ const AgroTrackChatBot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Quick suggestion buttons for common topics
+  const quickSuggestions = {
+    en: [
+      "How to plant corn?",
+      "Best cattle feed",
+      "Market prices today",
+      "Prevent crop diseases"
+    ],
+    ig: [
+      "Kedu ka esi akụ ọka?",
+      "Nri ehi kacha mma",
+      "Ọnụ ahịa taa",
+      "Gbochie ọrịa ihe ọkụkụ"
+    ],
+    yo: [
+      "Bawo ni a ṣe gbin agbado?",
+      "Ounje malu to dara ju",
+      "Awọn idiyele oja oni",
+      "Ṣe idiwọ arun oko"
+    ],
+    ha: [
+      "Yaya ake shuka masara?",
+      "Abincin shanu mafi kyau",
+      "Farashin kasuwa yau",
+      "Hana cututtukan amfanin gona"
+    ]
+  };
+
   return (
     <div className="flex flex-col min-h-[600px] bg-white rounded-lg shadow-lg border border-gray-200">
       {/* Header */}
@@ -196,8 +297,26 @@ const AgroTrackChatBot = () => {
         </div>
       </div>
 
+      {/* Quick Suggestions */}
+      {messages.length === 1 && (
+        <div className="p-4 bg-gray-50 border-b">
+          <p className="text-sm text-gray-600 mb-2">Quick questions:</p>
+          <div className="flex flex-wrap gap-2">
+            {quickSuggestions[language]?.map((suggestion, idx) => (
+              <button
+                key={idx}
+                onClick={() => setInput(suggestion)}
+                className="px-3 py-1 bg-white text-gray-700 text-sm rounded-full border border-gray-300 hover:bg-green-50 hover:border-green-300 transition-colors"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto max-h-[450px] p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto max-h-[400px] p-4 space-y-3">
         {messages.map((msg, idx) => (
           <div
             key={idx}
@@ -212,7 +331,20 @@ const AgroTrackChatBot = () => {
                   : "bg-white text-gray-800 rounded-bl-none border border-gray-200"
               }`}
             >
-              <p className="text-sm leading-relaxed">{msg.content}</p>
+              <p className="text-sm leading-relaxed whitespace-pre-line">{msg.content}</p>
+              
+              {/* More Info Button */}
+              {msg.role === "assistant" && msg.hasMoreInfo && (
+                <button
+                  onClick={() => getDetailedResponse(idx)}
+                  className="mt-2 px-3 py-1 bg-blue-500 text-white text-xs rounded-full hover:bg-blue-600 transition-colors flex items-center gap-1"
+                  disabled={loading}
+                >
+                  <Plus size={12} />
+                  More Details
+                </button>
+              )}
+              
               <div className="flex items-center justify-between mt-1">
                 <span className="text-xs opacity-70">
                   {msg.timestamp?.toLocaleTimeString([], {
@@ -283,7 +415,7 @@ const AgroTrackChatBot = () => {
           </button>
 
           <button
-            onClick={sendMessage}
+            onClick={() => sendMessage()}
             disabled={loading || !input.trim()}
             className="p-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white rounded-lg transition-colors"
             title="Send message"
