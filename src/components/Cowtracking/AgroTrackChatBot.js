@@ -42,7 +42,7 @@ const AgroTrackChatBot = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "llama3-8b-8192", // Better model for following instructions
+            model: "openai/gpt-oss-20b", 
             messages: [
               {
                 role: "system",
