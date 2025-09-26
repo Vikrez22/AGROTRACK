@@ -4,6 +4,8 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, LogIn, Users } from 'lucide-react';
+import sideBarLogo from "../../assets/logo_white.png";
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -69,8 +71,9 @@ const Login = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-green-100">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-              <LogIn className="w-8 h-8 text-white" />
+            <div className="flex items-center justify-center mx-auto mb-4">
+              {/* <LogIn className="w-8 h-8 text-white" /> */}
+               <img src={sideBarLogo} alt="agrotrack_sidebar" width={"150px"} height={"120px"} />
             </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
             <p className="text-gray-600">Sign in to your account</p>
