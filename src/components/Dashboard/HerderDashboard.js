@@ -67,7 +67,7 @@ const ResponsiveAgroTrackChatBot = () => (
 const HerderDashboard = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const herderUsername = "munachi";
+  const herderUsername = " Alhaji Musa"; // This would be fetched from user profile in a real app
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Navigation },
@@ -291,7 +291,7 @@ const HerderDashboard = ({ userId }) => {
               <h1 className="font-bold text-lg text-green-500 leading-5">
                 AgroTrack
               </h1>
-              <p className="text-sm text-gray-500">Farmer Dashboard</p>
+              <p className="text-sm text-gray-500">Herder Dashboard</p>
             </div>
           </div>
         </div>
@@ -306,7 +306,7 @@ const HerderDashboard = ({ userId }) => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`${
-                    sidebarOpen ? "w-full" : "w-fit"
+                    sidebarOpen ? "w-full" : "w-full"
                   } flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     activeTab === tab.id
                       ? "bg-green-500 text-white shadow-lg"
@@ -328,6 +328,13 @@ const HerderDashboard = ({ userId }) => {
         </nav>
 
         {/* Footer */}
+        {/* //logout button here */}
+        <a href="/login"> <button
+          className={"sidebarOpen w-60 bg-red-100 flex m-3 items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors"}
+        >
+          <X size={20} />
+          <span className={`${sidebarOpen ? "block" : "hidden"} lg:block font-medium`}>Logout</span>
+        </button></a>
         <div className="p-4 border-t border-gray-200">
           <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
             <div className="text-center">

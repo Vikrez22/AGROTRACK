@@ -1,63 +1,30 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Send, Users, MessageCircle, Clock, User, Shield } from "lucide-react";
-
-// Mock Firebase functions for demo - replace with your actual imports
-const mockDb = {};
-const mockCollection = () => ({});
-const mockAddDoc = async (collection, data) => {
-  console.log("Mock: Adding document:", data);
-  return Promise.resolve();
-};
-const mockOnSnapshot = (query, callback) => {
-  // Mock some initial messages
-  const mockMessages = [
-    {
-      userId: "farmer-2",
-      role: "farmer",
-      message: "Has anyone seen cattle near sector 3?",
-      timestamp: { toDate: () => new Date(Date.now() - 300000) },
-    },
-    {
-      userId: "herder-1",
-      role: "herder",
-      message: "Yes, my cattle are grazing there. Moving them out now.",
-      timestamp: { toDate: () => new Date(Date.now() - 120000) },
-    },
-    {
-      userId: "admin-1",
-      role: "admin",
-      message: "Thank you for the quick coordination!",
-      timestamp: { toDate: () => new Date(Date.now() - 60000) },
-    },
-  ];
-
-  setTimeout(() => {
-    callback({
-      docs: mockMessages.map((msg) => ({ data: () => msg })),
-    });
-  }, 100);
-
-  return () => {}; // unsubscribe function
-};
-const mockOrderBy = () => ({});
-const mockQuery = () => ({});
-const mockServerTimestamp = () => new Date();
+import { db } from "../../firebase/firebase";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+} from "firebase/firestore";
 
 const ChatBox = ({ userId, role }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [onlineUsers] = useState(3); // Mock online users count
+  const [onlineUsers] = useState(3); // You can implement real online user count later
   const chatRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    // Replace with your actual Firebase query
-    const q = mockQuery(
-      mockCollection(mockDb, "chatMessages"),
-      mockOrderBy("timestamp", "asc")
+    // Real Firebase query
+    const q = query(
+      collection(db, "chatMessages"),
+      orderBy("timestamp", "asc")
     );
-    const unsubscribe = mockOnSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       const messages = snapshot.docs.map((doc) => doc.data());
       setChatMessages(messages);
     });
@@ -75,12 +42,12 @@ const ChatBox = ({ userId, role }) => {
     setIsTyping(true);
 
     try {
-      // Replace with your actual Firebase addDoc call
-      await mockAddDoc(mockCollection(mockDb, "chatMessages"), {
+      // Real Firebase addDoc call
+      await addDoc(collection(db, "chatMessages"), {
         userId,
         role,
         message: message.trim(),
-        timestamp: mockServerTimestamp(),
+        timestamp: serverTimestamp(),
       });
 
       setMessage("");
@@ -103,7 +70,7 @@ const ChatBox = ({ userId, role }) => {
       case "farmer":
         return "text-green-600 bg-green-50";
       case "herder":
-        return "text-blue-600 bg-blue-50";
+        return "text-green-600 bg-green-50";
       case "admin":
         return "text-purple-600 bg-purple-50";
       default:
@@ -139,9 +106,9 @@ const ChatBox = ({ userId, role }) => {
   return (
     <div className="flex flex-col h-full bg-white rounded-lg shadow-lg border border-gray-200">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-green-50 to-indigo-50 rounded-t-lg">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-500 rounded-lg">
+          <div className="p-2 bg-green-500 rounded-lg">
             <MessageCircle className="text-white" size={20} />
           </div>
           <div>
@@ -177,7 +144,7 @@ const ChatBox = ({ userId, role }) => {
               <div
                 className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg shadow-sm ${
                   msg.userId === userId
-                    ? "bg-blue-500 text-white rounded-br-sm"
+                    ? "bg-green-500 text-white rounded-br-sm"
                     : "bg-white text-gray-800 rounded-bl-sm border border-gray-200"
                 }`}
               >
@@ -198,7 +165,7 @@ const ChatBox = ({ userId, role }) => {
 
                 <div
                   className={`flex items-center gap-2 mt-2 text-xs ${
-                    msg.userId === userId ? "text-blue-100" : "text-gray-500"
+                    msg.userId === userId ? "text-green-100" : "text-gray-500"
                   }`}
                 >
                   <Clock size={10} />
@@ -236,7 +203,7 @@ const ChatBox = ({ userId, role }) => {
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message... (Press Enter to send)"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
               rows="1"
               style={{ maxHeight: "120px", minHeight: "44px" }}
               disabled={isTyping}
@@ -246,7 +213,7 @@ const ChatBox = ({ userId, role }) => {
           <button
             onClick={sendMessage}
             disabled={!message.trim() || isTyping}
-            className="p-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center min-w-[44px]"
+            className="p-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center min-w-[44px]"
             title="Send message"
           >
             {isTyping ? (
