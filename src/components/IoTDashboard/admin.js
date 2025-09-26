@@ -1606,7 +1606,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
       case "settings":
         return (
-          <div className="space-y-6 m-6">
+          <div className="space-y-6">
             {/* Admin Settings Navigation */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg">
