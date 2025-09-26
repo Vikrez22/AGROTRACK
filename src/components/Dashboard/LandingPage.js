@@ -11,6 +11,7 @@ import {
   Eye,
   TrendingUp,
   Wifi,
+  ArrowRightIcon,
 } from "lucide-react";
 import sideBarLogo from "../../assets/logo.png";
 import sideBarLogoW from "../../assets/logo_white.png";
@@ -223,7 +224,7 @@ const AgroTrackLandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium mb-6">
+              <div className="inline-flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold mb-6">
                 Smart AgriTech Solution
               </div>
               <h1 className="text-3xl lg:text-5xl font-bold text-gray-900 leading-tight">
@@ -232,7 +233,7 @@ const AgroTrackLandingPage = () => {
                   Conflicts with Technology
                 </span>
               </h1>
-              <p className="text-xl text-gray-600 mt-6 leading-relaxed">
+              <p className="text-xl text-gray-800 mt-6 leading-relaxed">
                 AgroTrack uses IoT technology to prevent conflicts before they
                 start. Real-time livestock tracking, smart geofencing, and
                 instant alerts protect crops and save lives.
@@ -240,13 +241,17 @@ const AgroTrackLandingPage = () => {
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <a
                   href="/login"
-                  className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
+                  className="bg-green-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-green-700/90 transition-colors text-center inline-flex items-center gap-2 group"
                 >
                   Get Started
+                  <ArrowRightIcon
+                    size={20}
+                    className="group-hover:translate-x-1 duration-200"
+                  />
                 </a>
                 <button
                   onClick={() => setChatBotOpen(true)}
-                  className="border border-green-600 text-green-600 px-8 py-4 rounded-lg font-semibold hover:bg-green-50 transition-colors flex items-center justify-center gap-2"
+                  className="border-2 border-green-600 text-white hover:text-green-600 px-8 py-3 rounded-full font-semibold hover:bg-white/95 transition-colors flex items-center justify-center gap-2"
                 >
                   <Bot size={20} />
                   Talk to AI Assistant
