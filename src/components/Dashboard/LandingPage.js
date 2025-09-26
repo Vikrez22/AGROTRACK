@@ -107,8 +107,8 @@ const AgroTrackLandingPage = () => {
               >
                 Report Incident
               </button>
-              <a href="/iot-dashboard" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                Dashboard
+              <a href="/login" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                Get Started
               </a>
             </div>
 
@@ -162,10 +162,10 @@ const AgroTrackLandingPage = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <a 
-                  href="/iot-dashboard" 
+                  href="/login" 
                   className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
                 >
-                  Start Tracking Now
+                  Get Started
                 </a>
                 <button
                   onClick={() => setChatBotOpen(true)}
@@ -271,7 +271,7 @@ const AgroTrackLandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Our Technology Solution
+              Our Solution
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               AgroTrack prevents conflicts through proactive monitoring and 
@@ -363,7 +363,7 @@ const AgroTrackLandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Complete AgroTrack Platform
+              Advanced Features
             </h2>
             <p className="text-xl text-gray-600">
               Everything you need to prevent conflicts and protect your livelihood
@@ -455,8 +455,8 @@ const AgroTrackLandingPage = () => {
             <div>
               <h3 className="text-lg font-semibold mb-4">Contact</h3>
               <div className="space-y-2 text-gray-400">
-                <p>teamagrotrack@gmail.com</p>
                 <p>AGROTRACK</p>
+                <p>teamagrotrack@gmail.com</p>
                 <p>Enugu, Nigeria</p>
               </div>
             </div>
