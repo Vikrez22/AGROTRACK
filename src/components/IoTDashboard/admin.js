@@ -52,6 +52,9 @@ import {
   remove,
 } from "firebase/database";
 
+//Sidebar image
+import sideBarLogo from "../../assets/sidebar_logo_white.png";
+
 const iotFirebaseConfig = {
   apiKey: "AIzaSyDaw8OdK1eaMCcOJgB6lHDFGn_hb9YIEdM",
   authDomain: "agrorithm-f4d87.firebaseapp.com",
@@ -2394,15 +2397,17 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <div
-        className={`bg-white shadow-lg transition-all duration-300 ${
+        className={`bg-white shadow-lg transition-all duration-300 h-screen fixed top-0 left-0 overflow-x-hidden ${
           sidebarOpen ? "w-64" : "w-16"
-        } lg:w-64 flex flex-col border-r border-gray-200`}
+        } lg:w-64 flex flex-col border-r border-gray-200/30`}
       >
         {/* Header */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-green-700 rounded-lg flex items-center justify-center">
-              <Shield className="text-white" size={20} />
+        <div className="p-1.5 border-b border-gray-200 flex items-center w-full">
+          <div
+            className={`flex items-center ${sidebarOpen ? "gap-3" : undefined}`}
+          >
+            <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2">
+              <img src={sideBarLogo} alt="agrotrack_sidebar" />
             </div>
             <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
               <h1 className="font-bold text-lg text-gray-800">AgroTrack</h1>
@@ -2412,7 +2417,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4">
+        <nav className="flex-1 p-2">
           <div className="space-y-2">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -2420,9 +2425,11 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  className={`${
+                    sidebarOpen ? "w-full" : "w-fit"
+                  } flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     activeTab === tab.id
-                      ? "bg-green-600 text-white shadow-lg"
+                      ? "bg-green-500 text-white shadow-lg"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
                 >
@@ -2470,10 +2477,18 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div
+        className={`flex-1 flex flex-col transition-all duration-300 ${
+          sidebarOpen ? "ml-64" : "ml-16"
+        } lg:ml-64`}
+      >
         {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
+        <header
+          className={`bg-white shadow-sm border-b border-gray-200 px-4 ${
+            sidebarOpen ? "py-1.5" : "p-0.5"
+          } sticky top-0 right-0 flex items-center justify-between z-50`}
+        >
+          <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}

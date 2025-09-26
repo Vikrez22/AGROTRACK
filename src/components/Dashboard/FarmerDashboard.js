@@ -651,7 +651,7 @@ const FarmerDashboard = () => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`${
-                    sidebarOpen ? "w-full" : "w-full"
+                    sidebarOpen ? "w-full" : "w-fit"
                   } flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     activeTab === tab.id
                       ? "bg-green-500 text-white shadow-lg"
