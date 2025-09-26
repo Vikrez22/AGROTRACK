@@ -1012,6 +1012,13 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
         </nav>
 
         {/* Footer */}
+        {/* //logout button here */}
+          <a href="/login"> <button
+            className={"sidebarOpen w-60 bg-red-100 flex m-3 items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors"}
+          >
+            <X size={20} />
+            <span className={`${sidebarOpen ? "block" : "hidden"} lg:block font-medium`}>Logout</span>
+          </button></a>
         <div className="p-4 border-t border-gray-200">
           <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block`}>
             <div className="text-center">
