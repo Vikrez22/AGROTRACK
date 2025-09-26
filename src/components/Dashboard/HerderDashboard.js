@@ -306,7 +306,7 @@ const HerderDashboard = ({ userId }) => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`${
-                    sidebarOpen ? "w-full" : "w-fit"
+                    sidebarOpen ? "w-full" : "w-full"
                   } flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     activeTab === tab.id
                       ? "bg-green-500 text-white shadow-lg"
