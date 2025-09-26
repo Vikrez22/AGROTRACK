@@ -143,24 +143,26 @@ const AgroTrackLandingPage = () => {
               >
                 Solution
               </a>
-              <a
-                href="#features"
-                className="text-gray-600 hover:text-green-600 transition-colors"
-              >
-                Features
-              </a>
-              <button
-                onClick={() => setReportModalOpen(true)}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Report Incident
-              </button>
-              <a
-                href="/login"
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-              >
-                Get Started
-              </a>
+              <div className="ml-8 flex items-center gap-4">
+                <a
+                  href="#features"
+                  className="text-gray-600 hover:text-green-600 transition-colors"
+                >
+                  Features
+                </a>
+                <button
+                  onClick={() => setReportModalOpen(true)}
+                  className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-colors"
+                >
+                  Report Incident
+                </button>
+                <a
+                  href="/login"
+                  className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-colors"
+                >
+                  Get Started
+                </a>
+              </div>
             </div>
 
             {/* Mobile menu button */}
@@ -241,7 +243,7 @@ const AgroTrackLandingPage = () => {
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <a
                   href="/login"
-                  className="bg-green-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-green-700/90 transition-colors text-center inline-flex items-center gap-2 group"
+                  className="bg-green-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-green-700/90 transition-colors text-center inline-flex items-center gap-2 group justify-center"
                 >
                   Get Started
                   <ArrowRightIcon
