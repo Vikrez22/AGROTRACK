@@ -31,8 +31,16 @@ const Signup = () => {
   };
 
   return (
-    <div className="signup-container">
-      <form className="signup-form" onSubmit={handleSignup}>
+    <div className="text-center mt-20 container bg-green-100 p-10 rounded-lg shadow-md">
+      <h1>404 Erorr</h1><br/>
+      <h2>Page Not Found</h2>
+      <p>The page you are looking for does not exist.</p>
+      <p>Please check the URL or return to the <a href="/">home page</a>.</p>
+      <button onClick={() => navigate(-1)} className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+        Go Back
+      </button>
+
+      {/* <form className="signup-form" onSubmit={handleSignup}>
         <h2>Sign Up</h2>
         {error && <p className="error-message">{error}</p>}
 
@@ -59,7 +67,7 @@ const Signup = () => {
         </select>
 
         <button type="submit">Sign Up</button>
-      </form>
+      </form> */}
     </div>
   );
 };

@@ -4,6 +4,9 @@ import {
   Phone, Mail, Clock, User, Upload, Send, Menu, X,
   Zap, Radio, Eye, MessageSquare, TrendingUp, Wifi
 } from 'lucide-react';
+import sideBarLogo from "../../assets/logo.png";
+import sideBarLogoW from "../../assets/logo_white.png";
+import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
 
 const AgroTrackLandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -90,10 +93,7 @@ const AgroTrackLandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <span className="ml-3 text-xl font-bold text-gray-900">AgroTrack</span>
+               <img src={sideBarLogo} alt="agrotrack_sidebar" width={"150px"} height={"120px"} />
             </div>
 
             {/* Desktop Navigation */}
@@ -107,8 +107,8 @@ const AgroTrackLandingPage = () => {
               >
                 Report Incident
               </button>
-              <a href="/iot-dashboard" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                Dashboard
+              <a href="/login" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                Get Started
               </a>
             </div>
 
@@ -162,10 +162,10 @@ const AgroTrackLandingPage = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <a 
-                  href="/iot-dashboard" 
+                  href="/login" 
                   className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
                 >
-                  Start Tracking Now
+                  Get Started
                 </a>
                 <button
                   onClick={() => setChatBotOpen(true)}
@@ -271,7 +271,7 @@ const AgroTrackLandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Our Technology Solution
+              Our Solution
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               AgroTrack prevents conflicts through proactive monitoring and 
@@ -363,7 +363,7 @@ const AgroTrackLandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Complete AgroTrack Platform
+              Advanced Features
             </h2>
             <p className="text-xl text-gray-600">
               Everything you need to prevent conflicts and protect your livelihood
@@ -411,7 +411,7 @@ const AgroTrackLandingPage = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
-              href="/" 
+              href="/login" 
               className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors"
             >
               Get Started
@@ -432,10 +432,7 @@ const AgroTrackLandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-white" />
-                </div>
-                <span className="ml-3 text-xl font-bold">AgroTrack</span>
+                <img src={sideBarLogoW} alt="agrotrack_sidebar" width={"150px"} height={"120px"} />
               </div>
               <p className="text-gray-400">
                 Smart AgriTech solution preventing farmer-herder conflicts through IoT technology.
@@ -455,8 +452,8 @@ const AgroTrackLandingPage = () => {
             <div>
               <h3 className="text-lg font-semibold mb-4">Contact</h3>
               <div className="space-y-2 text-gray-400">
-                <p>teamagrotrack@gmail.com</p>
                 <p>AGROTRACK</p>
+                <p>teamagrotrack@gmail.com</p>
                 <p>Enugu, Nigeria</p>
               </div>
             </div>
@@ -633,23 +630,9 @@ const AgroTrackLandingPage = () => {
               <div className="text-gray-700">
                 <p>Hello! I'm your AI assistant. How can I help you today?</p>
               </div>
-              {/* Chat messages would go here */}
+              <AgroTrackChatBot />
             </div>
-            <div className="p-6 border-t border-gray-200">
-              <form className="flex items-center gap-4">
-                <input
-                  type="text"
-                  placeholder="Type your message..."
-                  className="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                />
-                <button
-                  type="submit"
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  <Send size={20} />
-                </button>
-              </form>
-            </div>
+            
           </div>
         </div>
       )}

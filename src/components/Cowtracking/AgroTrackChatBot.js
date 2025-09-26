@@ -337,7 +337,7 @@ const AgroTrackChatBot = () => {
               {msg.role === "assistant" && msg.hasMoreInfo && (
                 <button
                   onClick={() => getDetailedResponse(idx)}
-                  className="mt-2 px-3 py-1 bg-blue-500 text-white text-xs rounded-full hover:bg-blue-600 transition-colors flex items-center gap-1"
+                  className="mt-2 px-3 py-1 bg-green-500 text-white text-xs rounded-full hover:bg-green-600 transition-colors flex items-center gap-1"
                   disabled={loading}
                 >
                   <Plus size={12} />
