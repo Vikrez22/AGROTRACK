@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import sideBarLogo from "../../assets/logo.png";
 import sideBarLogoW from "../../assets/logo_white.png";
+import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
 
 const AgroTrackLandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -410,7 +411,7 @@ const AgroTrackLandingPage = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
-              href="/" 
+              href="/login" 
               className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors"
             >
               Get Started
@@ -629,23 +630,9 @@ const AgroTrackLandingPage = () => {
               <div className="text-gray-700">
                 <p>Hello! I'm your AI assistant. How can I help you today?</p>
               </div>
-              {/* Chat messages would go here */}
+              <AgroTrackChatBot />
             </div>
-            <div className="p-6 border-t border-gray-200">
-              <form className="flex items-center gap-4">
-                <input
-                  type="text"
-                  placeholder="Type your message..."
-                  className="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                />
-                <button
-                  type="submit"
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  <Send size={20} />
-                </button>
-              </form>
-            </div>
+            
           </div>
         </div>
       )}
