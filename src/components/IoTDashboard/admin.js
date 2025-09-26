@@ -1169,7 +1169,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
       case "reports":
         return (
-          <div className="space-y-6 m-4 sm:m-6 max-w-7xl mx-auto">
+          <div className="space-y-6">
             {/* Header */}
             <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
               <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4">
@@ -1198,7 +1198,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 overflow-x-auto">
               <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 items-stretch sm:items-center">
                 <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 w-full sm:w-auto">
                   <option value="">All Statuses</option>
@@ -1229,310 +1229,308 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
             </div>
 
             {/* Reports Table */}
-            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm md:text-base">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Report ID
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Reporter
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Type
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Location
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 overflow-x-auto max-w-[1060px]">
+              <table className="text-sm md:text-base w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Report ID
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Reporter
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Location
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Priority
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {/* Report 1 - Critical */}
+                  <tr className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      #RPT-2024-001
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                          <User className="text-white" size={16} />
+                        </div>
+                        <div className="ml-3">
+                          <div className="text-sm font-medium text-gray-900">
+                            Adamu Garba
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            +234 803 123 4567
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        Violence
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      Plateau State, Jos North
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      Dec 25, 2024
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        Critical
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-200 text-red-900">
+                        High
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <button className="text-green-600 hover:text-green-900 bg-green-100 px-3 py-1 rounded">
+                        View
+                      </button>
+                      <button className="text-blue-600 hover:text-blue-900 bg-blue-100 px-3 py-1 rounded">
+                        Assign
+                      </button>
+                      <button className="text-orange-600 hover:text-orange-900 bg-orange-100 px-3 py-1 rounded">
+                        Contact
+                      </button>
+                    </td>
+                  </tr>
+
+                  {/* Report 2 - Pending */}
+                  <tr className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      #RPT-2024-002
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                          <User className="text-white" size={16} />
+                        </div>
+                        <div className="ml-3">
+                          <div className="text-sm font-medium text-gray-900">
+                            Musa Ibrahim
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            +234 816 987 6543
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                        Crop Damage
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      Kaduna State, Zaria
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      Dec 24, 2024
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                        Pending Review
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-200 text-yellow-900">
+                        Medium
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <button className="text-green-600 hover:text-green-900 bg-green-100 px-3 py-1 rounded">
+                        View
+                      </button>
+                      <button className="text-blue-600 hover:text-blue-900 bg-blue-100 px-3 py-1 rounded">
+                        Approve
+                      </button>
+                      <button className="text-gray-600 hover:text-gray-900 bg-gray-100 px-3 py-1 rounded">
+                        Dismiss
+                      </button>
+                    </td>
+                  </tr>
+
+                  {/* Report 3 - In Progress */}
+                  <tr className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      #RPT-2024-003
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                          <User className="text-white" size={16} />
+                        </div>
+                        <div className="ml-3">
+                          <div className="text-sm font-medium text-gray-900">
+                            Fatima Aliyu
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            +234 701 234 5678
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                        Boundary Dispute
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      Nasarawa State, Lafia
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      Dec 23, 2024
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        Investigating
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-200 text-blue-900">
+                        Medium
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <button className="text-green-600 hover:text-green-900 bg-green-100 px-3 py-1 rounded">
+                        View
+                      </button>
+                      <button className="text-purple-600 hover:text-purple-900 bg-purple-100 px-3 py-1 rounded">
+                        Update
+                      </button>
+                      <button className="text-orange-600 hover:text-orange-900 bg-orange-100 px-3 py-1 rounded">
+                        Escalate
+                      </button>
+                    </td>
+                  </tr>
+
+                  {/* Report 4 - Resolved */}
+                  <tr className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      #RPT-2024-004
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                          <User className="text-white" size={16} />
+                        </div>
+                        <div className="ml-3">
+                          <div className="text-sm font-medium text-gray-900">
+                            Sani Mohammed
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            +234 812 345 6789
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                        Trespassing
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      Benue State, Makurdi
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      Dec 20, 2024
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Resolved
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-200 text-green-900">
+                        Low
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <button className="text-green-600 hover:text-green-900 bg-green-100 px-3 py-1 rounded">
+                        View
+                      </button>
+                      <button className="text-gray-600 hover:text-gray-900 bg-gray-100 px-3 py-1 rounded">
+                        Archive
+                      </button>
+                      <button className="text-blue-600 hover:text-blue-900 bg-blue-100 px-3 py-1 rounded">
+                        Report
+                      </button>
+                    </td>
+                  </tr>
+
+                  {/* Report 5 - Theft */}
+                  <tr className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      #RPT-2024-005
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                          <User className="text-white" size={16} />
+                        </div>
+                        <div className="ml-3">
+                          <div className="text-sm font-medium text-gray-900">
+                            Hauwa Abdullahi
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            +234 809 876 5432
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        Theft
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      Kano State, Kano Municipal
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      Dec 22, 2024
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        Investigating
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-200 text-red-900">
+                        High
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <button className="text-green-600 hover:text-green-900 bg-green-100 px-3 py-1 rounded">
+                        View
+                      </button>
+                      <button className="text-red-600 hover:text-red-900 bg-red-100 px-3 py-1 rounded">
+                        Police
+                      </button>
+                      <button className="text-orange-600 hover:text-orange-900 bg-orange-100 px-3 py-1 rounded">
                         Priority
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {/* Report 1 - Critical */}
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        #RPT-2024-001
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                            <User className="text-white" size={16} />
-                          </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900">
-                              Adamu Garba
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              +234 803 123 4567
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          Violence
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Plateau State, Jos North
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Dec 25, 2024
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          Critical
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-200 text-red-900">
-                          High
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button className="text-green-600 hover:text-green-900 bg-green-100 px-3 py-1 rounded">
-                          View
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-900 bg-blue-100 px-3 py-1 rounded">
-                          Assign
-                        </button>
-                        <button className="text-orange-600 hover:text-orange-900 bg-orange-100 px-3 py-1 rounded">
-                          Contact
-                        </button>
-                      </td>
-                    </tr>
-
-                    {/* Report 2 - Pending */}
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        #RPT-2024-002
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                            <User className="text-white" size={16} />
-                          </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900">
-                              Musa Ibrahim
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              +234 816 987 6543
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                          Crop Damage
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Kaduna State, Zaria
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Dec 24, 2024
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                          Pending Review
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-200 text-yellow-900">
-                          Medium
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button className="text-green-600 hover:text-green-900 bg-green-100 px-3 py-1 rounded">
-                          View
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-900 bg-blue-100 px-3 py-1 rounded">
-                          Approve
-                        </button>
-                        <button className="text-gray-600 hover:text-gray-900 bg-gray-100 px-3 py-1 rounded">
-                          Dismiss
-                        </button>
-                      </td>
-                    </tr>
-
-                    {/* Report 3 - In Progress */}
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        #RPT-2024-003
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                            <User className="text-white" size={16} />
-                          </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900">
-                              Fatima Aliyu
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              +234 701 234 5678
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                          Boundary Dispute
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Nasarawa State, Lafia
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Dec 23, 2024
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          Investigating
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-200 text-blue-900">
-                          Medium
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button className="text-green-600 hover:text-green-900 bg-green-100 px-3 py-1 rounded">
-                          View
-                        </button>
-                        <button className="text-purple-600 hover:text-purple-900 bg-purple-100 px-3 py-1 rounded">
-                          Update
-                        </button>
-                        <button className="text-orange-600 hover:text-orange-900 bg-orange-100 px-3 py-1 rounded">
-                          Escalate
-                        </button>
-                      </td>
-                    </tr>
-
-                    {/* Report 4 - Resolved */}
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        #RPT-2024-004
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                            <User className="text-white" size={16} />
-                          </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900">
-                              Sani Mohammed
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              +234 812 345 6789
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                          Trespassing
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Benue State, Makurdi
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Dec 20, 2024
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          Resolved
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-200 text-green-900">
-                          Low
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button className="text-green-600 hover:text-green-900 bg-green-100 px-3 py-1 rounded">
-                          View
-                        </button>
-                        <button className="text-gray-600 hover:text-gray-900 bg-gray-100 px-3 py-1 rounded">
-                          Archive
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-900 bg-blue-100 px-3 py-1 rounded">
-                          Report
-                        </button>
-                      </td>
-                    </tr>
-
-                    {/* Report 5 - Theft */}
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        #RPT-2024-005
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                            <User className="text-white" size={16} />
-                          </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900">
-                              Hauwa Abdullahi
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              +234 809 876 5432
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          Theft
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Kano State, Kano Municipal
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Dec 22, 2024
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          Investigating
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-200 text-red-900">
-                          High
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button className="text-green-600 hover:text-green-900 bg-green-100 px-3 py-1 rounded">
-                          View
-                        </button>
-                        <button className="text-red-600 hover:text-red-900 bg-red-100 px-3 py-1 rounded">
-                          Police
-                        </button>
-                        <button className="text-orange-600 hover:text-orange-900 bg-orange-100 px-3 py-1 rounded">
-                          Priority
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
               {/* Pagination */}
               <div className="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
