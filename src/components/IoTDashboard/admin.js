@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
+import ChatBox from "../Cowtracking/ChatBox";
 import AdvancedSettingsPanel from "../settings/settings";
 import { 
   MapPin, MessageSquare, Bot, Menu, X, Shield, Users, Map, 
@@ -520,12 +521,15 @@ const IoTLivestockDashboard = ({ userRole = 'law-enforcement' }) => {
   };
 };
 
-const MockChatBox = ({ title, icon: Icon, description }) => (
-  <div className="h-full w-full bg-gray-50 rounded-lg flex items-center justify-center border">
-    <div className="text-center p-6">
-      <Icon className="mx-auto mb-4 text-green-600" size={48} />
-      <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
-      <p className="text-sm text-gray-500">{description}</p>
+// Responsive wrapper for ChatBox
+const ResponsiveChatBox = ({ userId, role }) => (
+  <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
+    <div className="flex items-center gap-2 mb-4">
+      <Users className="text-green-600" size={24} />
+      <h3 className="text-xl font-semibold">Community Chat</h3>
+    </div>
+    <div className="flex-1 min-h-0">
+      <ChatBox userId={userId} role={role} />
     </div>
   </div>
 );
@@ -888,13 +892,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 Coordinate with patrol units, farmers, herders, and other stakeholders for effective conflict prevention.
               </p>
             </div>
-            <div className="bg-white rounded-lg shadow-lg p-6 h-96">
-              <MockChatBox 
-                title="Communication Hub" 
-                icon={Radio}
-                description="Multi-stakeholder coordination platform"
-              />
-            </div>
+              <ResponsiveChatBox userId={userId} role="admin" />
           </div>
         );
 

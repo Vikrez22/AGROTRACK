@@ -67,7 +67,7 @@ const ResponsiveAgroTrackChatBot = () => (
 const HerderDashboard = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const herderUsername = "munachi";
+  const herderUsername = " Alhaji Musa"; // This would be fetched from user profile in a real app
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Navigation },
@@ -291,7 +291,7 @@ const HerderDashboard = ({ userId }) => {
               <h1 className="font-bold text-lg text-green-500 leading-5">
                 AgroTrack
               </h1>
-              <p className="text-sm text-gray-500">Farmer Dashboard</p>
+              <p className="text-sm text-gray-500">Herder Dashboard</p>
             </div>
           </div>
         </div>
