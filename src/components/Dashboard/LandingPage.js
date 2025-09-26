@@ -4,6 +4,8 @@ import {
   Phone, Mail, Clock, User, Upload, Send, Menu, X,
   Zap, Radio, Eye, MessageSquare, TrendingUp, Wifi
 } from 'lucide-react';
+import sideBarLogo from "../../assets/logo.png";
+import sideBarLogoW from "../../assets/logo_white.png";
 
 const AgroTrackLandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -90,10 +92,7 @@ const AgroTrackLandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <span className="ml-3 text-xl font-bold text-gray-900">AgroTrack</span>
+               <img src={sideBarLogo} alt="agrotrack_sidebar" width={"150px"} height={"120px"} />
             </div>
 
             {/* Desktop Navigation */}
@@ -432,10 +431,7 @@ const AgroTrackLandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-white" />
-                </div>
-                <span className="ml-3 text-xl font-bold">AgroTrack</span>
+                <img src={sideBarLogoW} alt="agrotrack_sidebar" width={"150px"} height={"120px"} />
               </div>
               <p className="text-gray-400">
                 Smart AgriTech solution preventing farmer-herder conflicts through IoT technology.
