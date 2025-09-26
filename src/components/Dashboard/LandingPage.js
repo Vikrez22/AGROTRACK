@@ -16,6 +16,7 @@ import {
 import sideBarLogo from "../../assets/logo.png";
 import sideBarLogoW from "../../assets/logo_white.png";
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
+import heroImage from "../../assets/Gemini_Generated_Image_ikwgarikwgarikwg.png";
 
 const AgroTrackLandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -143,13 +144,13 @@ const AgroTrackLandingPage = () => {
               >
                 Solution
               </a>
+              <a
+                href="#features"
+                className="text-gray-600 hover:text-green-600 transition-colors"
+              >
+                Features
+              </a>
               <div className="ml-8 flex items-center gap-4">
-                <a
-                  href="#features"
-                  className="text-gray-600 hover:text-green-600 transition-colors"
-                >
-                  Features
-                </a>
                 <button
                   onClick={() => setReportModalOpen(true)}
                   className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-colors"
@@ -218,7 +219,7 @@ const AgroTrackLandingPage = () => {
       <section
         className="relative overflow-hidden bg-gradient-to-br from-green-50 to-white min-h-screen"
         style={{
-          backgroundImage: `url(${require("../../assets/Gemini_Generated_Image_ikwgarikwgarikwg.png")})`,
+          backgroundImage: `url(${heroImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -231,7 +232,7 @@ const AgroTrackLandingPage = () => {
               </div>
               <h1 className="text-3xl lg:text-5xl font-bold text-gray-900 leading-tight">
                 Ending Farmer-Herder
-                <span className="text-green-600 block">
+                <span className="text-green-700 block">
                   Conflicts with Technology
                 </span>
               </h1>
