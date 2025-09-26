@@ -35,7 +35,7 @@ const ResponsiveGeoTracker = ({ userRole }) => (
 const ResponsiveChatBox = ({ userId, role }) => (
   <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
     <div className="flex items-center gap-2 mb-4">
-      <Users className="text-blue-600" size={24} />
+      <Users className="text-green-600" size={24} />
       <h3 className="text-xl font-semibold">Community Chat</h3>
     </div>
     <div className="flex-1 min-h-0">
@@ -48,7 +48,7 @@ const ResponsiveChatBox = ({ userId, role }) => (
 const ResponsiveAgroTrackChatBot = () => (
   <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
     <div className="flex items-center gap-2 mb-4">
-      <Users className="text-blue-600" size={24} />
+      <Users className="text-green-600" size={24} />
       <h3 className="text-xl font-semibold">AgroTrack AI</h3>
     </div>
     <AgroTrackChatBot />
@@ -90,7 +90,7 @@ const FarmerDashboard = () => {
                 </p>
               </div>
 
-              <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg">
+              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">Grazing Areas</h3>
@@ -139,8 +139,8 @@ const FarmerDashboard = () => {
                         <p className="text-xs text-gray-500">1 hour ago</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       <div className="flex-1">
                         <p className="text-sm font-medium">
                           Message from herder in your area
@@ -270,6 +270,13 @@ const FarmerDashboard = () => {
         </nav>
 
         {/* Footer */}
+        {/* //logout button here */}
+          <a href="/login"> <button
+            className={`${sidebarOpen ? "w-full" : "w-fit"} bg-red-100 m-3 flex items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors`}
+          >
+            <X size={20} />
+            <span className={`${sidebarOpen ? "block" : "hidden"} lg:block font-medium`}>Logout</span>
+          </button></a>
         <div className="p-4 border-t border-gray-200">
           <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
             <div className="text-center">

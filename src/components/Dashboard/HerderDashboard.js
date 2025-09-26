@@ -328,6 +328,13 @@ const HerderDashboard = ({ userId }) => {
         </nav>
 
         {/* Footer */}
+        {/* //logout button here */}
+          <a href="/login"> <button
+            className={`${sidebarOpen ? "w-full" : "w-fit"} bg-red-100 m-3 flex items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors`}
+          >
+            <X size={20} />
+            <span className={`${sidebarOpen ? "block" : "hidden"} lg:block font-medium`}>Logout</span>
+          </button></a>
         <div className="p-4 border-t border-gray-200">
           <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
             <div className="text-center">
