@@ -340,10 +340,8 @@ const GeoTracker = ({ userRole }) => {
 
   return (
     <div className="p-2 sm:p-3">
-      <h2 className="font-semibold mb-3">Real-time Livestock Tracking & Geofencing</h2>
-
       {/* Geofencing Controls (only for admin/farmer roles) */}
-      {(userRole === "admin" || userRole === "farmer") && (
+      {(userRole === "admin") && (
         <div className="grazing-area flex items-center gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
           <span className="text-sm font-medium text-gray-700">Draw Area Type:</span>
           <label className="flex items-center">
