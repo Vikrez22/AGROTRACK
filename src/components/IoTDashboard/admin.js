@@ -268,9 +268,7 @@ const LiveTrackingMap = ({
               <p>
                 {/* <strong>Satellites:</strong> {animal.data.satellites} */}
               </p>
-              <p>
-                {/* <strong>Date:</strong> {animal.data.date} */}
-              </p>
+              <p>{/* <strong>Date:</strong> {animal.data.date} */}</p>
               <p>
                 <strong>Time:</strong> {animal.data.time}
               </p>
@@ -688,7 +686,6 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
   // Get real-time data from Firebase
   const {
-    livestockData,
     grazingAreas,
     nonGrazingAreas,
     alarms,
@@ -696,7 +693,6 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
     mapCenter,
     dismissAlarm,
     messageBox,
-    showMessageBox,
     drawType,
     setDrawType,
     handleCreated,
@@ -1228,9 +1224,9 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
               </div>
             </div>
 
-            {/* Reports Table */}
-            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 overflow-x-auto max-w-[1060px]">
-              <table className="text-sm md:text-base w-full">
+            {/* Reports Table the red should be white*/}
+            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 max-w-5xl w-full overflow-x-auto">
+              <table className="min-w-full sm:w-full text-sm md:text-base">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -2482,7 +2478,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
       >
         {/* Top Bar */}
         <header
-          className={`bg-white shadow-sm border-b border-gray-200 px-4 ${
+          className={`bg-white border-b border-gray-200 px-4 ${
             sidebarOpen ? "py-1.5" : "p-0.5"
           } sticky top-0 right-0 flex items-center justify-between z-50`}
         >
@@ -2532,7 +2528,9 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-6 overflow-auto">{renderContent()}</main>
+        <main className="flex-1 p-6 overflow-y-auto overflow-x-hidden">
+          {renderContent()}
+        </main>
       </div>
     </div>
   );
