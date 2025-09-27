@@ -174,6 +174,8 @@ const GeoTracker = ({ userRole }) => {
   const [userLocation, setUserLocation] = useState(null);
   const [drawType, setDrawType] = useState("grazing");
   const [alarms, setAlarms] = useState([]);
+  const [locationStatus, setLocationStatus] = useState("requesting"); // requesting, granted, denied, error
+  const [locationError, setLocationError] = useState("");
 
   // Point-in-polygon algorithm for geofencing
   const isPointInPolygon = useCallback((point, polygon) => {
@@ -235,14 +237,154 @@ const GeoTracker = ({ userRole }) => {
     return () => unsubscribe();
   }, []);
 
-  // Get user location
+  // Get user location with better permission handling
   useEffect(() => {
+    const requestLocation = async () => {
+      // Check if geolocation is supported
+      if (!navigator.geolocation) {
+        setLocationStatus("error");
+        setLocationError("Geolocation is not supported by this browser.");
+        return;
+      }
+
+      // Check current permission status
+      if ('permissions' in navigator) {
+        try {
+          const permission = await navigator.permissions.query({ name: 'geolocation' });
+          console.log('Geolocation permission status:', permission.state);
+          
+          if (permission.state === 'denied') {
+            setLocationStatus("denied");
+            setLocationError("Location access denied. Please enable location permissions in your browser settings.");
+            return;
+          }
+        } catch (err) {
+          console.log('Permission API not supported, proceeding with geolocation request');
+        }
+      }
+
+      // Request high-accuracy position
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 15000, // Increased timeout
+        maximumAge: 0 // Don't use cached position
+      };
+
+      // Get current position
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude, accuracy } = position.coords;
+          console.log(`Location found: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
+          setUserLocation([latitude, longitude]);
+          setLocationStatus("granted");
+          setLocationError("");
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          let errorMessage = "Unable to get your location. ";
+          
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = "Location access was denied. Please enable location permissions in your browser settings.";
+              setLocationStatus("denied");
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = "Location information is unavailable. Please check your GPS/internet connection.";
+              setLocationStatus("error");
+              break;
+            case error.TIMEOUT:
+              errorMessage = "Location request timed out. Please try again.";
+              setLocationStatus("error");
+              break;
+            default:
+              errorMessage = "An unknown error occurred while getting your location.";
+              setLocationStatus("error");
+              break;
+          }
+          
+          setLocationError(errorMessage);
+        },
+        options
+      );
+
+      // Also set up continuous watching for location changes (for herders especially)
+      if (userRole === "herder") {
+        const watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            const { latitude, longitude, accuracy } = position.coords;
+            console.log(`Location updated: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
+            setUserLocation([latitude, longitude]);
+            setLocationStatus("granted");
+          },
+          (error) => {
+            console.error("Geolocation watch error:", error);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 30000 // Accept cached position up to 30 seconds old
+          }
+        );
+
+        // Cleanup watch on unmount
+        return () => {
+          if (watchId) {
+            navigator.geolocation.clearWatch(watchId);
+          }
+        };
+      }
+    };
+
+    requestLocation();
+  }, [userRole]);
+
+  // Manual location request function
+  const requestLocationPermission = async () => {
+    setLocationStatus("requesting");
+    setLocationError("");
+    
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    };
+
     navigator.geolocation.getCurrentPosition(
-      (pos) => setUserLocation([pos.coords.latitude, pos.coords.longitude]),
-      (err) => console.error("Error getting user location:", err),
-      { enableHighAccuracy: true, timeout: 10000 }
+      (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+        console.log(`Manual location request: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
+        setUserLocation([latitude, longitude]);
+        setLocationStatus("granted");
+        setLocationError("");
+      },
+      (error) => {
+        console.error("Manual geolocation error:", error);
+        let errorMessage = "";
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Location access denied. Please enable location permissions and try again.";
+            setLocationStatus("denied");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location unavailable. Please check your GPS and internet connection.";
+            setLocationStatus("error");
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Location request timed out. Please try again.";
+            setLocationStatus("error");
+            break;
+          default:
+            errorMessage = "Unknown error getting location.";
+            setLocationStatus("error");
+            break;
+        }
+        
+        setLocationError(errorMessage);
+      },
+      options
     );
-  }, []);
+  };
 
   // Handle creating new geofencing areas (save to Realtime Database)
   const handleCreated = useCallback(async (latlngs, type) => {
@@ -340,8 +482,74 @@ const GeoTracker = ({ userRole }) => {
 
   return (
     <div className="p-2 sm:p-3">
-      {/* Geofencing Controls (only for admin/farmer roles) */}
-      {(userRole === "admin") && (
+      <h2 className="font-semibold mb-3">Real-time Livestock Tracking & Geofencing</h2>
+
+      {/* Location Status Banner */}
+      {locationStatus !== "granted" && (
+        <div className={`mb-4 p-3 rounded-lg border ${
+          locationStatus === "denied" ? "bg-red-50 border-red-200" :
+          locationStatus === "error" ? "bg-orange-50 border-orange-200" :
+          "bg-blue-50 border-blue-200"
+        }`}>
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              {locationStatus === "requesting" && (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-blue-700 text-sm font-medium">Requesting your location...</span>
+                </div>
+              )}
+              {locationStatus === "denied" && (
+                <div>
+                  <p className="text-red-700 font-medium text-sm">Location Access Needed</p>
+                  <p className="text-red-600 text-xs mt-1">{locationError}</p>
+                </div>
+              )}
+              {locationStatus === "error" && (
+                <div>
+                  <p className="text-orange-700 font-medium text-sm">Location Error</p>
+                  <p className="text-orange-600 text-xs mt-1">{locationError}</p>
+                </div>
+              )}
+            </div>
+            {(locationStatus === "denied" || locationStatus === "error") && (
+              <button
+                onClick={requestLocationPermission}
+                className={`px-3 py-1 text-xs font-medium rounded ${
+                  locationStatus === "denied" 
+                    ? "bg-red-600 hover:bg-red-700 text-white"
+                    : "bg-orange-600 hover:bg-orange-700 text-white"
+                } transition-colors`}
+              >
+                Try Again
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Success message when location is found */}
+      {locationStatus === "granted" && userLocation && (
+        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-green-700 text-sm font-medium">
+                Location found: {userLocation[0].toFixed(4)}, {userLocation[1].toFixed(4)}
+              </span>
+            </div>
+            <button
+              onClick={requestLocationPermission}
+              className="px-3 py-1 text-xs font-medium text-green-600 hover:text-green-800 transition-colors"
+            >
+              Update
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Geofencing Controls (only for admin roles) */}
+      {(userRole === "admin" || userRole === "law-enforcement") && (
         <div className="grazing-area flex items-center gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
           <span className="text-sm font-medium text-gray-700">Draw Area Type:</span>
           <label className="flex items-center">
@@ -448,7 +656,7 @@ const GeoTracker = ({ userRole }) => {
           ))}
 
           {/* Draw Controls - only for admin/farmer roles */}
-          {(userRole === "admin" || userRole === "farmer") && (
+          {(userRole === "admin" || userRole === "law-enforcement") && (
             <DrawControl
               drawType={drawType}
               onCreated={handleCreated}

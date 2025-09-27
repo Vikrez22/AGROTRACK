@@ -11,7 +11,7 @@ import {
   AlertTriangle,
   Settings,
 } from "lucide-react";
-import GeoTrackerHerder from "../Cowtracking/GeotrackerHerder";
+import GeoTrackerHerder from "../Cowtracking/GeoTracker";
 import ChatBox from "../Cowtracking/ChatBox";
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
 import sideBarLogo from "../../assets/sidebar_logo_white.png";
@@ -37,7 +37,7 @@ const ResponsiveGeoTrackerHerder = ({ userId }) => (
         <span>Restricted Areas</span>
       </div>
       <div className="flex items-center gap-2">
-        <div className="w-3 h-3 bg-green-500 rounded"></div>
+        <div className="w-3 h-3 bg-blue-500 rounded"></div>
         <span>Your Location</span>
       </div>
     </div>
