@@ -266,10 +266,10 @@ const LiveTrackingMap = ({
                 <strong>Course:</strong> {animal.data.course}°
               </p>
               <p>
-                <strong>Satellites:</strong> {animal.data.satellites}
+                {/* <strong>Satellites:</strong> {animal.data.satellites} */}
               </p>
               <p>
-                <strong>Date:</strong> {animal.data.date}
+                {/* <strong>Date:</strong> {animal.data.date} */}
               </p>
               <p>
                 <strong>Time:</strong> {animal.data.time}
