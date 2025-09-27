@@ -67,7 +67,11 @@ const ResponsiveAgroTrackChatBot = () => (
 const HerderDashboard = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const herderUsername = " Alhaji Musa"; // This would be fetched from user profile in a real app
+  const herderUsername = "Alhaji Musa"; // This would be fetched from user profile in a real app
+  const firstLetters = herderUsername
+    .split(" ")
+    .map((name) => name[0])
+    .join("");
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Navigation },
@@ -329,12 +333,23 @@ const HerderDashboard = ({ userId }) => {
 
         {/* Footer */}
         {/* //logout button here */}
-        <a href="/login"> <button
-          className={"sidebarOpen w-60 bg-red-100 flex m-3 items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors"}
-        >
-          <X size={20} />
-          <span className={`${sidebarOpen ? "block" : "hidden"} lg:block font-medium`}>Logout</span>
-        </button></a>
+        <a href="/login">
+          {" "}
+          <button
+            className={
+              "sidebarOpen w-60 bg-red-100 flex m-3 items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+            }
+          >
+            <X size={20} />
+            <span
+              className={`${
+                sidebarOpen ? "block" : "hidden"
+              } lg:block font-medium`}
+            >
+              Logout
+            </span>
+          </button>
+        </a>
         <div className="p-4 border-t border-gray-200">
           <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
             <div className="text-center">
@@ -378,7 +393,7 @@ const HerderDashboard = ({ userId }) => {
             </div>
             <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-bold uppercase">
-                {herderUsername[0]}
+                {firstLetters}
               </span>
             </div>
           </div>

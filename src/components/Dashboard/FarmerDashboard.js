@@ -76,7 +76,11 @@ const FarmerDashboard = () => {
   ];
 
   //replace my name with the actual username
-  const farmerUsername = "munachi";
+  const farmerUsername = "Munachi Onyebuchi";
+  const firstLetters = farmerUsername
+    .split(" ")
+    .map((name) => name[0])
+    .join("");
 
   const renderContent = () => {
     switch (activeTab) {
@@ -734,7 +738,7 @@ const FarmerDashboard = () => {
             </div>
             <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-bold uppercase">
-                {farmerUsername[0]}
+                {firstLetters}
               </span>
             </div>
           </div>
