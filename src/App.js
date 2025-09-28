@@ -14,7 +14,6 @@ import withUserId from './components/Cowtracking/PrivateDashboardWrapper';
 
 import IoTLivestockDashboard from './components/IoTDashboard/IoTLivestockDashboard';
 import LawEnforcementDashboard from './components/IoTDashboard/admin';
-import AdvancedSettingsPanel from './components/settings/settings.js';
 import Marketplace from './components/Marketplace/marketplace';
 
 
@@ -33,8 +32,7 @@ const App = () => (
     <Route path="/farmer-dashboard" element={<FarmerDashboardWithUser />} />
     <Route path="/iot-dashboard" element={<IoTLivestockDashboard />} />
     <Route path="/admin-dashboard" element={<LawEnforcementDashboard />} />
-    <Route path="/settings" element={<AdvancedSettingsPanel />} />
-    <Route path="/marketplace" element={<Marketplace />} />
+    <Route path="/comingsoon" element={<Marketplace />} />
   </Routes>
 );
 
