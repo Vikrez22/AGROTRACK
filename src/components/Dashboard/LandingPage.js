@@ -204,10 +204,10 @@ const AgroTrackLandingPage = () => {
                   Report Incident
                 </button>
                 <a
-                  href="/iot-dashboard"
+                  href="/login"
                   className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 mx-4 text-center"
                 >
-                  Dashboard
+                  Get Started
                 </a>
               </div>
             </div>
