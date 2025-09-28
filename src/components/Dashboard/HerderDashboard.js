@@ -690,7 +690,7 @@ const HerderDashboard = ({ userId }) => {
             <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2">
               <img src={sideBarLogo} alt="agrotrack_sidebar" />
             </div>
-            <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
+            <div className={`${sidebarOpen ? "block" : "hidden"} lg:block pl-3`}>
               <h1 className="font-bold text-lg text-green-500 leading-5">
                 AgroTrack
               </h1>
