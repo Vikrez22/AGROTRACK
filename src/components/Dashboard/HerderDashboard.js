@@ -22,7 +22,6 @@ import GeoTrackerHerder from "../Cowtracking/GeoTracker";
 import ChatBox from "../Cowtracking/ChatBox";
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
 import sideBarLogo from "../../assets/sidebar_logo_white.png";
-import AdvancedSettingsPanel from "../settings/settings";
 
 // Responsive wrapper for GeoTrackerHerder
 const ResponsiveGeoTrackerHerder = ({ userId }) => (
@@ -74,7 +73,8 @@ const ResponsiveAgroTrackChatBot = () => (
 const HerderDashboard = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const herderUsername = "Alhaji Musa"; // This would be fetched from user profile in a real app
+  const [settingsTab, setSettingsTab] = useState("notifications");
+  const herderUsername = " Alhaji Musa"; 
   const firstLetters = herderUsername
     .split(" ")
     .map((name) => name[0])

@@ -65,7 +65,7 @@ const FarmerDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState("notifications");
-  const userId = "farmer-1";
+  const userId = "farmer";
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Tractor },
