@@ -2515,11 +2515,6 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                   </div>
                 )}
               </div>
-              <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                <a href="/settings">
-                  <Settings size={20} />
-                </a>
-              </button>
               <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-green-700 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-bold">LE</span>
               </div>
