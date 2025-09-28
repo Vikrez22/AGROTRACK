@@ -1604,6 +1604,17 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
             {/* Admin Settings Navigation */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg justify-between">
+                                <button
+                  onClick={() => setAdminSettingsTab("farmers")}
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
+                    adminSettingsTab === "farmers"
+                      ? "bg-white text-green-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-800"
+                  }`}
+                >
+                  <Users size={16} />
+                  User Profiles
+                </button>
                 <button
                   onClick={() => setAdminSettingsTab("notifications")}
                   className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
@@ -1658,17 +1669,6 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 >
                   <Lock size={16} />
                   Security
-                </button>
-                <button
-                  onClick={() => setAdminSettingsTab("farmers")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
-                    adminSettingsTab === "farmers"
-                      ? "bg-white text-green-600 shadow-sm"
-                      : "text-gray-600 hover:text-gray-800"
-                  }`}
-                >
-                  <Users size={16} />
-                  Farmer Profiles
                 </button>
               </div>
             </div>
@@ -2271,15 +2271,15 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg">
                     <h3 className="text-lg font-semibold">Total Users</h3>
-                    <p className="text-3xl font-bold">5</p>
+                    <p className="text-3xl font-bold">3</p>
                   </div>
                   <div className="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
                     <h3 className="text-lg font-semibold">Active Farmers</h3>
-                    <p className="text-3xl font-bold">3</p>
+                    <p className="text-3xl font-bold">2</p>
                   </div>
                   <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-lg">
                     <h3 className="text-lg font-semibold">Active Herders</h3>
-                    <p className="text-3xl font-bold">2</p>
+                    <p className="text-3xl font-bold">1</p>
                   </div>
                   <div className="bg-red-500 text-white p-6 rounded-lg shadow-lg">
                     <h3 className="text-lg font-semibold">
@@ -2329,18 +2329,21 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                             name: "Munachi Onyebuchi",
                             contact: "+2348123456789",
                             location: "Lagos, Nigeria",
+                            role: "Farmer",
                             status: "Active",
                           },
                           {
                             name: "Alhaji Musa",
                             contact: "+2348987654321",
                             location: "Abuja, Nigeria",
+                            role: "Herder",
                             status: "Active",
                           },
                           {
                             name: "Samuel Eze",
                             contact: "+2348012345678",
                             location: "Kano, Nigeria",
+                            role: "Farmer",
                             status: "Active",
                           },
                         ].map((farmer, index) => (
@@ -2353,6 +2356,9 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                             </td>
                             <td className="px-4 py-2 border-b text-sm text-gray-800">
                               {farmer.location}
+                            </td>
+                            <td className="px-4 py-2 border-b text-sm text-gray-800">
+                              {farmer.role}
                             </td>
                             <td className="px-4 py-2 border-b text-sm">
                               <span
