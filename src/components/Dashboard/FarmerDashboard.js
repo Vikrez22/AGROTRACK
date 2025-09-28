@@ -354,7 +354,7 @@ const FarmerDashboard = () => {
                         </label>
                       </div>
                       <p className="text-sm text-gray-600">
-                        Mobile app notifications
+                        Web app notifications
                       </p>
                     </div>
                   </div>
@@ -525,7 +525,7 @@ const FarmerDashboard = () => {
             <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2">
               <img src={sideBarLogo} alt="agrotrack_sidebar" />
             </div>
-            <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
+            <div className={`${sidebarOpen ? "block" : "hidden"} lg:block pl-3`}>
               <h1 className="font-bold text-lg leading-5 text-gray-800">
                 AgroTrack
               </h1>
