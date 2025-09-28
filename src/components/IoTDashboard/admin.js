@@ -2006,7 +2006,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Emergency Contacts
+                    Emergency Contacts <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
