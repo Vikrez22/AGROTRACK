@@ -268,9 +268,7 @@ const LiveTrackingMap = ({
               <p>
                 {/* <strong>Satellites:</strong> {animal.data.satellites} */}
               </p>
-              <p>
-                {/* <strong>Date:</strong> {animal.data.date} */}
-              </p>
+              <p>{/* <strong>Date:</strong> {animal.data.date} */}</p>
               <p>
                 <strong>Time:</strong> {animal.data.time}
               </p>
@@ -688,7 +686,6 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
   // Get real-time data from Firebase
   const {
-    livestockData,
     grazingAreas,
     nonGrazingAreas,
     alarms,
@@ -696,7 +693,6 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
     mapCenter,
     dismissAlarm,
     messageBox,
-    showMessageBox,
     drawType,
     setDrawType,
     handleCreated,
@@ -1228,9 +1224,9 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
               </div>
             </div>
 
-            {/* Reports Table */}
-            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 overflow-x-auto max-w-[1060px]">
-              <table className="text-sm md:text-base w-full">
+            {/* Reports Table the red should be white*/}
+            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 max-w-5xl w-full overflow-x-auto">
+              <table className="min-w-full sm:w-full text-sm md:text-base">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -1607,10 +1603,10 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
           <div className="space-y-6">
             {/* Admin Settings Navigation */}
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg">
+              <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg justify-between">
                 <button
                   onClick={() => setAdminSettingsTab("notifications")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "notifications"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
@@ -1621,7 +1617,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 </button>
                 <button
                   onClick={() => setAdminSettingsTab("alerts")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "alerts"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
@@ -1632,7 +1628,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 </button>
                 <button
                   onClick={() => setAdminSettingsTab("communication")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "communication"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
@@ -1643,7 +1639,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 </button>
                 <button
                   onClick={() => setAdminSettingsTab("advanced")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "advanced"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
@@ -1654,7 +1650,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 </button>
                 <button
                   onClick={() => setAdminSettingsTab("security")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "security"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
@@ -1665,7 +1661,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 </button>
                 <button
                   onClick={() => setAdminSettingsTab("farmers")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "farmers"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
@@ -2482,7 +2478,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
       >
         {/* Top Bar */}
         <header
-          className={`bg-white shadow-sm border-b border-gray-200 px-4 ${
+          className={`bg-white border-b border-gray-200 px-4 ${
             sidebarOpen ? "py-1.5" : "p-0.5"
           } sticky top-0 right-0 flex items-center justify-between z-50`}
         >
@@ -2519,11 +2515,6 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                   </div>
                 )}
               </div>
-              <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                <a href="/settings">
-                  <Settings size={20} />
-                </a>
-              </button>
               <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-green-700 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-bold">LE</span>
               </div>
@@ -2532,7 +2523,9 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-6 overflow-auto">{renderContent()}</main>
+        <main className="flex-1 p-6 overflow-y-auto overflow-x-hidden">
+          {renderContent()}
+        </main>
       </div>
     </div>
   );

@@ -76,7 +76,11 @@ const FarmerDashboard = () => {
   ];
 
   //replace my name with the actual username
-  const farmerUsername = "munachi";
+  const farmerUsername = "Munachi Onyebuchi";
+  const firstLetters = farmerUsername
+    .split(" ")
+    .map((name) => name[0])
+    .join("");
 
   const renderContent = () => {
     switch (activeTab) {
@@ -708,7 +712,7 @@ const FarmerDashboard = () => {
         } lg:ml-64`}
       >
         {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-4 py-0.5 sticky top-0 right-0 flex items-center justify-between z-50">
+        <header className="bg-white border-b border-gray-200 px-4 py-0.5 sticky top-0 right-0 flex items-center justify-between z-50">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -734,7 +738,7 @@ const FarmerDashboard = () => {
             </div>
             <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-bold uppercase">
-                {farmerUsername[0]}
+                {firstLetters}
               </span>
             </div>
           </div>
