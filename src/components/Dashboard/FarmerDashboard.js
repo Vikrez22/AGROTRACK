@@ -64,7 +64,7 @@ const ResponsiveAgroTrackChatBot = () => (
 const FarmerDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [settingsTab, setSettingsTab] = useState("notifications");
+  const [settingsTab, setSettingsTab] = useState("profiles");
   const userId = "farmer";
 
   const tabs = [
@@ -225,17 +225,6 @@ const FarmerDashboard = () => {
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
                 <button
-                  onClick={() => setSettingsTab("notifications")}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md font-medium transition-colors ${
-                    settingsTab === "notifications"
-                      ? "bg-white text-green-600 shadow-sm"
-                      : "text-gray-600 hover:text-gray-800"
-                  }`}
-                >
-                  <Bell size={18} />
-                  Notifications
-                </button>
-                <button
                   onClick={() => setSettingsTab("profiles")}
                   className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md font-medium transition-colors ${
                     settingsTab === "profiles"
@@ -245,6 +234,17 @@ const FarmerDashboard = () => {
                 >
                   <Users size={18} />
                   Farmer Profile
+                </button>
+                <button
+                  onClick={() => setSettingsTab("notifications")}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md font-medium transition-colors ${
+                    settingsTab === "notifications"
+                      ? "bg-white text-green-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-800"
+                  }`}
+                >
+                  <Bell size={18} />
+                  Notifications
                 </button>
               </div>
             </div>
@@ -431,7 +431,7 @@ const FarmerDashboard = () => {
                           <div className="flex justify-between">
                             <span className="text-gray-600">Email:</span>
                             <span className="font-medium text-xs">
-                              adamu.ibrahim@email.com
+                              Munachi.Onyebuchi@email.com
                             </span>
                           </div>
                         </div>
@@ -544,7 +544,7 @@ const FarmerDashboard = () => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`${
-                    sidebarOpen ? "w-full" : "w-fit"
+                    sidebarOpen ? "w-full" : "w-full"
                   } flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     activeTab === tab.id
                       ? "bg-green-500 text-white shadow-lg"
