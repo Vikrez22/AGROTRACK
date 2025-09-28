@@ -1774,7 +1774,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                         </label>
                       </div>
                       <p className="text-sm text-gray-600">
-                        Mobile app notifications
+                        Web app notifications
                       </p>
                     </div>
                   </div>
