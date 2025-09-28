@@ -1783,7 +1783,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 {/* Test Notifications */}
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Test System
+                    Test System <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
