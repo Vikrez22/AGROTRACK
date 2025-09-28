@@ -1604,6 +1604,17 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
             {/* Admin Settings Navigation */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg justify-between">
+                                <button
+                  onClick={() => setAdminSettingsTab("farmers")}
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
+                    adminSettingsTab === "farmers"
+                      ? "bg-white text-green-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-800"
+                  }`}
+                >
+                  <Users size={16} />
+                  User Profiles
+                </button>
                 <button
                   onClick={() => setAdminSettingsTab("notifications")}
                   className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
@@ -1658,17 +1669,6 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 >
                   <Lock size={16} />
                   Security
-                </button>
-                <button
-                  onClick={() => setAdminSettingsTab("farmers")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
-                    adminSettingsTab === "farmers"
-                      ? "bg-white text-green-600 shadow-sm"
-                      : "text-gray-600 hover:text-gray-800"
-                  }`}
-                >
-                  <Users size={16} />
-                  Farmer Profiles
                 </button>
               </div>
             </div>
@@ -1774,7 +1774,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                         </label>
                       </div>
                       <p className="text-sm text-gray-600">
-                        Mobile app notifications
+                        Web app notifications
                       </p>
                     </div>
                   </div>
@@ -1783,7 +1783,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 {/* Test Notifications */}
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Test System
+                     Send Automated Notifications <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1897,7 +1897,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Emergency Response
+                    Emergency Response <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-red-50 p-4 rounded-lg border border-red-200">
@@ -2006,7 +2006,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Emergency Contacts
+                    Emergency Contacts <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -2052,7 +2052,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    AI & Analytics
+                    AI & Analytics <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
@@ -2114,7 +2114,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Integration Settings
+                    Integration Settings <small className="text-red-500">(Coming Soon)</small>  
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -2222,7 +2222,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Data Protection
+                    Data Protection <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-red-50 p-4 rounded-lg border border-red-200">
@@ -2257,46 +2257,46 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
               </div>
             )}
 
-            {/* Farmer Profiles */}
+            {/* Users Profiles */}
             {adminSettingsTab === "farmers" && (
               <div className="space-y-6">
                 <div className="bg-white rounded-lg shadow-lg p-6">
-                  <h2 className="text-2xl font-bold mb-2">Farmer Management</h2>
+                  <h2 className="text-2xl font-bold mb-2">Users Management</h2>
                   <p className="text-gray-600">
-                    Manage registered farmers and their information
+                    Manage registered Users and their information
                   </p>
                 </div>
 
                 {/* Farmer Statistics */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg">
-                    <h3 className="text-lg font-semibold">Total Farmers</h3>
-                    <p className="text-3xl font-bold">1,250</p>
+                    <h3 className="text-lg font-semibold">Total Users</h3>
+                    <p className="text-3xl font-bold">3</p>
                   </div>
                   <div className="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
                     <h3 className="text-lg font-semibold">Active Farmers</h3>
-                    <p className="text-3xl font-bold">1,100</p>
+                    <p className="text-3xl font-bold">2</p>
                   </div>
                   <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-lg">
-                    <h3 className="text-lg font-semibold">Pending Approvals</h3>
-                    <p className="text-3xl font-bold">45</p>
+                    <h3 className="text-lg font-semibold">Active Herders</h3>
+                    <p className="text-3xl font-bold">1</p>
                   </div>
                   <div className="bg-red-500 text-white p-6 rounded-lg shadow-lg">
                     <h3 className="text-lg font-semibold">
                       Suspended Accounts
                     </h3>
-                    <p className="text-3xl font-bold">15</p>
+                    <p className="text-3xl font-bold">0</p>
                   </div>
                 </div>
-                {/* Farmer List */}
+                {/* Users List */}
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-800">
-                      Registered Farmers
+                      Registered Users
                     </h3>
                     <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2">
                       <Plus size={16} />
-                      Add Farmer
+                      Add User
                     </button>
                   </div>
                   <div className="overflow-x-auto">
@@ -2313,6 +2313,9 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                             Location
                           </th>
                           <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
+                            Role
+                          </th>
+                          <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
                             Status
                           </th>
                           <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
@@ -2323,22 +2326,25 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                       <tbody>
                         {[
                           {
-                            name: "John Doe",
+                            name: "Munachi Onyebuchi",
                             contact: "+2348123456789",
                             location: "Lagos, Nigeria",
+                            role: "Farmer",
                             status: "Active",
                           },
                           {
-                            name: "Jane Smith",
+                            name: "Alhaji Musa",
                             contact: "+2348987654321",
                             location: "Abuja, Nigeria",
-                            status: "Pending",
+                            role: "Herder",
+                            status: "Active",
                           },
                           {
-                            name: "Samuel Green",
+                            name: "Samuel Eze",
                             contact: "+2348012345678",
                             location: "Kano, Nigeria",
-                            status: "Suspended",
+                            role: "Farmer",
+                            status: "Active",
                           },
                         ].map((farmer, index) => (
                           <tr key={index} className="hover:bg-gray-50">
@@ -2350,6 +2356,9 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                             </td>
                             <td className="px-4 py-2 border-b text-sm text-gray-800">
                               {farmer.location}
+                            </td>
+                            <td className="px-4 py-2 border-b text-sm text-gray-800">
+                              {farmer.role}
                             </td>
                             <td className="px-4 py-2 border-b text-sm">
                               <span
@@ -2403,7 +2412,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
             <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2">
               <img src={sideBarLogo} alt="agrotrack_sidebar" />
             </div>
-            <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
+            <div className={`${sidebarOpen ? "block" : "hidden"} lg:block pl-3`}>
               <h1 className="font-bold text-lg text-gray-800">AgroTrack</h1>
               <p className="text-sm text-gray-500">Law Enforcement</p>
             </div>
@@ -2420,7 +2429,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`${
-                    sidebarOpen ? "w-full" : "w-fit"
+                    sidebarOpen ? "w-full" : "w-full"
                   } flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     activeTab === tab.id
                       ? "bg-green-500 text-white shadow-lg"
