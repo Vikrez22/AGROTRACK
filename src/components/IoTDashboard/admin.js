@@ -2257,46 +2257,46 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
               </div>
             )}
 
-            {/* Farmer Profiles */}
+            {/* Users Profiles */}
             {adminSettingsTab === "farmers" && (
               <div className="space-y-6">
                 <div className="bg-white rounded-lg shadow-lg p-6">
-                  <h2 className="text-2xl font-bold mb-2">Farmer Management</h2>
+                  <h2 className="text-2xl font-bold mb-2">Users Management</h2>
                   <p className="text-gray-600">
-                    Manage registered farmers and their information
+                    Manage registered Users and their information
                   </p>
                 </div>
 
                 {/* Farmer Statistics */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg">
-                    <h3 className="text-lg font-semibold">Total Farmers</h3>
-                    <p className="text-3xl font-bold">1,250</p>
+                    <h3 className="text-lg font-semibold">Total Users</h3>
+                    <p className="text-3xl font-bold">5</p>
                   </div>
                   <div className="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
                     <h3 className="text-lg font-semibold">Active Farmers</h3>
-                    <p className="text-3xl font-bold">1,100</p>
+                    <p className="text-3xl font-bold">3</p>
                   </div>
                   <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-lg">
-                    <h3 className="text-lg font-semibold">Pending Approvals</h3>
-                    <p className="text-3xl font-bold">45</p>
+                    <h3 className="text-lg font-semibold">Active Herders</h3>
+                    <p className="text-3xl font-bold">2</p>
                   </div>
                   <div className="bg-red-500 text-white p-6 rounded-lg shadow-lg">
                     <h3 className="text-lg font-semibold">
                       Suspended Accounts
                     </h3>
-                    <p className="text-3xl font-bold">15</p>
+                    <p className="text-3xl font-bold">0</p>
                   </div>
                 </div>
-                {/* Farmer List */}
+                {/* Users List */}
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-800">
-                      Registered Farmers
+                      Registered Users
                     </h3>
                     <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2">
                       <Plus size={16} />
-                      Add Farmer
+                      Add User
                     </button>
                   </div>
                   <div className="overflow-x-auto">
