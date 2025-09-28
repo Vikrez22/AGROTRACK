@@ -540,7 +540,7 @@ const AgroTrackLandingPage = () => {
 
       {/* CTA Section */}
       <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 flex items-center flex-col">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Ready to Build Peace Through Technology?
           </h2>
