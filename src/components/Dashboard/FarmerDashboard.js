@@ -400,10 +400,10 @@ const FarmerDashboard = () => {
                         </div>
                         <div>
                           <h4 className="text-xl font-semibold text-gray-800">
-                            Adamu Ibrahim
+                            Munachi Onyebuchi
                           </h4>
                           <p className="text-sm text-gray-500">
-                            Registered: Aug 15, 2025
+                            Registered: Sep 15, 2025
                           </p>
                         </div>
                       </div>
