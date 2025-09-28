@@ -2403,7 +2403,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
             <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2">
               <img src={sideBarLogo} alt="agrotrack_sidebar" />
             </div>
-            <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
+            <div className={`${sidebarOpen ? "block" : "hidden"} lg:block pl-3`}>
               <h1 className="font-bold text-lg text-gray-800">AgroTrack</h1>
               <p className="text-sm text-gray-500">Law Enforcement</p>
             </div>
@@ -2420,7 +2420,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`${
-                    sidebarOpen ? "w-full" : "w-fit"
+                    sidebarOpen ? "w-full" : "w-full"
                   } flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     activeTab === tab.id
                       ? "bg-green-500 text-white shadow-lg"
