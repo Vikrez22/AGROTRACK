@@ -1603,10 +1603,10 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
           <div className="space-y-6">
             {/* Admin Settings Navigation */}
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg">
+              <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg justify-between">
                 <button
                   onClick={() => setAdminSettingsTab("notifications")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "notifications"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
@@ -1617,7 +1617,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 </button>
                 <button
                   onClick={() => setAdminSettingsTab("alerts")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "alerts"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
@@ -1628,7 +1628,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 </button>
                 <button
                   onClick={() => setAdminSettingsTab("communication")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "communication"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
@@ -1639,7 +1639,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 </button>
                 <button
                   onClick={() => setAdminSettingsTab("advanced")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "advanced"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
@@ -1650,7 +1650,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 </button>
                 <button
                   onClick={() => setAdminSettingsTab("security")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "security"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
@@ -1661,7 +1661,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 </button>
                 <button
                   onClick={() => setAdminSettingsTab("farmers")}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md font-medium transition-colors text-xs ${
+                  className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "farmers"
                       ? "bg-white text-green-600 shadow-sm"
                       : "text-gray-600 hover:text-gray-800"
