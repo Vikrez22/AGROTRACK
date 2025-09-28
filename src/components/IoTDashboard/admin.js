@@ -2313,6 +2313,9 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                             Location
                           </th>
                           <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
+                            Role
+                          </th>
+                          <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
                             Status
                           </th>
                           <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
@@ -2323,22 +2326,22 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                       <tbody>
                         {[
                           {
-                            name: "John Doe",
+                            name: "Munachi Onyebuchi",
                             contact: "+2348123456789",
                             location: "Lagos, Nigeria",
                             status: "Active",
                           },
                           {
-                            name: "Jane Smith",
+                            name: "Alhaji Musa",
                             contact: "+2348987654321",
                             location: "Abuja, Nigeria",
-                            status: "Pending",
+                            status: "Active",
                           },
                           {
-                            name: "Samuel Green",
+                            name: "Samuel Eze",
                             contact: "+2348012345678",
                             location: "Kano, Nigeria",
-                            status: "Suspended",
+                            status: "Active",
                           },
                         ].map((farmer, index) => (
                           <tr key={index} className="hover:bg-gray-50">
