@@ -244,7 +244,7 @@ const FarmerDashboard = () => {
                   }`}
                 >
                   <Users size={18} />
-                  Farmer Profiles
+                  Farmer Profile
                 </button>
               </div>
             </div>
@@ -382,9 +382,9 @@ const FarmerDashboard = () => {
               <div className="space-y-6">
                 {/* Header */}
                 <div className="bg-white rounded-lg shadow-lg p-6">
-                  <h2 className="text-2xl font-bold mb-2">Farmer Profiles</h2>
+                  <h2 className="text-2xl font-bold mb-2">Farmer Profile</h2>
                   <p className="text-gray-600">
-                    Manage registered farmers and their information in the
+                    View registered farmer information in the
                     system.
                   </p>
                 </div>
@@ -403,7 +403,7 @@ const FarmerDashboard = () => {
                             Adamu Ibrahim
                           </h4>
                           <p className="text-sm text-gray-500">
-                            Registered: Jan 15, 2024
+                            Registered: Aug 15, 2025
                           </p>
                         </div>
                       </div>
@@ -478,117 +478,6 @@ const FarmerDashboard = () => {
                             <span className="text-gray-600">Cooperative:</span>
                             <span className="font-medium text-xs">
                               Plateau Cattle Farmers Assoc.
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 pt-4 border-t border-gray-200">
-                      <div className="flex flex-wrap gap-2">
-                        <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                          View Animals
-                        </button>
-                        <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                          Send Message
-                        </button>
-                        <button className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
-                          Contact Info
-                        </button>
-                        <button className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
-                          View Reports
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Farmer 2 */}
-                  <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
-                          <User className="text-white" size={20} />
-                        </div>
-                        <div>
-                          <h4 className="text-xl font-semibold text-gray-800">
-                            Musa Garba
-                          </h4>
-                          <p className="text-sm text-gray-500">
-                            Registered: Feb 10, 2024
-                          </p>
-                        </div>
-                      </div>
-                      <button className="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2">
-                        <Edit size={16} />
-                        Edit Profile
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      <div className="space-y-3">
-                        <h5 className="font-semibold text-gray-700 flex items-center gap-2">
-                          <User size={16} />
-                          Personal Information
-                        </h5>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">NIN:</span>
-                            <span className="font-medium">98765432109</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Phone:</span>
-                            <span className="font-medium">+2348234567890</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Email:</span>
-                            <span className="font-medium text-xs">
-                              musa.garba@email.com
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
-                        <h5 className="font-semibold text-gray-700 flex items-center gap-2">
-                          <MapPin size={16} />
-                          Farm Details
-                        </h5>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Location:</span>
-                            <span className="font-medium text-xs">
-                              Kaduna State, Nigeria
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Size:</span>
-                            <span className="font-medium">75 hectares</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Livestock:</span>
-                            <span className="font-medium">40 animals</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
-                        <h5 className="font-semibold text-gray-700 flex items-center gap-2">
-                          <Phone size={16} />
-                          Additional Information
-                        </h5>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Emergency:</span>
-                            <span className="font-medium">+2348876543210</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Bank Account:</span>
-                            <span className="font-medium">9876543210</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Cooperative:</span>
-                            <span className="font-medium text-xs">
-                              Kaduna Herders Union
                             </span>
                           </div>
                         </div>
