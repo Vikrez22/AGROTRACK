@@ -160,7 +160,7 @@ const HerderDashboard = ({ userId }) => {
                       <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                       <div className="flex-1">
                         <p className="text-sm font-medium">
-                          Message from farmer nearby
+                          Message from Herder nearby
                         </p>
                         <p className="text-xs text-gray-500">10 minutes ago</p>
                       </div>
@@ -408,7 +408,7 @@ const HerderDashboard = ({ userId }) => {
                               </label>
                             </div>
                             <p className="text-sm text-gray-600">
-                              Mobile app notifications
+                              Web app notifications
                             </p>
                           </div>
                         </div>
@@ -454,10 +454,10 @@ const HerderDashboard = ({ userId }) => {
                               </div>
                               <div>
                                 <h4 className="text-xl font-semibold text-gray-800">
-                                  Musa Garba
+                                  Alhaji Musa
                                 </h4>
                                 <p className="text-sm text-gray-500">
-                                  Registered: Feb 10, 2024
+                                  Registered: Sep 10, 2025
                                 </p>
                               </div>
                             </div>
