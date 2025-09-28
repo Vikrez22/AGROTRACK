@@ -2052,7 +2052,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    AI & Analytics
+                    AI & Analytics <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
@@ -2114,7 +2114,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Integration Settings
+                    Integration Settings <small className="text-red-500">(Coming Soon)</small>  
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -2222,7 +2222,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Data Protection
+                    Data Protection <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-red-50 p-4 rounded-lg border border-red-200">
