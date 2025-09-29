@@ -575,9 +575,11 @@ const HerderDashboard = ({ userId }) => {
         {/* Header */}
         <div className="p-1.5 border-b border-gray-200 flex items-center">
           <div className="flex items-center">
-            <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2">
-              <img src={sideBarLogo} alt="agrotrack_sidebar" />
-            </div>
+            <a href="/">
+              <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2 cursor-pointer">
+                <img src={sideBarLogo} alt="agrotrack_sidebar" />
+              </div>
+            </a>
             <div
               className={`${sidebarOpen ? "block" : "hidden"} lg:block pl-3`}
             >
