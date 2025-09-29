@@ -170,7 +170,7 @@ const AgroTrackLandingPage = () => {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2"
+              className="md:hidden p-2 cursor-pointer"
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
