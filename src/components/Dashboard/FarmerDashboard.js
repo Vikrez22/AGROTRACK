@@ -384,8 +384,7 @@ const FarmerDashboard = () => {
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h2 className="text-2xl font-bold mb-2">Farmer Profile</h2>
                   <p className="text-gray-600">
-                    View registered farmer information in the
-                    system.
+                    View registered farmer information in the system.
                   </p>
                 </div>
 
@@ -521,11 +520,13 @@ const FarmerDashboard = () => {
       >
         {/* Header */}
         <div className="p-1.5 border-b border-gray-200 flex items-center">
-          <div className={`flex items-center ${sidebarOpen ? "gap-3" : ""}`}>
+          <div className="flex items-center">
             <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2">
               <img src={sideBarLogo} alt="agrotrack_sidebar" />
             </div>
-            <div className={`${sidebarOpen ? "block" : "hidden"} lg:block pl-3`}>
+            <div
+              className={`${sidebarOpen ? "block" : "hidden"} lg:block pl-3`}
+            >
               <h1 className="font-bold text-lg leading-5 text-gray-800">
                 AgroTrack
               </h1>
