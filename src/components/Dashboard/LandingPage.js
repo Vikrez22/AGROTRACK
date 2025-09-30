@@ -17,6 +17,7 @@ import sideBarLogo from "../../assets/logo.png";
 import sideBarLogoW from "../../assets/logo_white.png";
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
 import heroImage from "../../assets/Gemini_Generated_Image_ikwgarikwgarikwg.png";
+import marketplace from "../../assets/marketplace.avif";
 
 const AgroTrackLandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -169,7 +170,7 @@ const AgroTrackLandingPage = () => {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2"
+              className="md:hidden p-2 cursor-pointer"
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -393,7 +394,7 @@ const AgroTrackLandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="bg-green-50 p-8 rounded-2xl">
+            <div className="bg-green-100 p-8 rounded-2xl">
               <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-6">
                 <Wifi className="w-6 h-6 text-white" />
               </div>
@@ -420,7 +421,7 @@ const AgroTrackLandingPage = () => {
               </ul>
             </div>
 
-            <div className="bg-blue-50 p-8 rounded-2xl">
+            <div className="bg-green-100 p-8 rounded-2xl">
               <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-6">
                 <Shield className="w-6 h-6 text-white" />
               </div>
@@ -447,7 +448,7 @@ const AgroTrackLandingPage = () => {
               </ul>
             </div>
 
-            <div className="bg-purple-50 p-8 rounded-2xl">
+            <div className="bg-green-100 p-8 rounded-2xl">
               <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-6">
                 <Radio className="w-6 h-6 text-white" />
               </div>
@@ -496,7 +497,7 @@ const AgroTrackLandingPage = () => {
               return (
                 <div
                   key={index}
-                  className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow"
+                  className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-150"
                 >
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-6">
                     <IconComponent className="w-6 h-6 text-green-600" />
@@ -511,26 +512,35 @@ const AgroTrackLandingPage = () => {
           </div>
 
           {/* Marketplace Coming Soon */}
-          <div className="mt-16 bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-8 text-center text-white">
-            <TrendingUp className="w-12 h-12 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold mb-4">
-              Secure Marketplace - Coming Soon
-            </h3>
-            <p className="text-green-100 max-w-2xl mx-auto">
-              Connect farmers and herders for peaceful trade and collaboration.
-              Pre-register now to be among the first to access our secure
-              trading platform.
-            </p>
-            <button className="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold mt-6 hover:bg-green-50 transition-colors">
-              Join Waitlist
-            </button>
+          <div
+            className="mt-16 bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-8 text-center text-green-600"
+            style={{
+              backgroundImage: `url(${marketplace})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <div className="w-fit p-3 bg-white mx-auto rounded-lg">
+              <TrendingUp className="w-12 h-12 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold mb-4">
+                Secure Marketplace - Coming Soon
+              </h3>
+              <p className="text-green-600 max-w-2xl mx-auto font-semibold">
+                Connect farmers and herders for peaceful trade and
+                collaboration. Pre-register now to be among the first to access
+                our secure trading platform.
+              </p>
+              <button className="bg-white text-green-600 border-2 border-green-500 px-8 py-2 rounded-full font-semibold mt-6 hover:bg-green-50 transition-colors">
+                Join Waitlist
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 flex items-center flex-col">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Ready to Build Peace Through Technology?
           </h2>
@@ -541,13 +551,13 @@ const AgroTrackLandingPage = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/login"
-              className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+              className="border-2 border-green-700 hover:text-white text-green-700 px-8 py-3 rounded-full font-semibold hover:bg-green-700 transition-colors"
             >
               Get Started
             </a>
             <button
               onClick={() => setReportModalOpen(true)}
-              className="bg-red-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-red-700 transition-colors"
+              className="border-2 border-red-700 hover:text-white text-red-700 px-8 py-3 rounded-full font-semibold hover:bg-red-700 transition-colors"
             >
               Report an Incident
             </button>

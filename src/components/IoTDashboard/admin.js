@@ -1604,7 +1604,7 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
             {/* Admin Settings Navigation */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg justify-between">
-                                <button
+                <button
                   onClick={() => setAdminSettingsTab("farmers")}
                   className={`flex items-center justify-center gap-2 py-2 px-3 whitespace-nowrap rounded-md font-medium transition-colors text-xs ${
                     adminSettingsTab === "farmers"
@@ -1783,7 +1783,8 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
                 {/* Test Notifications */}
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                     Send Automated Notifications <small className="text-red-500">(Coming Soon)</small>
+                    Send Automated Notifications{" "}
+                    <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1897,7 +1898,8 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Emergency Response <small className="text-red-500">(Coming Soon)</small>
+                    Emergency Response{" "}
+                    <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-red-50 p-4 rounded-lg border border-red-200">
@@ -2006,7 +2008,8 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Emergency Contacts <small className="text-red-500">(Coming Soon)</small>
+                    Emergency Contacts{" "}
+                    <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -2052,7 +2055,8 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    AI & Analytics <small className="text-red-500">(Coming Soon)</small>
+                    AI & Analytics{" "}
+                    <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
@@ -2114,7 +2118,8 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Integration Settings <small className="text-red-500">(Coming Soon)</small>  
+                    Integration Settings{" "}
+                    <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -2222,7 +2227,8 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
 
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Data Protection <small className="text-red-500">(Coming Soon)</small>
+                    Data Protection{" "}
+                    <small className="text-red-500">(Coming Soon)</small>
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-red-50 p-4 rounded-lg border border-red-200">
@@ -2406,13 +2412,15 @@ const LawEnforcementDashboard = ({ userId = "law-enforcement" }) => {
       >
         {/* Header */}
         <div className="p-1.5 border-b border-gray-200 flex items-center w-full">
-          <div
-            className={`flex items-center ${sidebarOpen ? "gap-3" : undefined}`}
-          >
-            <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2">
-              <img src={sideBarLogo} alt="agrotrack_sidebar" />
-            </div>
-            <div className={`${sidebarOpen ? "block" : "hidden"} lg:block pl-3`}>
+          <div className="flex items-center">
+            <a href="/">
+              <div className="w-11 h-10 bg-green-500 rounded-lg flex items-center justify-center p-2 cursor-pointer">
+                <img src={sideBarLogo} alt="agrotrack_sidebar" />
+              </div>
+            </a>
+            <div
+              className={`${sidebarOpen ? "block" : "hidden"} lg:block pl-3`}
+            >
               <h1 className="font-bold text-lg text-gray-800">AgroTrack</h1>
               <p className="text-sm text-gray-500">Law Enforcement</p>
             </div>
