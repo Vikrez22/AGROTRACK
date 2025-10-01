@@ -18,6 +18,9 @@ import sideBarLogoW from "../../assets/logo_white.png";
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
 import heroImage from "../../assets/Gemini_Generated_Image_ikwgarikwgarikwg.png";
 import marketplace from "../../assets/marketplace.avif";
+import agrotrackCollar from "../../assets/cow-wearing-agrotrack-collar.jpg";
+import emergencyResponseImg from "../../assets/focused-medical-worker-outdoor-clinic_192345-2792.jpg";
+import geoFencingImg from "../../assets/Screenshot 2025-10-01 at 01-17-48 AgroTrack Peace through Technology.png";
 
 const AgroTrackLandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -394,11 +397,15 @@ const AgroTrackLandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="bg-green-100 p-8 rounded-2xl">
-              <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-6">
-                <Wifi className="w-6 h-6 text-white" />
+            <div className="bg-green-100 p-6 rounded-2xl">
+              <div className="w-full h-[220px] bg-green-600 rounded-lg flex items-center justify-center mb-6">
+                <img
+                  src={agrotrackCollar}
+                  alt="cow wearing agrotrack esp32 and neo6m gps module collar"
+                  className="min-w-full h-full object-cover rounded-lg"
+                />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-xl font-semibold text-green-700 mb-4">
                 IoT Hardware
               </h3>
               <p className="text-gray-700 mb-6">
@@ -421,11 +428,15 @@ const AgroTrackLandingPage = () => {
               </ul>
             </div>
 
-            <div className="bg-green-100 p-8 rounded-2xl">
-              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-6">
-                <Shield className="w-6 h-6 text-white" />
+            <div className="bg-green-100 p-6 rounded-2xl">
+              <div className="w-full h-[220px] bg-green-600 rounded-lg flex items-center justify-center mb-6">
+                <img
+                  src={geoFencingImg}
+                  alt="agrotrack smart geofencing feature"
+                  className="min-w-full h-full object-cover rounded-lg"
+                />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-xl font-semibold text-green-700 mb-4">
                 Smart Geofencing
               </h3>
               <p className="text-gray-700 mb-6">
@@ -434,25 +445,29 @@ const AgroTrackLandingPage = () => {
               </p>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                   Custom boundary creation
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                   Multi-level alert system
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                   SMS, call & app notifications
                 </li>
               </ul>
             </div>
 
-            <div className="bg-green-100 p-8 rounded-2xl">
-              <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-6">
-                <Radio className="w-6 h-6 text-white" />
+            <div className="bg-green-100 p-6 rounded-2xl">
+              <div className="w-full h-[220px] bg-green-600 rounded-lg flex items-center justify-center mb-6">
+                <img
+                  src={emergencyResponseImg}
+                  alt="agrotrack emergency response operative"
+                  className="min-w-full h-full object-cover rounded-lg"
+                />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-xl font-semibold text-green-700 mb-4">
                 Emergency Response
               </h3>
               <p className="text-gray-700 mb-6">
@@ -461,15 +476,15 @@ const AgroTrackLandingPage = () => {
               </p>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                   24/7 monitoring center
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                   Incident reporting system
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                   Evidence collection tools
                 </li>
               </ul>
