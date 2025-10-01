@@ -10,7 +10,7 @@ import {
   Radio,
   Eye,
   TrendingUp,
-  Wifi,
+  Hash,
   ArrowRightIcon,
 } from "lucide-react";
 import sideBarLogo from "../../assets/logo.png";
@@ -65,6 +65,11 @@ const AgroTrackLandingPage = () => {
 
   const features = [
     {
+      icon: Eye,
+      title: "Live Monitoring Dashboard",
+      description: "Real-time tracking and management of livestock movements",
+    },
+    {
       icon: Shield,
       title: "Smart Geo-Fencing",
       description:
@@ -89,15 +94,11 @@ const AgroTrackLandingPage = () => {
         "Educational support and guidance for farmers and herders in multiple languages",
     },
     {
-      icon: Radio,
-      title: "Emergency Response",
+      icon: Hash,
+      title: "USSD Access",
       description:
-        "Direct communication with law enforcement and emergency services",
-    },
-    {
-      icon: Eye,
-      title: "Live Monitoring Dashboard",
-      description: "Real-time tracking and management of livestock movements",
+        "Affordable offline access for checking grazing and non-grazing areas",
+      comingSoon: true,
     },
   ];
 
@@ -514,8 +515,16 @@ const AgroTrackLandingPage = () => {
                   key={index}
                   className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-150"
                 >
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-6">
-                    <IconComponent className="w-6 h-6 text-green-600" />
+                  <div className="w-full flex items-start justify-between mb-6">
+                    <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                      <IconComponent className="w-6 h-6 text-green-600" />
+                    </div>
+
+                    {feature.comingSoon && (
+                      <span className="ml-2 text-xs border-2 border-red-600 text-red-600 px-3 py-1 rounded-full font-semibold">
+                        Coming Soon
+                      </span>
+                    )}
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">
                     {feature.title}
