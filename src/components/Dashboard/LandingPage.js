@@ -7,19 +7,17 @@ import {
   Upload,
   Menu,
   X,
+  Radio,
   Eye,
   TrendingUp,
+  Wifi,
   ArrowRightIcon,
-  Hash,
 } from "lucide-react";
 import sideBarLogo from "../../assets/logo.png";
 import sideBarLogoW from "../../assets/logo_white.png";
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
 import heroImage from "../../assets/Gemini_Generated_Image_ikwgarikwgarikwg.png";
 import marketplace from "../../assets/marketplace.avif";
-import agrotrackCollar from "../../assets/cow-wearing-agrotrack-collar.jpg";
-import emergencyResponseImg from "../../assets/focused-medical-worker-outdoor-clinic_192345-2792.jpg";
-import geoFencingImg from "../../assets/Screenshot 2025-10-01 at 01-17-48 AgroTrack Peace through Technology.png";
 
 const AgroTrackLandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -64,11 +62,6 @@ const AgroTrackLandingPage = () => {
 
   const features = [
     {
-      icon: Eye,
-      title: "Live Monitoring Dashboard",
-      description: "Real-time tracking and management of livestock movements",
-    },
-    {
       icon: Shield,
       title: "Smart Geo-Fencing",
       description:
@@ -93,11 +86,15 @@ const AgroTrackLandingPage = () => {
         "Educational support and guidance for farmers and herders in multiple languages",
     },
     {
-      icon: Hash,
-      title: "USSD Access",
+      icon: Radio,
+      title: "Emergency Response",
       description:
-        "Affordable offline access for checking grazing and non-grazing areas",
-      comingSoon: true,
+        "Direct communication with law enforcement and emergency services",
+    },
+    {
+      icon: Eye,
+      title: "Live Monitoring Dashboard",
+      description: "Real-time tracking and management of livestock movements",
     },
   ];
 
@@ -396,113 +393,86 @@ const AgroTrackLandingPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-rows-1 lg:grid-rows-3 gap-8">
-            <div className="bg-green-100 p-4 flex max-w-4xl gap-4">
-              {/* this should w-[400px] */}
-              <div className="min-w-40">
-                <img
-                  src={agrotrackCollar}
-                  alt="cow wearing agrotrack collar"
-                  className="min-w-full rounded-2xl"
-                />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="bg-green-100 p-8 rounded-2xl">
+              <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-6">
+                <Wifi className="w-6 h-6 text-white" />
               </div>
-              <div className="h-fit">
-                <h3 className="text-xl sm:text-[22px] font-semibold text-green-700 mb-4">
-                  IOT Hardware
-                </h3>
-                <p className="text-gray-700 mb-6 font-medium">
-                  Our GPS-enabled collars, powered by ESP32, continuously
-                  monitor livestock and transmit precise location updates to the
-                  cloud every 30 seconds, enabling real-time tracking and early
-                  warning alerts.
-                </p>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                    Solar powered for long-term use
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                    Waterproof and durable design
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                    GPS + cellular connectivity
-                  </li>
-                </ul>
-              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                IoT Hardware
+              </h3>
+              <p className="text-gray-700 mb-6">
+                ESP32-powered GPS collars track livestock location in real-time,
+                sending data to our cloud platform every 30 seconds.
+              </p>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                  Solar powered for long-term use
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                  Waterproof and durable design
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                  GPS + cellular connectivity
+                </li>
+              </ul>
             </div>
 
-            <div className="bg-green-100 p-4 flex max-w-4xl gap-4 flex-row-reverse place-self-end h-full">
-              {/* this should w-[400px] */}
-              <div className="min-w-[359px]">
-                <img
-                  src={geoFencingImg}
-                  alt="agrotrack geofencing"
-                  className="min-w-full h-full object-cover object-center rounded-2xl"
-                />
+            <div className="bg-green-100 p-8 rounded-2xl">
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-6">
+                <Shield className="w-6 h-6 text-white" />
               </div>
-              <div className="h-fit">
-                <h3 className="text-xl sm:text-[22px] font-semibold text-green-700 mb-4">
-                  Smart Geofencing
-                </h3>
-                <p className="text-gray-700 mb-6">
-                  Easily map out grazing zones and restricted farmland. Receive
-                  real-time alerts the moment livestock stray into protected
-                  areas, helping farmers respond quickly and avoid costly
-                  disputes.
-                </p>
-                <ul className="space-y-2 text-sm text-gray-600 text-right">
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                    Draw and customize boundaries directly on the map
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                    alerts for warnings and critical breaches
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                    Instant updates via SMS, automated calls, and app
-                    notifications
-                  </li>
-                </ul>
-              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Smart Geofencing
+              </h3>
+              <p className="text-gray-700 mb-6">
+                Define safe grazing areas and restricted zones. Get instant
+                alerts when animals approach or enter forbidden areas.
+              </p>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Custom boundary creation
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Multi-level alert system
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  SMS, call & app notifications
+                </li>
+              </ul>
             </div>
 
-            <div className="bg-green-100 p-4 flex max-w-4xl gap-4">
-              {/* this should w-[400px] */}
-              <div className="min-w-40">
-                <img
-                  src={emergencyResponseImg}
-                  alt="agrotrack emergency response"
-                  className="min-w-full h-full object-cover object-right rounded-2xl"
-                />
+            <div className="bg-green-100 p-8 rounded-2xl">
+              <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-6">
+                <Radio className="w-6 h-6 text-white" />
               </div>
-              <div className="h-fit">
-                <h3 className="text-xl sm:text-[22px] font-semibold text-green-700 mb-4">
-                  Emergency Response
-                </h3>
-                <p className="text-gray-700 mb-6">
-                  Real-time response channels link farmers, herders, and
-                  security agencies, enabling faster reporting, coordinated
-                  action, and peaceful conflict resolution on the ground.
-                </p>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                    24/7 monitoring center
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                    Incident reporting system
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                    Evidence collection tools
-                  </li>
-                </ul>
-              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Emergency Response
+              </h3>
+              <p className="text-gray-700 mb-6">
+                Direct communication channels connect farmers, herders, and law
+                enforcement for rapid conflict resolution.
+              </p>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                  24/7 monitoring center
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                  Incident reporting system
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                  Evidence collection tools
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -529,16 +499,8 @@ const AgroTrackLandingPage = () => {
                   key={index}
                   className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-150"
                 >
-                  <div className="w-full flex items-start justify-between mb-6">
-                    <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                      <IconComponent className="w-6 h-6 text-green-600" />
-                    </div>
-
-                    {feature.comingSoon && (
-                      <span className="ml-2 text-xs border-2 border-red-600 text-red-600 px-3 py-1 rounded-full font-semibold">
-                        Coming Soon
-                      </span>
-                    )}
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-6">
+                    <IconComponent className="w-6 h-6 text-green-600" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">
                     {feature.title}
@@ -595,7 +557,7 @@ const AgroTrackLandingPage = () => {
             </a>
             <button
               onClick={() => setReportModalOpen(true)}
-              className="border-2 border-red-700 hover:text-white text-red-700 px-8 py-3 rounded-full font-semibold hover:bg-red-700 transition-colors cursor-pointer"
+              className="border-2 border-red-700 hover:text-white text-red-700 px-8 py-3 rounded-full font-semibold hover:bg-red-700 transition-colors"
             >
               Report an Incident
             </button>
