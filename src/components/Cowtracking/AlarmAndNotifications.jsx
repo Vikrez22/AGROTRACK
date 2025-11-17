@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from "react";
 
 const AlarmAndNotifications = ({ trigger }) => {
   useEffect(() => {
@@ -10,12 +10,12 @@ const AlarmAndNotifications = ({ trigger }) => {
       const message = `🚨 You don enta non-grazing area. Abeg comot sharp sharp!
       Ka shiga wurin da ba a yarda da kiwo ba. Don Allah, ka bar wurin nan yanzu.`;
 
-      if (Notification.permission === 'granted') {
-        new Notification('🚨 Non-Grazing Alert', { body: message });
-      } else if (Notification.permission !== 'denied') {
+      if (Notification.permission === "granted") {
+        new Notification("🚨 Non-Grazing Alert", { body: message });
+      } else if (Notification.permission !== "denied") {
         Notification.requestPermission().then((permission) => {
-          if (permission === 'granted') {
-            new Notification('🚨 Non-Grazing Alert', { body: message });
+          if (permission === "granted") {
+            new Notification("🚨 Non-Grazing Alert", { body: message });
           }
         });
       }

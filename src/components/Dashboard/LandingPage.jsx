@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import {
   MapPin,
   Shield,
@@ -7,7 +7,6 @@ import {
   Upload,
   Menu,
   X,
-  Radio,
   Eye,
   TrendingUp,
   Hash,
@@ -222,7 +221,7 @@ const AgroTrackLandingPage = () => {
 
       {/* Hero Section */}
       <section
-        className="relative overflow-hidden bg-gradient-to-br from-green-50 to-white min-h-screen"
+        className="relative overflow-hidden"
         style={{
           backgroundImage: `url(${heroImage})`,
           backgroundSize: "cover",
