@@ -1,21 +1,19 @@
-// src/App.js
 import { Routes, Route } from "react-router-dom";
 
 import LandingPage from "./components/Dashboard/LandingPage";
 import Signup from "./components/Auth/Signup";
 import Login from "./components/Auth/Login";
 
-import AdminDashboard from "./components/Dashboard/AdminDashboard";
 import HerderDashboard from "./components/Dashboard/HerderDashboard";
 import FarmerDashboard from "./components/Dashboard/FarmerDashboard";
 
 import withUserId from "./components/Cowtracking/PrivateDashboardWrapper";
 
-import IoTLivestockDashboard from "./components/IoTDashboard/IoTLivestockDashboard";
 import LawEnforcementDashboard from "./components/IoTDashboard/admin";
 import Marketplace from "./components/Marketplace/marketplace";
 
-const AdminDashboardWithUser = withUserId(AdminDashboard);
+import NotFound from "./NotFound";
+
 const HerderDashboardWithUser = withUserId(HerderDashboard);
 const FarmerDashboardWithUser = withUserId(FarmerDashboard);
 
@@ -25,12 +23,11 @@ const App = () => (
     <Route path="/signup" element={<Signup />} />
     <Route path="/login" element={<Login />} />
 
-    <Route path="/admin-dashboards" element={<AdminDashboardWithUser />} />
+    <Route path="/admin-dashboard" element={<LawEnforcementDashboard />} />
     <Route path="/herder-dashboard" element={<HerderDashboardWithUser />} />
     <Route path="/farmer-dashboard" element={<FarmerDashboardWithUser />} />
-    <Route path="/iot-dashboard" element={<IoTLivestockDashboard />} />
-    <Route path="/admin-dashboard" element={<LawEnforcementDashboard />} />
     <Route path="/comingsoon" element={<Marketplace />} />
+    <Route path="*" element={<NotFound />} />
   </Routes>
 );
 

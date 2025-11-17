@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { auth, db } from "../../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -83,7 +83,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-white flex p-4">
+    <div className="min-h-screen bg-linear-to-br from-green-50 to-white flex p-4">
       <div className="max-w-md sm:max-w-4xl w-full mx-auto my-auto flex gap-5 sm:flex-row flex-col">
         {/* Main Login Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-green-100 max-w-md flex-1">

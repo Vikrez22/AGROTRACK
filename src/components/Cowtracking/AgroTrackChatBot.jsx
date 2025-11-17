@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   MessageCircle,
   Mic,
@@ -7,7 +7,6 @@ import {
   Send,
   Globe,
   Plus,
-  ChevronDown,
 } from "lucide-react";
 
 const AgroTrackChatBot = () => {
@@ -285,7 +284,7 @@ const AgroTrackChatBot = () => {
   return (
     <div className="flex flex-col min-h-[600px] bg-white rounded-lg shadow-lg border border-gray-200">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 rounded-t-lg">
+      <div className="bg-linear-to-r from-green-600 to-green-700 text-white p-4 rounded-t-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <MessageCircle size={24} />

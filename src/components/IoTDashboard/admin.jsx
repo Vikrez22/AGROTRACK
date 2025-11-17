@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
 import ChatBox from "../Cowtracking/ChatBox";
 import {
@@ -155,7 +155,7 @@ const DrawControl = ({ onCreated, onDeleted, drawType }) => {
       edit: {
         featureGroup: drawnItemsRef.current,
         remove: true,
-        edit: true,
+        edit: {},
       },
     });
 
