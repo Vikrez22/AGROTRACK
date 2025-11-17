@@ -1,5 +1,5 @@
 // src/components/Cowtracking/GeoTracker.js
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -42,7 +42,8 @@ const iotDb = getDatabase(iotApp);
 // Fix Leaflet default markers
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+  iconRetinaUrl:
+    "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
   iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
 });
@@ -179,14 +180,18 @@ const GeoTracker = ({ userRole }) => {
 
   // Point-in-polygon algorithm for geofencing
   const isPointInPolygon = useCallback((point, polygon) => {
-    const x = point.lat, y = point.lng;
+    const x = point.lat,
+      y = point.lng;
     let inside = false;
-    
+
     for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-      const xi = polygon[i].lat, yi = polygon[i].lng;
-      const xj = polygon[j].lat, yj = polygon[j].lng;
-      
-      const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      const xi = polygon[i].lat,
+        yi = polygon[i].lng;
+      const xj = polygon[j].lat,
+        yj = polygon[j].lng;
+
+      const intersect =
+        yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
       if (intersect) {
         inside = !inside;
       }
@@ -196,7 +201,7 @@ const GeoTracker = ({ userRole }) => {
 
   // Listen to IoT livestock data from Firebase Realtime Database
   useEffect(() => {
-    const livestockRef = ref(iotDb, '/');
+    const livestockRef = ref(iotDb, "/");
     const unsubscribe = onValue(livestockRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
@@ -211,21 +216,22 @@ const GeoTracker = ({ userRole }) => {
 
   // Listen to geofencing areas from Firebase Realtime Database (same path as admin)
   useEffect(() => {
-    const areasRef = ref(iotDb, 'geofencing_areas');
+    const areasRef = ref(iotDb, "geofencing_areas");
     const unsubscribe = onValue(areasRef, (snapshot) => {
       if (snapshot.exists()) {
         const areas = snapshot.val();
-        const grazing = [], nonGrazing = [];
-        
-        Object.keys(areas).forEach(areaId => {
+        const grazing = [],
+          nonGrazing = [];
+
+        Object.keys(areas).forEach((areaId) => {
           const area = areas[areaId];
-          if (area.type === 'grazing') {
+          if (area.type === "grazing") {
             grazing.push({ id: areaId, coords: area.coordinates });
-          } else if (area.type === 'non-grazing') {
+          } else if (area.type === "non-grazing") {
             nonGrazing.push({ id: areaId, coords: area.coordinates });
           }
         });
-        
+
         setGrazingAreas(grazing);
         setNonGrazingAreas(nonGrazing);
       } else {
@@ -248,18 +254,24 @@ const GeoTracker = ({ userRole }) => {
       }
 
       // Check current permission status
-      if ('permissions' in navigator) {
+      if ("permissions" in navigator) {
         try {
-          const permission = await navigator.permissions.query({ name: 'geolocation' });
-          console.log('Geolocation permission status:', permission.state);
-          
-          if (permission.state === 'denied') {
+          const permission = await navigator.permissions.query({
+            name: "geolocation",
+          });
+          console.log("Geolocation permission status:", permission.state);
+
+          if (permission.state === "denied") {
             setLocationStatus("denied");
-            setLocationError("Location access denied. Please enable location permissions in your browser settings.");
+            setLocationError(
+              "Location access denied. Please enable location permissions in your browser settings."
+            );
             return;
           }
         } catch (err) {
-          console.log('Permission API not supported, proceeding with geolocation request');
+          console.log(
+            "Permission API not supported, proceeding with geolocation request"
+          );
         }
       }
 
@@ -267,14 +279,16 @@ const GeoTracker = ({ userRole }) => {
       const options = {
         enableHighAccuracy: true,
         timeout: 15000, // Increased timeout
-        maximumAge: 0 // Don't use cached position
+        maximumAge: 0, // Don't use cached position
       };
 
       // Get current position
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude, accuracy } = position.coords;
-          console.log(`Location found: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
+          console.log(
+            `Location found: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`
+          );
           setUserLocation([latitude, longitude]);
           setLocationStatus("granted");
           setLocationError("");
@@ -282,14 +296,16 @@ const GeoTracker = ({ userRole }) => {
         (error) => {
           console.error("Geolocation error:", error);
           let errorMessage = "Unable to get your location. ";
-          
+
           switch (error.code) {
             case error.PERMISSION_DENIED:
-              errorMessage = "Location access was denied. Please enable location permissions in your browser settings.";
+              errorMessage =
+                "Location access was denied. Please enable location permissions in your browser settings.";
               setLocationStatus("denied");
               break;
             case error.POSITION_UNAVAILABLE:
-              errorMessage = "Location information is unavailable. Please check your GPS/internet connection.";
+              errorMessage =
+                "Location information is unavailable. Please check your GPS/internet connection.";
               setLocationStatus("error");
               break;
             case error.TIMEOUT:
@@ -297,11 +313,12 @@ const GeoTracker = ({ userRole }) => {
               setLocationStatus("error");
               break;
             default:
-              errorMessage = "An unknown error occurred while getting your location.";
+              errorMessage =
+                "An unknown error occurred while getting your location.";
               setLocationStatus("error");
               break;
           }
-          
+
           setLocationError(errorMessage);
         },
         options
@@ -312,7 +329,9 @@ const GeoTracker = ({ userRole }) => {
         const watchId = navigator.geolocation.watchPosition(
           (position) => {
             const { latitude, longitude, accuracy } = position.coords;
-            console.log(`Location updated: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
+            console.log(
+              `Location updated: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`
+            );
             setUserLocation([latitude, longitude]);
             setLocationStatus("granted");
           },
@@ -322,7 +341,7 @@ const GeoTracker = ({ userRole }) => {
           {
             enableHighAccuracy: true,
             timeout: 10000,
-            maximumAge: 30000 // Accept cached position up to 30 seconds old
+            maximumAge: 30000, // Accept cached position up to 30 seconds old
           }
         );
 
@@ -342,17 +361,19 @@ const GeoTracker = ({ userRole }) => {
   const requestLocationPermission = async () => {
     setLocationStatus("requesting");
     setLocationError("");
-    
+
     const options = {
       enableHighAccuracy: true,
       timeout: 15000,
-      maximumAge: 0
+      maximumAge: 0,
     };
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude, accuracy } = position.coords;
-        console.log(`Manual location request: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
+        console.log(
+          `Manual location request: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`
+        );
         setUserLocation([latitude, longitude]);
         setLocationStatus("granted");
         setLocationError("");
@@ -360,14 +381,16 @@ const GeoTracker = ({ userRole }) => {
       (error) => {
         console.error("Manual geolocation error:", error);
         let errorMessage = "";
-        
+
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = "Location access denied. Please enable location permissions and try again.";
+            errorMessage =
+              "Location access denied. Please enable location permissions and try again.";
             setLocationStatus("denied");
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = "Location unavailable. Please check your GPS and internet connection.";
+            errorMessage =
+              "Location unavailable. Please check your GPS and internet connection.";
             setLocationStatus("error");
             break;
           case error.TIMEOUT:
@@ -379,7 +402,7 @@ const GeoTracker = ({ userRole }) => {
             setLocationStatus("error");
             break;
         }
-        
+
         setLocationError(errorMessage);
       },
       options
@@ -389,7 +412,7 @@ const GeoTracker = ({ userRole }) => {
   // Handle creating new geofencing areas (save to Realtime Database)
   const handleCreated = useCallback(async (latlngs, type) => {
     try {
-      const areasRef = ref(iotDb, 'geofencing_areas');
+      const areasRef = ref(iotDb, "geofencing_areas");
       const newAreaRef = push(areasRef);
       await set(newAreaRef, {
         type: type,
@@ -403,62 +426,72 @@ const GeoTracker = ({ userRole }) => {
   }, []);
 
   // Handle deleting geofencing areas (remove from Realtime Database)
-  const handleDeleted = useCallback(async (layer) => {
-    const latlngs = layer.getLatLngs()[0].map((ll) => ({
-      lat: parseFloat(ll.lat.toFixed(6)),
-      lng: parseFloat(ll.lng.toFixed(6)),
-    }));
-    
-    const allAreas = [...grazingAreas, ...nonGrazingAreas];
-    for (const area of allAreas) {
-      if (area.coords.length === latlngs.length) {
-        const matched = area.coords.every((pt, i) =>
-          Math.abs(pt.lat - latlngs[i].lat) < 0.00001 &&
-          Math.abs(pt.lng - latlngs[i].lng) < 0.00001
-        );
-        if (matched) {
-          try {
-            const areaRef = ref(iotDb, `geofencing_areas/${area.id}`);
-            await remove(areaRef);
-            console.log("Area deleted successfully!");
-            break;
-          } catch (err) {
-            console.error("Error deleting polygon:", err);
+  const handleDeleted = useCallback(
+    async (layer) => {
+      const latlngs = layer.getLatLngs()[0].map((ll) => ({
+        lat: parseFloat(ll.lat.toFixed(6)),
+        lng: parseFloat(ll.lng.toFixed(6)),
+      }));
+
+      const allAreas = [...grazingAreas, ...nonGrazingAreas];
+      for (const area of allAreas) {
+        if (area.coords.length === latlngs.length) {
+          const matched = area.coords.every(
+            (pt, i) =>
+              Math.abs(pt.lat - latlngs[i].lat) < 0.00001 &&
+              Math.abs(pt.lng - latlngs[i].lng) < 0.00001
+          );
+          if (matched) {
+            try {
+              const areaRef = ref(iotDb, `geofencing_areas/${area.id}`);
+              await remove(areaRef);
+              console.log("Area deleted successfully!");
+              break;
+            } catch (err) {
+              console.error("Error deleting polygon:", err);
+            }
           }
         }
       }
-    }
-  }, [grazingAreas, nonGrazingAreas]);
+    },
+    [grazingAreas, nonGrazingAreas]
+  );
 
   // Generate animal markers from IoT data (same logic as admin)
   const getAnimalMarkers = useCallback(() => {
     const markers = [];
-    
+
     // Add Main Device position if available
     if (livestockData.latest_position) {
       const pos = livestockData.latest_position;
-      const isInRestrictedArea = nonGrazingAreas.some(area => 
+      const isInRestrictedArea = nonGrazingAreas.some((area) =>
         isPointInPolygon({ lat: pos.latitude, lng: pos.longitude }, area.coords)
       );
-      
+
       markers.push({
-        id: 'main_device',
-        name: 'Main Device',
+        id: "main_device",
+        name: "Main Device",
         position: [pos.latitude, pos.longitude],
         data: pos,
         isInRestrictedArea,
       });
     }
-    
+
     // Add Individual animal positions from 'offline_XXXXX' nodes
-    Object.keys(livestockData).forEach(animalId => {
-      if (animalId.startsWith('offline_') && livestockData[animalId]?.latest_position) {
+    Object.keys(livestockData).forEach((animalId) => {
+      if (
+        animalId.startsWith("offline_") &&
+        livestockData[animalId]?.latest_position
+      ) {
         const pos = livestockData[animalId].latest_position;
-        const animalName = `Animal ${animalId.replace('offline_', '')}`;
-        const isInRestrictedArea = nonGrazingAreas.some(area => 
-          isPointInPolygon({ lat: pos.latitude, lng: pos.longitude }, area.coords)
+        const animalName = `Animal ${animalId.replace("offline_", "")}`;
+        const isInRestrictedArea = nonGrazingAreas.some((area) =>
+          isPointInPolygon(
+            { lat: pos.latitude, lng: pos.longitude },
+            area.coords
+          )
         );
-        
+
         markers.push({
           id: animalId,
           name: animalName,
@@ -468,47 +501,65 @@ const GeoTracker = ({ userRole }) => {
         });
       }
     });
-    
+
     return markers;
   }, [livestockData, nonGrazingAreas, isPointInPolygon]);
 
   const animalMarkers = getAnimalMarkers();
 
   // Determine map center
-  const mapCenter = userLocation || 
-    (livestockData.latest_position ? 
-      [livestockData.latest_position.latitude, livestockData.latest_position.longitude] : 
-      [9.082, 8.6753]);
+  const mapCenter =
+    userLocation ||
+    (livestockData.latest_position
+      ? [
+          livestockData.latest_position.latitude,
+          livestockData.latest_position.longitude,
+        ]
+      : [9.082, 8.6753]);
 
   return (
     <div className="p-2 sm:p-3">
-      <h2 className="font-semibold mb-3">Real-time Livestock Tracking & Geofencing</h2>
+      <h2 className="font-semibold mb-3">
+        Real-time Livestock Tracking & Geofencing
+      </h2>
 
       {/* Location Status Banner */}
       {locationStatus !== "granted" && (
-        <div className={`mb-4 p-3 rounded-lg border ${
-          locationStatus === "denied" ? "bg-red-50 border-red-200" :
-          locationStatus === "error" ? "bg-orange-50 border-orange-200" :
-          "bg-blue-50 border-blue-200"
-        }`}>
+        <div
+          className={`mb-4 p-3 rounded-lg border ${
+            locationStatus === "denied"
+              ? "bg-red-50 border-red-200"
+              : locationStatus === "error"
+              ? "bg-orange-50 border-orange-200"
+              : "bg-blue-50 border-blue-200"
+          }`}
+        >
           <div className="flex items-center justify-between">
             <div className="flex-1">
               {locationStatus === "requesting" && (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-blue-700 text-sm font-medium">Requesting your location...</span>
+                  <span className="text-blue-700 text-sm font-medium">
+                    Requesting your location...
+                  </span>
                 </div>
               )}
               {locationStatus === "denied" && (
                 <div>
-                  <p className="text-red-700 font-medium text-sm">Location Access Needed</p>
+                  <p className="text-red-700 font-medium text-sm">
+                    Location Access Needed
+                  </p>
                   <p className="text-red-600 text-xs mt-1">{locationError}</p>
                 </div>
               )}
               {locationStatus === "error" && (
                 <div>
-                  <p className="text-orange-700 font-medium text-sm">Location Error</p>
-                  <p className="text-orange-600 text-xs mt-1">{locationError}</p>
+                  <p className="text-orange-700 font-medium text-sm">
+                    Location Error
+                  </p>
+                  <p className="text-orange-600 text-xs mt-1">
+                    {locationError}
+                  </p>
                 </div>
               )}
             </div>
@@ -516,7 +567,7 @@ const GeoTracker = ({ userRole }) => {
               <button
                 onClick={requestLocationPermission}
                 className={`px-3 py-1 text-xs font-medium rounded ${
-                  locationStatus === "denied" 
+                  locationStatus === "denied"
                     ? "bg-red-600 hover:bg-red-700 text-white"
                     : "bg-orange-600 hover:bg-orange-700 text-white"
                 } transition-colors`}
@@ -535,7 +586,8 @@ const GeoTracker = ({ userRole }) => {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-green-700 text-sm font-medium">
-                Location found: {userLocation[0].toFixed(4)}, {userLocation[1].toFixed(4)}
+                Location found: {userLocation[0].toFixed(4)},{" "}
+                {userLocation[1].toFixed(4)}
               </span>
             </div>
             <button
@@ -551,7 +603,9 @@ const GeoTracker = ({ userRole }) => {
       {/* Geofencing Controls (only for admin roles) */}
       {(userRole === "admin" || userRole === "law-enforcement") && (
         <div className="grazing-area flex items-center gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
-          <span className="text-sm font-medium text-gray-700">Draw Area Type:</span>
+          <span className="text-sm font-medium text-gray-700">
+            Draw Area Type:
+          </span>
           <label className="flex items-center">
             <input
               type="radio"
@@ -609,13 +663,27 @@ const GeoTracker = ({ userRole }) => {
                 <div className="p-2">
                   <h4 className="font-bold text-lg mb-2">{animal.name}</h4>
                   <div className="space-y-1 text-sm">
-                    <p><strong>Coordinates:</strong> {animal.data.latitude?.toFixed(6)}, {animal.data.longitude?.toFixed(6)}</p>
-                    <p><strong>Altitude:</strong> {animal.data.altitude}m</p>
-                    <p><strong>Speed:</strong> {animal.data.speed_kmph} km/h</p>
-                    <p><strong>Course:</strong> {animal.data.course}°</p>
-                    <p><strong>Time:</strong> {animal.data.time}</p>
+                    <p>
+                      <strong>Coordinates:</strong>{" "}
+                      {animal.data.latitude?.toFixed(6)},{" "}
+                      {animal.data.longitude?.toFixed(6)}
+                    </p>
+                    <p>
+                      <strong>Altitude:</strong> {animal.data.altitude}m
+                    </p>
+                    <p>
+                      <strong>Speed:</strong> {animal.data.speed_kmph} km/h
+                    </p>
+                    <p>
+                      <strong>Course:</strong> {animal.data.course}°
+                    </p>
+                    <p>
+                      <strong>Time:</strong> {animal.data.time}
+                    </p>
                     {animal.isInRestrictedArea && (
-                      <p className="text-red-600 font-bold mt-2">⚠️ IN RESTRICTED AREA!</p>
+                      <p className="text-red-600 font-bold mt-2">
+                        ⚠️ IN RESTRICTED AREA!
+                      </p>
                     )}
                   </div>
                 </div>
@@ -669,20 +737,26 @@ const GeoTracker = ({ userRole }) => {
       {/* Statistics */}
       <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
         <div className="bg-blue-50 p-3 rounded-lg text-center">
-          <div className="font-semibold text-blue-800">{animalMarkers.length}</div>
+          <div className="font-semibold text-blue-800">
+            {animalMarkers.length}
+          </div>
           <div className="text-blue-600">Animals Tracked</div>
         </div>
         <div className="bg-green-50 p-3 rounded-lg text-center">
-          <div className="font-semibold text-green-800">{grazingAreas.length}</div>
+          <div className="font-semibold text-green-800">
+            {grazingAreas.length}
+          </div>
           <div className="text-green-600">Grazing Areas</div>
         </div>
         <div className="bg-red-50 p-3 rounded-lg text-center">
-          <div className="font-semibold text-red-800">{nonGrazingAreas.length}</div>
+          <div className="font-semibold text-red-800">
+            {nonGrazingAreas.length}
+          </div>
           <div className="text-red-600">Restricted Areas</div>
         </div>
         <div className="bg-orange-50 p-3 rounded-lg text-center">
           <div className="font-semibold text-orange-800">
-            {animalMarkers.filter(a => a.isInRestrictedArea).length}
+            {animalMarkers.filter((a) => a.isInRestrictedArea).length}
           </div>
           <div className="text-orange-600">Alerts</div>
         </div>
