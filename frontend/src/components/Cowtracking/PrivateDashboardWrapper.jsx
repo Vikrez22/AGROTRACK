@@ -1,7 +1,7 @@
 // src/components/PrivateDashboardWrapper.js
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase/firebase";
+import { auth } from "../../config/firebase";
 
 const withUserId = (Component) => {
   return (props) => {
