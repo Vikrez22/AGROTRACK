@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import userRoutes from './routes/user.js'
 import 'dotenv/config'
 
 
@@ -10,6 +11,8 @@ const PORT = process.env.PORT
 
 app.use(cors())
 app.use(express.json())
+
+app.use('/api/users', userRoutes)
 
 
 app.get('/health', (req, res) => {
@@ -23,6 +26,7 @@ app.get('/health', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`SERVER is live on port ${PORT}`)
+    console.log('project id value')
 })
 
 export default app
