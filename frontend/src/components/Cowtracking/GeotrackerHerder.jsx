@@ -10,7 +10,7 @@ import {
   setDoc,
   onSnapshot,
 } from "firebase/firestore";
-import { app } from "../../firebase/firebase";
+import { app } from "../../config/firebase";
 import AlarmAndNotifications from "./AlarmAndNotifications";
 
 delete L.Icon.Default.prototype._getIconUrl;

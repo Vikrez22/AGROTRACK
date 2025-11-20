@@ -80,6 +80,7 @@ const HerderDashboard = ({ userId }) => {
     .map((name) => name[0])
     .join("");
 
+  console.log("this is the USERID: ", userId);
   const tabs = [
     { id: "overview", label: "Overview", icon: Navigation },
     { id: "tracking", label: "Location Tracking", icon: MapPin },
