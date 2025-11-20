@@ -1,24 +1,29 @@
-const express = require('express');
+import express from 'express';
+import fetch from 'node-fetch';
+
 const router = express.Router();
-const fetch = require('node-fetch'); // Make sure to install: npm install node-fetch@2
 
 // N-ATLaS API endpoint
 router.post('/natlas', async (req, res) => {
   try {
-    const { prompt, isDetailed, conversationHistory } = req.body;
+    const { prompt, isDetailed, conversationHistory, systemPrompt, language } = req.body;
 
     // Validate input
     if (!prompt) {
-      return res.status(400).json({ error: 'Prompt is required' });
+      return res.status(400).json({ 
+        success: false,
+        error: 'VALIDATION_ERROR',
+        message: 'Prompt is required' 
+      });
     }
 
-    // Build the N-ATLaS prompt format
+    // Build the N-ATLaS prompt format (Llama-3 chat template)
     let formattedPrompt = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n";
-    formattedPrompt += req.body.systemPrompt || "You are AwaGPT, an agricultural assistant for AgroTrack.";
+    formattedPrompt += systemPrompt || "You are AwaGPT, an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria.";
     formattedPrompt += "<|eot_id|>";
 
-    // Add conversation history
-    if (conversationHistory && conversationHistory.length > 0) {
+    // Add conversation history (last 6 messages for context)
+    if (conversationHistory && Array.isArray(conversationHistory)) {
       conversationHistory.slice(-6).forEach(msg => {
         if (msg.role === 'user') {
           formattedPrompt += `<|start_header_id|>user<|end_header_id|>\n\n${msg.content}<|eot_id|>`;
@@ -28,11 +33,11 @@ router.post('/natlas', async (req, res) => {
       });
     }
 
-    // Add current prompt
+    // Add current user prompt
     formattedPrompt += `<|start_header_id|>user<|end_header_id|>\n\n${prompt}<|eot_id|>`;
     formattedPrompt += `<|start_header_id|>assistant<|end_header_id|>\n\n`;
 
-    console.log('Calling Hugging Face API...');
+    console.log(`[N-ATLaS] Processing request - Language: ${language || 'en'}, Detailed: ${isDetailed}`);
 
     // Call Hugging Face API
     const response = await fetch(
@@ -61,27 +66,50 @@ router.post('/natlas', async (req, res) => {
       }
     );
 
+    console.log(`[N-ATLaS] Response status: ${response.status}`);
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('HF API Error:', errorText);
+      console.error('[N-ATLaS] API Error:', errorText);
       
-      // Handle model loading
-      if (errorText.includes('loading')) {
-        return res.status(503).json({ 
-          error: 'MODEL_LOADING',
-          message: 'Model is loading, please try again in 20-30 seconds',
-          estimatedTime: 30
+      try {
+        const errorData = JSON.parse(errorText);
+        
+        // Handle model loading state
+        if (errorData.error && errorData.error.includes('loading')) {
+          return res.status(503).json({ 
+            success: false,
+            error: 'MODEL_LOADING',
+            message: 'N-ATLaS model is loading. This takes 20-30 seconds on first use.',
+            estimatedTime: errorData.estimated_time || 30
+          });
+        }
+
+        // Handle rate limiting
+        if (errorData.error && errorData.error.includes('rate limit')) {
+          return res.status(429).json({ 
+            success: false,
+            error: 'RATE_LIMIT',
+            message: 'Too many requests. Please try again in a moment.'
+          });
+        }
+
+        return res.status(response.status).json({ 
+          success: false,
+          error: 'HF_API_ERROR',
+          message: errorData.error || 'Unknown error from Hugging Face API'
+        });
+      } catch (parseError) {
+        return res.status(response.status).json({ 
+          success: false,
+          error: 'HF_API_ERROR',
+          message: errorText
         });
       }
-
-      return res.status(response.status).json({ 
-        error: 'HF_API_ERROR',
-        message: errorText 
-      });
     }
 
     const data = await response.json();
-    console.log('HF API Response received');
+    console.log('[N-ATLaS] Successfully received response');
 
     // Extract generated text
     let content = '';
@@ -89,20 +117,22 @@ router.post('/natlas', async (req, res) => {
       content = data[0]?.generated_text || '';
     } else if (data.generated_text) {
       content = data.generated_text;
-    } else {
-      content = typeof data === 'string' ? data : '';
+    } else if (typeof data === 'string') {
+      content = data;
     }
 
     // Clean up response
     content = content
-      .replace(/\*\*(.*?)\*\*/g, '$1')
-      .replace(/\*(.*?)\*/g, '$1')
-      .replace(/<\|.*?\|>/g, '')
-      .replace(/\n{3,}/g, '\n\n')
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+      .replace(/\*(.*?)\*/g, '$1') // Remove italics
+      .replace(/<\|.*?\|>/g, '') // Remove chat template markers
+      .replace(/<\|eot_id\|>/g, '')
+      .replace(/\n{3,}/g, '\n\n') // Reduce multiple newlines
       .trim();
 
     if (!content) {
       return res.status(500).json({ 
+        success: false,
         error: 'EMPTY_RESPONSE',
         message: 'Model returned empty response' 
       });
@@ -110,14 +140,17 @@ router.post('/natlas', async (req, res) => {
 
     res.json({ 
       success: true,
-      content: content 
+      content: content,
+      model: 'N-ATLaS',
+      language: language || 'en'
     });
 
   } catch (error) {
-    console.error('N-ATLaS API Error:', error);
+    console.error('[N-ATLaS] Server Error:', error);
     res.status(500).json({ 
+      success: false,
       error: 'SERVER_ERROR',
-      message: error.message 
+      message: error.message || 'Internal server error'
     });
   }
 });
@@ -125,7 +158,17 @@ router.post('/natlas', async (req, res) => {
 // Groq API endpoint (fallback)
 router.post('/groq', async (req, res) => {
   try {
-    const { prompt, isDetailed, systemPrompt } = req.body;
+    const { prompt, isDetailed, systemPrompt, language } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'VALIDATION_ERROR',
+        message: 'Prompt is required' 
+      });
+    }
+
+    console.log(`[Groq] Processing request - Language: ${language || 'en'}, Detailed: ${isDetailed}`);
 
     const response = await fetch(
       'https://api.groq.com/openai/v1/chat/completions',
@@ -140,7 +183,7 @@ router.post('/groq', async (req, res) => {
           messages: [
             { 
               role: 'system', 
-              content: systemPrompt || 'You are an agricultural assistant for AgroTrack.' 
+              content: systemPrompt || 'You are an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria.' 
             },
             { role: 'user', content: prompt }
           ],
@@ -150,29 +193,61 @@ router.post('/groq', async (req, res) => {
       }
     );
 
+    console.log(`[Groq] Response status: ${response.status}`);
+
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('[Groq] API Error:', errorText);
+      
       return res.status(response.status).json({ 
+        success: false,
         error: 'GROQ_API_ERROR',
-        message: errorText 
+        message: errorText
       });
     }
 
     const data = await response.json();
-    const content = data.choices[0].message.content;
+    let content = data.choices[0].message.content;
+
+    // Clean up response
+    content = content
+      .replace(/\|.*\|/g, '') // Remove tables
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/---+/g, '')
+      .replace(/#{1,6}\s*/g, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
+    console.log('[Groq] Successfully received response');
 
     res.json({ 
       success: true,
-      content: content 
+      content: content,
+      model: 'Groq Llama 3.1 70B',
+      language: language || 'en'
     });
 
   } catch (error) {
-    console.error('Groq API Error:', error);
+    console.error('[Groq] Server Error:', error);
     res.status(500).json({ 
+      success: false,
       error: 'SERVER_ERROR',
-      message: error.message 
+      message: error.message || 'Internal server error'
     });
   }
 });
 
-module.exports = router;
+// Health check endpoint
+router.get('/health', (req, res) => {
+  res.json({ 
+    success: true,
+    message: 'AI routes are working',
+    endpoints: {
+      natlas: '/api/ai/natlas',
+      groq: '/api/ai/groq'
+    }
+  });
+});
+
+export default router;
