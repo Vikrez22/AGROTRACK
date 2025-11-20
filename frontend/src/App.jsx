@@ -8,7 +8,7 @@ import LandingPage from "./components/Dashboard/LandingPage";
 import Signup from "./components/Auth/Signup";
 import Login from "./components/Auth/Login";
 
-import HerderDashboard from "./components/Dashboard/HerderDashboard";
+import HerderDashboard from "./components/Dashboard/HerderDashboard/HerderDashboard";
 import FarmerDashboard from "./components/Dashboard/FarmerDashboard/FarmerDashboard";
 
 import withUserId from "./components/Cowtracking/PrivateDashboardWrapper";
