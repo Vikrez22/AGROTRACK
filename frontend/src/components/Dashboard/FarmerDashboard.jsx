@@ -88,7 +88,7 @@ const FarmerDashboard = () => {
         return (
           <div className="space-y-6 m-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
+              <div className="bg-linear-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">Active Alerts</h3>
@@ -101,7 +101,7 @@ const FarmerDashboard = () => {
                 </p>
               </div>
 
-              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
+              <div className="bg-linear-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">Grazing Areas</h3>
@@ -112,7 +112,7 @@ const FarmerDashboard = () => {
                 <p className="text-sm mt-2 opacity-90">Designated safe zones</p>
               </div>
 
-              <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-lg shadow-lg">
+              <div className="bg-linear-to-r from-purple-500 to-purple-600 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">Messages</h3>
@@ -394,7 +394,7 @@ const FarmerDashboard = () => {
                   <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                        <div className="w-12 h-12 bg-linear-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
                           <User className="text-white" size={20} />
                         </div>
                         <div>
@@ -628,7 +628,7 @@ const FarmerDashboard = () => {
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span>Online</span>
             </div>
-            <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-linear-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-bold uppercase">
                 {firstLetters}
               </span>
