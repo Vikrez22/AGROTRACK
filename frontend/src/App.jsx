@@ -1,15 +1,15 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import React from "react";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthProvider } from './context/AuthContext'
-import RoleRoute from './components/Auth/RoleRoute'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "./context/AuthContext";
+import RoleRoute from "./components/Auth/RoleRoute";
 
 import LandingPage from "./components/Dashboard/LandingPage";
 import Signup from "./components/Auth/Signup";
 import Login from "./components/Auth/Login";
 
 import HerderDashboard from "./components/Dashboard/HerderDashboard";
-import FarmerDashboard from "./components/Dashboard/FarmerDashboard";
+import FarmerDashboard from "./components/Dashboard/FarmerDashboard/FarmerDashboard";
 
 import withUserId from "./components/Cowtracking/PrivateDashboardWrapper";
 
@@ -26,56 +26,45 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-    }
-  }
-})
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
 
-          <Route 
-            path="/admin-dashboard" 
-            element={
-              <RoleRoute
-                allowed={["admin"]}
-              >
-                <LawEnforcementDashboard />
-              </RoleRoute>
-            
-            } 
-            
-          />
-          <Route 
-            path="/herder-dashboard" 
-            element={
-              <RoleRoute
-                allowed={["herder"]}
-              >
-                <HerderDashboard />
-              </RoleRoute>
-              } 
-              
-          />
-          <Route 
-            path="/farmer-dashboard" 
-            element={
-              <RoleRoute
-                allowed={["farmer"]}
-              >
-                <FarmerDashboard />
-              </RoleRoute>
-          
-          } 
-            
-          />
-          <Route path="/comingsoon" element={<Marketplace />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Route
+          path="/admin-dashboard"
+          element={
+            <RoleRoute allowed={["admin"]}>
+              <LawEnforcementDashboard />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/herder-dashboard"
+          element={
+            <RoleRoute allowed={["herder"]}>
+              <HerderDashboard />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/farmer-dashboard"
+          element={
+            <RoleRoute allowed={["farmer"]}>
+              <FarmerDashboard />
+            </RoleRoute>
+          }
+        />
+        <Route path="/comingsoon" element={<Marketplace />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </AuthProvider>
   </QueryClientProvider>
 );
