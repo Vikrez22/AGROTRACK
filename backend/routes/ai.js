@@ -3,12 +3,10 @@ import fetch from 'node-fetch';
 
 const router = express.Router();
 
-// N-ATLaS API endpoint
 router.post('/natlas', async (req, res) => {
   try {
     const { prompt, isDetailed, conversationHistory, systemPrompt, language } = req.body;
 
-    // Validate input
     if (!prompt) {
       return res.status(400).json({ 
         success: false,
@@ -17,12 +15,10 @@ router.post('/natlas', async (req, res) => {
       });
     }
 
-    // Build the N-ATLaS prompt format (Llama-3 chat template)
     let formattedPrompt = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n";
     formattedPrompt += systemPrompt || "You are AwaGPT, an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria.";
     formattedPrompt += "<|eot_id|>";
 
-    // Add conversation history (last 6 messages for context)
     if (conversationHistory && Array.isArray(conversationHistory)) {
       conversationHistory.slice(-6).forEach(msg => {
         if (msg.role === 'user') {
@@ -33,13 +29,11 @@ router.post('/natlas', async (req, res) => {
       });
     }
 
-    // Add current user prompt
     formattedPrompt += `<|start_header_id|>user<|end_header_id|>\n\n${prompt}<|eot_id|>`;
     formattedPrompt += `<|start_header_id|>assistant<|end_header_id|>\n\n`;
 
     console.log(`[N-ATLaS] Processing request - Language: ${language || 'en'}, Detailed: ${isDetailed}`);
 
-    // Call Hugging Face API
     const response = await fetch(
       'https://api-inference.huggingface.co/models/NCAIR1/N-ATLaS',
       {
@@ -75,7 +69,6 @@ router.post('/natlas', async (req, res) => {
       try {
         const errorData = JSON.parse(errorText);
         
-        // Handle model loading state
         if (errorData.error && errorData.error.includes('loading')) {
           return res.status(503).json({ 
             success: false,
@@ -85,7 +78,6 @@ router.post('/natlas', async (req, res) => {
           });
         }
 
-        // Handle rate limiting
         if (errorData.error && errorData.error.includes('rate limit')) {
           return res.status(429).json({ 
             success: false,
@@ -111,7 +103,6 @@ router.post('/natlas', async (req, res) => {
     const data = await response.json();
     console.log('[N-ATLaS] Successfully received response');
 
-    // Extract generated text
     let content = '';
     if (Array.isArray(data)) {
       content = data[0]?.generated_text || '';
@@ -121,13 +112,12 @@ router.post('/natlas', async (req, res) => {
       content = data;
     }
 
-    // Clean up response
     content = content
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
-      .replace(/\*(.*?)\*/g, '$1') // Remove italics
-      .replace(/<\|.*?\|>/g, '') // Remove chat template markers
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1') 
+      .replace(/<\|.*?\|>/g, '') 
       .replace(/<\|eot_id\|>/g, '')
-      .replace(/\n{3,}/g, '\n\n') // Reduce multiple newlines
+      .replace(/\n{3,}/g, '\n\n') 
       .trim();
 
     if (!content) {
@@ -155,7 +145,6 @@ router.post('/natlas', async (req, res) => {
   }
 });
 
-// Groq API endpoint (fallback)
 router.post('/groq', async (req, res) => {
   try {
     const { prompt, isDetailed, systemPrompt, language } = req.body;
@@ -209,9 +198,8 @@ router.post('/groq', async (req, res) => {
     const data = await response.json();
     let content = data.choices[0].message.content;
 
-    // Clean up response
     content = content
-      .replace(/\|.*\|/g, '') // Remove tables
+      .replace(/\|.*\|/g, '') 
       .replace(/\*\*(.*?)\*\*/g, '$1')
       .replace(/\*(.*?)\*/g, '$1')
       .replace(/---+/g, '')
@@ -238,7 +226,6 @@ router.post('/groq', async (req, res) => {
   }
 });
 
-// Health check endpoint
 router.get('/health', (req, res) => {
   res.json({ 
     success: true,
