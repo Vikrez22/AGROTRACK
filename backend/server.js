@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import userRoutes from './routes/user.js'
+import aiRoutes from './routes/ai.js'
 import 'dotenv/config'
 
 
@@ -13,6 +14,7 @@ app.use(cors())
 app.use(express.json())
 
 app.use('/api/users', userRoutes)
+app.use('/api/ai', aiRoutes);
 
 
 app.get('/health', (req, res) => {
