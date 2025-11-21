@@ -16,7 +16,7 @@ import Chat from "./Chat";
 import Settings from "./Settings";
 
 const FarmerDashboard = () => {
-  const [activeTab, setActiveTab] = useState("settings");
+  const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const tabs = [
