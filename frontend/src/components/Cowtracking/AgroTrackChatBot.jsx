@@ -16,10 +16,13 @@ const AgroTrackChatBot = () => {
   const [isListening, setIsListening] = useState(false);
   const [error, setError] = useState("");
   const [apiProvider, setApiProvider] = useState("natlas");
-  const [modelStatus, setModelStatus] = useState("ready"); // "ready", "loading", "error"
+  const [modelStatus, setModelStatus] = useState("ready");
 
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
+
+  // Update this to your backend URL
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:5000';
 
   const languages = {
     en: { name: "English", code: "en-US", flag: "🇺🇸" },
@@ -28,129 +31,74 @@ const AgroTrackChatBot = () => {
     ha: { name: "Hausa", code: "ha-NG", flag: "🇳🇬" },
   };
 
-  // N-ATLaS API integration - CORRECTED VERSION
+  // N-ATLaS API - Now calls YOUR backend
   const fetchNATLaSResponse = async (userMessage, isDetailed = false, conversationHistory = []) => {
     try {
       const systemPrompt = isDetailed 
         ? `You are AwaGPT, an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Provide detailed, step-by-step information about farming techniques, pest control, livestock management, market information, and conflict resolution between farmers and herders. Use simple, clear language that farmers can understand. Break information into numbered steps when helpful.`
         : `You are AwaGPT, an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Give SHORT, SIMPLE answers (2-3 sentences maximum) using basic words that farmers can understand. Focus on practical advice. If the topic needs more detail, mention that more information is available if they ask.`;
 
-      // Build the prompt in chat format
-      let prompt = `<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n${systemPrompt}<|eot_id|>`;
-      
-      // Add conversation history (last 6 messages for context)
-      conversationHistory.slice(-6).forEach(msg => {
-        if (msg.role === 'user') {
-          prompt += `<|start_header_id|>user<|end_header_id|>\n\n${msg.content}<|eot_id|>`;
-        } else if (msg.role === 'assistant') {
-          prompt += `<|start_header_id|>assistant<|end_header_id|>\n\n${msg.content}<|eot_id|>`;
-        }
+      console.log("Sending request to backend...");
+
+      const response = await fetch(`${API_BASE_URL}/api/ai/natlas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: userMessage,
+          isDetailed: isDetailed,
+          systemPrompt: systemPrompt,
+          conversationHistory: conversationHistory,
+          language: language
+        })
       });
-      
-      // Add current user message
-      prompt += `<|start_header_id|>user<|end_header_id|>\n\n${userMessage}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n`;
-
-      console.log("Sending request to Hugging Face...");
-
-      const HF_API_KEY = process.env.VITE_APP_HF_API_KEY;
-      
-      const response = await fetch(
-        "https://api-inference.huggingface.co/models/NCAIR1/N-ATLaS",
-        {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${HF_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            inputs: prompt,
-            parameters: {
-              max_new_tokens: isDetailed ? 800 : 250,
-              temperature: 0.7,
-              top_p: 0.9,
-              repetition_penalty: 1.12,
-              return_full_text: false,
-              do_sample: true
-            },
-            options: {
-              wait_for_model: true,
-              use_cache: false
-            }
-          }),
-        }
-      );
 
       console.log("Response status:", response.status);
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("API Error Response:", errorText);
+        const errorData = await response.json();
+        console.error("API Error Response:", errorData);
         
-        try {
-          const errorData = JSON.parse(errorText);
-          
-          // Handle model loading
-          if (errorData.error && errorData.error.includes("loading")) {
-            setModelStatus("loading");
-            const estimatedTime = errorData.estimated_time || 20;
-            throw new Error(`MODEL_LOADING:${estimatedTime}`);
-          }
-          
-          throw new Error(`API Error: ${errorData.error || 'Unknown error'}`);
-        } catch (e) {
-          if (e.message.startsWith("MODEL_LOADING")) {
-            throw e;
-          }
-          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        // Handle model loading
+        if (errorData.error === 'MODEL_LOADING') {
+          setModelStatus("loading");
+          const estimatedTime = errorData.estimatedTime || 30;
+          throw new Error(`MODEL_LOADING:${estimatedTime}`);
         }
+
+        // Handle rate limiting
+        if (errorData.error === 'RATE_LIMIT') {
+          throw new Error('RATE_LIMIT');
+        }
+        
+        throw new Error(errorData.message || 'API request failed');
       }
 
       const data = await response.json();
-      console.log("API Response:", data);
+      console.log("API Response received:", data);
       
       setModelStatus("ready");
       
-      // Extract the generated text
-      let content = "";
-      
-      if (Array.isArray(data)) {
-        content = data[0]?.generated_text || "";
-      } else if (data.generated_text) {
-        content = data.generated_text;
-      } else if (typeof data === 'string') {
-        content = data;
-      } else {
-        console.error("Unexpected response format:", data);
-        throw new Error("Unexpected response format from API");
+      if (!data.success || !data.content) {
+        throw new Error("Invalid response format");
       }
 
-      // Clean up the response
-      content = content
-        .replace(/\*\*(.*?)\*\*/g, '$1')
-        .replace(/\*(.*?)\*/g, '$1')
-        .replace(/\n{3,}/g, '\n\n')
-        .trim();
-
-      // Remove any chat template markers if they leaked through
-      content = content
-        .replace(/<\|.*?\|>/g, '')
-        .replace(/<\|eot_id\|>/g, '')
-        .trim();
-
-      if (!content) {
-        throw new Error("Empty response from model");
-      }
-
-      return content;
+      return data.content;
 
     } catch (error) {
       console.error("N-ATLaS API error:", error);
 
       // Handle model loading
       if (error.message.startsWith("MODEL_LOADING")) {
-        const time = error.message.split(":")[1] || "20";
+        const time = error.message.split(":")[1] || "30";
         setModelStatus("loading");
         return getLoadingMessage(language, time);
+      }
+
+      // Handle rate limiting
+      if (error.message === 'RATE_LIMIT') {
+        return getRateLimitMessage(language);
       }
 
       setModelStatus("error");
@@ -162,10 +110,10 @@ const AgroTrackChatBot = () => {
 
       // Fallback responses
       const fallbackResponses = {
-        en: "I'm having trouble connecting to N-ATLaS. This could be due to: 1) Model is loading (first use takes ~30sec), 2) API key issue, or 3) Network problem. Try again in a moment.",
-        ig: "Enwere m nsogbu ijikọ na N-ATLaS. Nke a nwere ike ịbụ: 1) Ụdị ahụ na-ebu (ojiji mbụ na-ewe ~30sec), 2) Nsogbu igodo API, ma ọ bụ 3) Nsogbu netwọk. Nwaa ọzọ n'oge na-adịghị anya.",
-        yo: "Mo ni wahala lati so pẹlu N-ATLaS. Eyi le jẹ nitori: 1) Awọsanma n bu (lilo akọkọ gba ~30sec), 2) Iṣoro bọtini API, tabi 3) Iṣoro nẹtiwọọki. Gbiyanju lẹẹkansi laipẹ.",
-        ha: "Ina da matsala ta haɗuwa da N-ATLaS. Wannan na iya zama saboda: 1) Ana ɗaukar samfurin (amfani na farko yana ɗaukar ~30sec), 2) Matsalar maɓallin API, ko 3) Matsalar cibiyar sadarwa. Sake gwadawa nan ba da jimawa ba.",
+        en: "I'm having trouble connecting right now. Please try again in a moment. Make sure your backend server is running.",
+        ig: "Enwere m nsogbu ijikọ ugbu a. Biko nwaa ọzọ n'oge na-adịghị anya. Gbaa mbọ hụ na sava backend gị na-arụ ọrụ.",
+        yo: "Mo ni wahala lati so ni bayi. Jọwọ gbiyanju lẹẹkansi laipẹ. Rii daju pe olupin backend rẹ n ṣiṣẹ.",
+        ha: "Ina da matsala ta haɗuwa a yanzu. Da fatan za a sake gwadawa nan ba da jimawa ba. Tabbatar cewa sabar backend ɗinku tana aiki.",
       };
 
       return fallbackResponses[language] || fallbackResponses.en;
@@ -182,62 +130,59 @@ const AgroTrackChatBot = () => {
     return messages[lang] || messages.en;
   };
 
-  const getConnectionErrorMessage = (lang) => {
+  const getRateLimitMessage = (lang) => {
     const messages = {
-      en: "Cannot connect to N-ATLaS server. Please check: 1) Your internet connection, 2) API key is set correctly in .env file (VITE_APP_HF_API_KEY), 3) Try switching to Groq model temporarily.",
-      ig: "Enweghị ike ijikọ na sava N-ATLaS. Biko lelee: 1) Njikọ intanetị gị, 2) Igodo API edobere nke ọma na faịlụ .env (VITE_APP_HF_API_KEY), 3) Gbalịa ịgbanwee na ụdị Groq nwa oge.",
-      yo: "Ko le so si olupin N-ATLaS. Jọwọ ṣayẹwo: 1) Asopọ intanẹẹti rẹ, 2) Bọtini API ti ṣeto daradara ninu faili .env (VITE_APP_HF_API_KEY), 3) Gbiyanju yipada si awoṣe Groq fun igba diẹ.",
-      ha: "Ba za a iya haɗuwa da sabar N-ATLaS ba. Da fatan za a duba: 1) Haɗin intanet ɗinku, 2) Maɓallin API an saita daidai a cikin fayil ɗin .env (VITE_APP_HF_API_KEY), 3) Gwada canzawa zuwa ƙirar Groq na ɗan lokaci.",
+      en: "Too many requests. Please wait a moment before trying again.",
+      ig: "Ọtụtụ arịrịọ. Biko chere ntakịrị tupu ịnwaa ọzọ.",
+      yo: "Awọn ibeere pupọ ju. Jọwọ duro diẹ ṣaaju ki o to gbiyanju lẹẹkansi.",
+      ha: "Buƙatun da yawa. Da fatan za a jira kaɗan kafin a sake gwadawa.",
     };
     return messages[lang] || messages.en;
   };
 
-  // Groq API (fallback/alternative)
+  const getConnectionErrorMessage = (lang) => {
+    const messages = {
+      en: "Cannot connect to server. Please check: 1) Backend server is running on port 3000, 2) Your internet connection, 3) Try switching to Groq model temporarily.",
+      ig: "Enweghị ike ijikọ na sava. Biko lelee: 1) Sava azụ na-arụ ọrụ na ọdụ ụgbọ mmiri 3000, 2) Njikọ ịntanetị gị, 3) Gbalịa ịgbanwee na ụdị Groq nwa oge.",
+      yo: "Ko le so si olupin. Jọwọ ṣayẹwo: 1) Olupin ẹhin n ṣiṣẹ lori ibudo 3000, 2) Asopọ intanẹẹti rẹ, 3) Gbiyanju yipada si awoṣe Groq fun igba diẹ.",
+      ha: "Ba za a iya haɗuwa da sabar ba. Da fatan za a duba: 1) Sabar baya tana aiki akan tashar jiragen ruwa 3000, 2) Haɗin intanet ɗinku, 3) Gwada canzawa zuwa ƙirar Groq na ɗan lokaci.",
+    };
+    return messages[lang] || messages.en;
+  };
+
+  // Groq API - Now calls YOUR backend
   const fetchGroqResponse = async (userMessage, isDetailed = false) => {
     try {
       const systemPrompt = isDetailed 
         ? `You are an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Provide detailed, step-by-step information about farming techniques, pest control, livestock management, market information, and conflict resolution. Use simple, clear language that farmers can understand. Avoid complex tables, formatting, or technical jargon. Break information into numbered steps when helpful.`
         : `You are an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Give SHORT, SIMPLE answers (2-3 sentences maximum) using basic words that farmers can understand. Focus on practical advice. Avoid tables, formatting, and complex explanations. If the topic needs more detail, mention that more information is available if they ask.`;
 
-      const GROQ_API_KEY = process.env.REACT_APP_GROQ_API_KEY;
-
-      const response = await fetch(
-        "https://api.groq.com/openai/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${GROQ_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "openai/gpt-oss-20b",
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: userMessage },
-            ],
-            max_tokens: isDetailed ? 800 : 200,
-            temperature: 0.7,
-          }),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/api/ai/groq`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: userMessage,
+          isDetailed: isDetailed,
+          systemPrompt: systemPrompt,
+          language: language
+        })
+      });
 
       if (!response.ok) {
-        throw new Error(`Groq API error: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Groq API request failed');
       }
 
       const data = await response.json();
-      let content = data.choices[0].message.content;
       
-      content = content
-        .replace(/\|.*\|/g, '')
-        .replace(/\*\*(.*?)\*\*/g, '$1')
-        .replace(/\*(.*?)\*/g, '$1')
-        .replace(/---+/g, '')
-        .replace(/#{1,6}\s*/g, '')
-        .replace(/\n{3,}/g, '\n\n')
-        .trim();
+      if (!data.success || !data.content) {
+        throw new Error("Invalid response format");
+      }
 
-      return content;
+      return data.content;
+
     } catch (error) {
       console.error("Groq API error:", error);
       throw error;

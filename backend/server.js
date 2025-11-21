@@ -13,6 +13,8 @@ const PORT = process.env.PORT
 app.use(cors())
 app.use(express.json())
 
+console.log("aiRoutes:", aiRoutes);
+
 app.use('/api/users', userRoutes)
 app.use('/api/ai', aiRoutes);
 
