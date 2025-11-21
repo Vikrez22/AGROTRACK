@@ -35,7 +35,8 @@ router.post('/natlas', async (req, res) => {
     console.log(`[N-ATLaS] Processing request - Language: ${language || 'en'}, Detailed: ${isDetailed}`);
 
     const response = await fetch(
-      'https://api-inference.huggingface.co/models/NCAIR1/N-ATLaS',
+      // 'https://api-inference.huggingface.co/models/NCAIR1/N-ATLaS',
+      'https://router.huggingface.co/models/ncair1/N-ATLaS',
       {
         method: 'POST',
         headers: {
@@ -168,7 +169,8 @@ router.post('/groq', async (req, res) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'llama-3.1-70b-versatile',
+          // FIXED: Use new active Groq model
+          model: 'llama-3.3-70b-versatile',
           messages: [
             { 
               role: 'system', 
@@ -212,7 +214,7 @@ router.post('/groq', async (req, res) => {
     res.json({ 
       success: true,
       content: content,
-      model: 'Groq Llama 3.1 70B',
+      model: 'Groq Llama 3.3 70B',
       language: language || 'en'
     });
 
