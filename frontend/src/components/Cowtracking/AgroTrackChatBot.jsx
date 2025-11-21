@@ -15,14 +15,14 @@ const AgroTrackChatBot = () => {
   const [language, setLanguage] = useState("en");
   const [isListening, setIsListening] = useState(false);
   const [error, setError] = useState("");
-  const [apiProvider, setApiProvider] = useState("natlas");
+  // const [apiProvider, setApiProvider] = useState("natlas");
+  const [apiProvider, setApiProvider] = useState("groq");
   const [modelStatus, setModelStatus] = useState("ready");
 
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
 
-  // Update this to your backend URL
-  const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:5000';
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3000';
 
   const languages = {
     en: { name: "English", code: "en-US", flag: "🇺🇸" },
@@ -31,7 +31,6 @@ const AgroTrackChatBot = () => {
     ha: { name: "Hausa", code: "ha-NG", flag: "🇳🇬" },
   };
 
-  // N-ATLaS API - Now calls YOUR backend
   const fetchNATLaSResponse = async (userMessage, isDetailed = false, conversationHistory = []) => {
     try {
       const systemPrompt = isDetailed 
@@ -58,16 +57,14 @@ const AgroTrackChatBot = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("API Error Response:", errorData);
+        // console.error("API Error Response:", errorData);
         
-        // Handle model loading
         if (errorData.error === 'MODEL_LOADING') {
           setModelStatus("loading");
           const estimatedTime = errorData.estimatedTime || 30;
           throw new Error(`MODEL_LOADING:${estimatedTime}`);
         }
 
-        // Handle rate limiting
         if (errorData.error === 'RATE_LIMIT') {
           throw new Error('RATE_LIMIT');
         }
@@ -76,7 +73,7 @@ const AgroTrackChatBot = () => {
       }
 
       const data = await response.json();
-      console.log("API Response received:", data);
+      // console.log("API Response received:", data);
       
       setModelStatus("ready");
       
@@ -87,33 +84,29 @@ const AgroTrackChatBot = () => {
       return data.content;
 
     } catch (error) {
-      console.error("N-ATLaS API error:", error);
+      // console.error("N-ATLaS API error:", error);
 
-      // Handle model loading
       if (error.message.startsWith("MODEL_LOADING")) {
         const time = error.message.split(":")[1] || "30";
         setModelStatus("loading");
         return getLoadingMessage(language, time);
       }
 
-      // Handle rate limiting
       if (error.message === 'RATE_LIMIT') {
         return getRateLimitMessage(language);
       }
 
       setModelStatus("error");
 
-      // Better error messages
       if (error.message.includes("Failed to fetch")) {
         return getConnectionErrorMessage(language);
       }
 
-      // Fallback responses
       const fallbackResponses = {
-        en: "I'm having trouble connecting right now. Please try again in a moment. Make sure your backend server is running.",
-        ig: "Enwere m nsogbu ijikọ ugbu a. Biko nwaa ọzọ n'oge na-adịghị anya. Gbaa mbọ hụ na sava backend gị na-arụ ọrụ.",
-        yo: "Mo ni wahala lati so ni bayi. Jọwọ gbiyanju lẹẹkansi laipẹ. Rii daju pe olupin backend rẹ n ṣiṣẹ.",
-        ha: "Ina da matsala ta haɗuwa a yanzu. Da fatan za a sake gwadawa nan ba da jimawa ba. Tabbatar cewa sabar backend ɗinku tana aiki.",
+        en: "I'm having trouble connecting right now. Please try again in a moment.",
+        ig: "Enwere m nsogbu ijikọ ugbu a. Biko nwaa ọzọ n'oge na-adịghị anya.",
+        yo: "Mo ni wahala lati so ni bayi. Jọwọ gbiyanju lẹẹkansi laipẹ.",
+        ha: "Ina da matsala ta haɗuwa a yanzu. Da fatan za a sake gwadawa nan ba da jimawa ba.",
       };
 
       return fallbackResponses[language] || fallbackResponses.en;
@@ -142,15 +135,14 @@ const AgroTrackChatBot = () => {
 
   const getConnectionErrorMessage = (lang) => {
     const messages = {
-      en: "Cannot connect to server. Please check: 1) Backend server is running on port 3000, 2) Your internet connection, 3) Try switching to Groq model temporarily.",
-      ig: "Enweghị ike ijikọ na sava. Biko lelee: 1) Sava azụ na-arụ ọrụ na ọdụ ụgbọ mmiri 3000, 2) Njikọ ịntanetị gị, 3) Gbalịa ịgbanwee na ụdị Groq nwa oge.",
-      yo: "Ko le so si olupin. Jọwọ ṣayẹwo: 1) Olupin ẹhin n ṣiṣẹ lori ibudo 3000, 2) Asopọ intanẹẹti rẹ, 3) Gbiyanju yipada si awoṣe Groq fun igba diẹ.",
-      ha: "Ba za a iya haɗuwa da sabar ba. Da fatan za a duba: 1) Sabar baya tana aiki akan tashar jiragen ruwa 3000, 2) Haɗin intanet ɗinku, 3) Gwada canzawa zuwa ƙirar Groq na ɗan lokaci.",
+      en: "Cannot connect to server. Please check Your internet connection",
+      ig: "Enweghị ike ijikọ na sava. Biko lelee Njikọ ịntanetị gị",
+      yo: "Ko le so si olupin. Jọwọ ṣayẹwo Asopọ intanẹẹti rẹ",
+      ha: "Ba za a iya haɗuwa da sabar ba. Da fatan za a duba Haɗin intanet ɗinku",
     };
     return messages[lang] || messages.en;
   };
 
-  // Groq API - Now calls YOUR backend
   const fetchGroqResponse = async (userMessage, isDetailed = false) => {
     try {
       const systemPrompt = isDetailed 
@@ -400,7 +392,7 @@ const AgroTrackChatBot = () => {
               title="AI Model"
             >
               <option value="natlas">🇳🇬 N-ATLaS</option>
-              <option value="groq">⚡ Groq</option>
+              <option value="groq">⚡ AgrotrackAI</option>
             </select>
             <div className="flex items-center gap-2">
               <Globe size={16} />
@@ -557,9 +549,9 @@ const AgroTrackChatBot = () => {
           </button>
         </div>
 
-        <div className="mt-2 text-xs text-gray-500 text-center">
+        {/* <div className="mt-2 text-xs text-gray-500 text-center">
           Powered by {apiProvider === 'natlas' ? 'N-ATLaS (Awarri AI)' : 'Groq AI'} • Multilingual Agricultural Assistant
-        </div>
+        </div> */}
       </div>
     </div>
   );
