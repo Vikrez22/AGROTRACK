@@ -18,10 +18,10 @@ import {
   Edit,
   Save,
 } from "lucide-react";
-import GeoTrackerHerder from "../Cowtracking/GeoTracker";
-import ChatBox from "../Cowtracking/ChatBox";
-import AgroTrackChatBot from "../Cowtracking/AgroTrackChatBot";
-import sideBarLogo from "../../assets/sidebar_logo_white.png";
+import GeoTrackerHerder from "../../Cowtracking/GeoTracker";
+import ChatBox from "../../Cowtracking/ChatBox";
+import AgroTrackChatBot from "../../Cowtracking/AgroTrackChatBot";
+import sideBarLogo from "../../../assets/sidebar_logo_white.png";
 
 // Responsive wrapper for GeoTrackerHerder
 const ResponsiveGeoTrackerHerder = ({ userId }) => (
@@ -80,6 +80,7 @@ const HerderDashboard = ({ userId }) => {
     .map((name) => name[0])
     .join("");
 
+  console.log("this is the USERID: ", userId);
   const tabs = [
     { id: "overview", label: "Overview", icon: Navigation },
     { id: "tracking", label: "Location Tracking", icon: MapPin },
@@ -94,7 +95,7 @@ const HerderDashboard = ({ userId }) => {
         return (
           <div className="space-y-6 m-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
+              <div className="bg-linear-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">Location Status</h3>
@@ -105,7 +106,7 @@ const HerderDashboard = ({ userId }) => {
                 <p className="text-sm mt-2 opacity-90">GPS tracking enabled</p>
               </div>
 
-              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
+              <div className="bg-linear-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">Safe Zones</h3>
@@ -118,7 +119,7 @@ const HerderDashboard = ({ userId }) => {
                 </p>
               </div>
 
-              <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-lg shadow-lg">
+              <div className="bg-linear-to-r from-orange-500 to-orange-600 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">Alerts</h3>
@@ -338,7 +339,7 @@ const HerderDashboard = ({ userId }) => {
                             defaultChecked
                             className="sr-only peer"
                           />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
                         </label>
                       </div>
                       <p className="text-sm text-gray-600">
@@ -360,7 +361,7 @@ const HerderDashboard = ({ userId }) => {
                             defaultChecked
                             className="sr-only peer"
                           />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
                         </label>
                       </div>
                       <p className="text-sm text-gray-600">
@@ -382,7 +383,7 @@ const HerderDashboard = ({ userId }) => {
                             defaultChecked
                             className="sr-only peer"
                           />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500"></div>
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500"></div>
                         </label>
                       </div>
                       <p className="text-sm text-gray-600">
@@ -404,7 +405,7 @@ const HerderDashboard = ({ userId }) => {
                             defaultChecked
                             className="sr-only peer"
                           />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                         </label>
                       </div>
                       <p className="text-sm text-gray-600">
@@ -448,7 +449,7 @@ const HerderDashboard = ({ userId }) => {
                   <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                        <div className="w-12 h-12 bg-linear-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
                           <User className="text-white" size={20} />
                         </div>
                         <div>
@@ -682,7 +683,7 @@ const HerderDashboard = ({ userId }) => {
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span>GPS Active</span>
             </div>
-            <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-linear-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-bold uppercase">
                 {firstLetters}
               </span>
