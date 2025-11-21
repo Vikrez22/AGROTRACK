@@ -1,13 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import {
-  MessageCircle,
-  Mic,
-  MicOff,
-  Volume2,
-  Send,
-  Globe,
-  Plus,
-} from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { MessageCircle, Mic, MicOff, Volume2, Send, Globe, Plus, AlertCircle } from "lucide-react";
 
 const AgroTrackChatBot = () => {
   const [messages, setMessages] = useState([
@@ -23,9 +15,14 @@ const AgroTrackChatBot = () => {
   const [language, setLanguage] = useState("en");
   const [isListening, setIsListening] = useState(false);
   const [error, setError] = useState("");
+  // const [apiProvider, setApiProvider] = useState("natlas");
+  const [apiProvider, setApiProvider] = useState("groq");
+  const [modelStatus, setModelStatus] = useState("ready");
 
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
+
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3000';
 
   const languages = {
     en: { name: "English", code: "en-US", flag: "🇺🇸" },
@@ -34,69 +31,153 @@ const AgroTrackChatBot = () => {
     ha: { name: "Hausa", code: "ha-NG", flag: "🇳🇬" },
   };
 
-  // Groq AI API integration with improved prompting
-  const fetchAIResponse = async (userMessage, isDetailed = false) => {
+  const fetchNATLaSResponse = async (userMessage, isDetailed = false, conversationHistory = []) => {
     try {
-      const systemPrompt = isDetailed
-        ? `You are an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Provide detailed, step-by-step information about farming techniques, pest control, livestock management, market information, and conflict resolution. Use simple, clear language that farmers can understand. Avoid complex tables, formatting, or technical jargon. Break information into numbered steps when helpful.`
-        : `You are an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Give SHORT, SIMPLE answers (2-3 sentences maximum) using basic words that farmers can understand. Focus on practical advice. Avoid tables, formatting, and complex explanations. If the topic needs more detail, mention that more information is available if they ask.`;
+      const systemPrompt = isDetailed 
+        ? `You are AwaGPT, an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Provide detailed, step-by-step information about farming techniques, pest control, livestock management, market information, and conflict resolution between farmers and herders. Use simple, clear language that farmers can understand. Break information into numbered steps when helpful.`
+        : `You are AwaGPT, an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Give SHORT, SIMPLE answers (2-3 sentences maximum) using basic words that farmers can understand. Focus on practical advice. If the topic needs more detail, mention that more information is available if they ask.`;
 
-      const response = await fetch(
-        "https://api.groq.com/openai/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "openai/gpt-oss-20b",
-            messages: [
-              {
-                role: "system",
-                content: systemPrompt,
-              },
-              {
-                role: "user",
-                content: userMessage,
-              },
-            ],
-            max_tokens: isDetailed ? 800 : 200,
-            temperature: 0.7,
-          }),
-        }
-      );
+      console.log("Sending request to backend...");
+
+      const response = await fetch(`${API_BASE_URL}/api/ai/natlas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: userMessage,
+          isDetailed: isDetailed,
+          systemPrompt: systemPrompt,
+          conversationHistory: conversationHistory,
+          language: language
+        })
+      });
+
+      console.log("Response status:", response.status);
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        // console.error("API Error Response:", errorData);
+        
+        if (errorData.error === 'MODEL_LOADING') {
+          setModelStatus("loading");
+          const estimatedTime = errorData.estimatedTime || 30;
+          throw new Error(`MODEL_LOADING:${estimatedTime}`);
+        }
+
+        if (errorData.error === 'RATE_LIMIT') {
+          throw new Error('RATE_LIMIT');
+        }
+        
+        throw new Error(errorData.message || 'API request failed');
       }
 
       const data = await response.json();
-      let content = data.choices[0].message.content;
+      // console.log("API Response received:", data);
+      
+      setModelStatus("ready");
+      
+      if (!data.success || !data.content) {
+        throw new Error("Invalid response format");
+      }
 
-      // Clean up any markdown formatting that might slip through
-      content = content
-        .replace(/\|.*\|/g, "") // Remove table rows
-        .replace(/\*\*(.*?)\*\*/g, "$1") // Remove bold formatting
-        .replace(/\*(.*?)\*/g, "$1") // Remove italic formatting
-        .replace(/---+/g, "") // Remove horizontal rules
-        .replace(/#{1,6}\s*/g, "") // Remove headers
-        .replace(/\n{3,}/g, "\n\n") // Reduce multiple newlines
-        .trim();
+      return data.content;
 
-      return content;
     } catch (error) {
-      console.error("Groq API error:", error);
+      // console.error("N-ATLaS API error:", error);
 
-      // Fallback responses based on language
+      if (error.message.startsWith("MODEL_LOADING")) {
+        const time = error.message.split(":")[1] || "30";
+        setModelStatus("loading");
+        return getLoadingMessage(language, time);
+      }
+
+      if (error.message === 'RATE_LIMIT') {
+        return getRateLimitMessage(language);
+      }
+
+      setModelStatus("error");
+
+      if (error.message.includes("Failed to fetch")) {
+        return getConnectionErrorMessage(language);
+      }
+
       const fallbackResponses = {
-        en: "I'm having trouble connecting right now. Please try again. AgroTrack helps prevent farmer-herder conflicts through smart tracking.",
-        ig: "Enwere m nsogbu ijikọ ugbu a. Biko nwaa ọzọ. AgroTrack na-enyere aka igbochi esemokwu ndị ọrụ ugbo na ndị ọzụzụ anụmanụ.",
-        yo: "Mo ni wahala lati so ni bayi. Jọwọ gbiyanju lẹẹkansi. AgroTrack ṣe iranlọwọ lati ṣe idiwọ awọn ija agbe-darandaran.",
-        ha: "Ina da matsala ta haɗuwa a yanzu. Da fatan za a sake gwadawa. AgroTrack yana taimakawa wajen hana rikice-rikice tsakanin manoma da makiyaya.",
+        en: "I'm having trouble connecting right now. Please try again in a moment.",
+        ig: "Enwere m nsogbu ijikọ ugbu a. Biko nwaa ọzọ n'oge na-adịghị anya.",
+        yo: "Mo ni wahala lati so ni bayi. Jọwọ gbiyanju lẹẹkansi laipẹ.",
+        ha: "Ina da matsala ta haɗuwa a yanzu. Da fatan za a sake gwadawa nan ba da jimawa ba.",
       };
 
       return fallbackResponses[language] || fallbackResponses.en;
+    }
+  };
+
+  const getLoadingMessage = (lang, seconds) => {
+    const messages = {
+      en: `N-ATLaS is starting up (estimated ${seconds} seconds). This only happens on first use. Please wait...`,
+      ig: `N-ATLaS na-amalite (atụmatụ sekọnd ${seconds}). Nke a na-eme naanị na ojiji mbụ. Biko chere...`,
+      yo: `N-ATLaS n bẹrẹ (aṣoju iṣẹju ${seconds}). Eyi ṣẹlẹ nikan ni lilo akọkọ. Jọwọ duro...`,
+      ha: `N-ATLaS yana farawa (kimanin daƙiƙa ${seconds}). Wannan yana faruwa ne kawai a amfani na farko. Don Allah jira...`,
+    };
+    return messages[lang] || messages.en;
+  };
+
+  const getRateLimitMessage = (lang) => {
+    const messages = {
+      en: "Too many requests. Please wait a moment before trying again.",
+      ig: "Ọtụtụ arịrịọ. Biko chere ntakịrị tupu ịnwaa ọzọ.",
+      yo: "Awọn ibeere pupọ ju. Jọwọ duro diẹ ṣaaju ki o to gbiyanju lẹẹkansi.",
+      ha: "Buƙatun da yawa. Da fatan za a jira kaɗan kafin a sake gwadawa.",
+    };
+    return messages[lang] || messages.en;
+  };
+
+  const getConnectionErrorMessage = (lang) => {
+    const messages = {
+      en: "Cannot connect to server. Please check Your internet connection",
+      ig: "Enweghị ike ijikọ na sava. Biko lelee Njikọ ịntanetị gị",
+      yo: "Ko le so si olupin. Jọwọ ṣayẹwo Asopọ intanẹẹti rẹ",
+      ha: "Ba za a iya haɗuwa da sabar ba. Da fatan za a duba Haɗin intanet ɗinku",
+    };
+    return messages[lang] || messages.en;
+  };
+
+  const fetchGroqResponse = async (userMessage, isDetailed = false) => {
+    try {
+      const systemPrompt = isDetailed 
+        ? `You are an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Provide detailed, step-by-step information about farming techniques, pest control, livestock management, market information, and conflict resolution. Use simple, clear language that farmers can understand. Avoid complex tables, formatting, or technical jargon. Break information into numbered steps when helpful.`
+        : `You are an agricultural assistant for AgroTrack, helping farmers and herders in Nigeria. Respond in ${languages[language].name}. Give SHORT, SIMPLE answers (2-3 sentences maximum) using basic words that farmers can understand. Focus on practical advice. Avoid tables, formatting, and complex explanations. If the topic needs more detail, mention that more information is available if they ask.`;
+
+      const response = await fetch(`${API_BASE_URL}/api/ai/groq`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: userMessage,
+          isDetailed: isDetailed,
+          systemPrompt: systemPrompt,
+          language: language
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Groq API request failed');
+      }
+
+      const data = await response.json();
+      
+      if (!data.success || !data.content) {
+        throw new Error("Invalid response format");
+      }
+
+      return data.content;
+
+    } catch (error) {
+      console.error("Groq API error:", error);
+      throw error;
     }
   };
 
@@ -104,15 +185,12 @@ const AgroTrackChatBot = () => {
     if (!input.trim() && !isDetailed) return;
 
     setError("");
-
+    
     let userMessage;
     if (isDetailed) {
-      // For detailed requests, use the last user message
-      const lastUserMessage = messages
-        .filter((m) => m.role === "user")
-        .slice(-1)[0];
+      const lastUserMessage = messages.filter(m => m.role === 'user').slice(-1)[0];
       if (!lastUserMessage) return;
-
+      
       userMessage = {
         role: "user",
         content: `Please give me more detailed information about: ${lastUserMessage.content}`,
@@ -132,19 +210,29 @@ const AgroTrackChatBot = () => {
     setLoading(true);
 
     try {
-      const response = await fetchAIResponse(userMessage.content, isDetailed);
+      let response;
+      
+      if (apiProvider === "natlas") {
+        const conversationHistory = messages
+          .filter(m => m.role === 'user' || m.role === 'assistant')
+          .map(m => ({ role: m.role, content: m.content }));
+        
+        response = await fetchNATLaSResponse(userMessage.content, isDetailed, conversationHistory);
+      } else {
+        response = await fetchGroqResponse(userMessage.content, isDetailed);
+      }
+
       const aiMessage = {
         role: "assistant",
         content: response,
         timestamp: new Date(),
-        hasMoreInfo: !isDetailed, // Show "More Info" button for simple responses
+        hasMoreInfo: !isDetailed,
       };
       setMessages([...newMessages, aiMessage]);
 
-      // Text-to-speech
       speak(response);
     } catch (error) {
-      setError("Failed to get response. Please try again.");
+      setError(`Failed to get response: ${error.message}`);
       console.error("AI Response error:", error);
     } finally {
       setLoading(false);
@@ -153,12 +241,11 @@ const AgroTrackChatBot = () => {
 
   const getDetailedResponse = async (messageIndex) => {
     const message = messages[messageIndex];
-    if (message.role !== "assistant") return;
+    if (message.role !== 'assistant') return;
 
-    // Find the user message that prompted this response
     let userMessage = null;
     for (let i = messageIndex - 1; i >= 0; i--) {
-      if (messages[i].role === "user") {
+      if (messages[i].role === 'user') {
         userMessage = messages[i];
         break;
       }
@@ -168,19 +255,28 @@ const AgroTrackChatBot = () => {
 
     setLoading(true);
     try {
-      const detailedResponse = await fetchAIResponse(userMessage.content, true);
-
-      // Update the specific message to show detailed info
+      let detailedResponse;
+      
+      if (apiProvider === "natlas") {
+        const conversationHistory = messages
+          .slice(0, messageIndex)
+          .filter(m => m.role === 'user' || m.role === 'assistant')
+          .map(m => ({ role: m.role, content: m.content }));
+        
+        detailedResponse = await fetchNATLaSResponse(userMessage.content, true, conversationHistory);
+      } else {
+        detailedResponse = await fetchGroqResponse(userMessage.content, true);
+      }
+      
       const updatedMessages = [...messages];
       updatedMessages[messageIndex] = {
         ...message,
         content: detailedResponse,
         hasMoreInfo: false,
-        isDetailed: true,
+        isDetailed: true
       };
       setMessages(updatedMessages);
-
-      // Speak the detailed response
+      
       speak(detailedResponse);
     } catch (error) {
       setError("Failed to get detailed response. Please try again.");
@@ -192,9 +288,8 @@ const AgroTrackChatBot = () => {
 
   const speak = (text) => {
     if ("speechSynthesis" in window) {
-      // Stop any currently speaking utterances
       speechSynthesis.cancel();
-
+      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = languages[language].code;
       utterance.rate = 0.8;
@@ -253,58 +348,76 @@ const AgroTrackChatBot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Quick suggestion buttons for common topics
   const quickSuggestions = {
     en: [
       "How to plant corn?",
       "Best cattle feed",
       "Market prices today",
-      "Prevent crop diseases",
+      "Prevent crop diseases"
     ],
     ig: [
       "Kedu ka esi akụ ọka?",
       "Nri ehi kacha mma",
       "Ọnụ ahịa taa",
-      "Gbochie ọrịa ihe ọkụkụ",
+      "Gbochie ọrịa ihe ọkụkụ"
     ],
     yo: [
       "Bawo ni a ṣe gbin agbado?",
       "Ounje malu to dara ju",
       "Awọn idiyele oja oni",
-      "Ṣe idiwọ arun oko",
+      "Ṣe idiwọ arun oko"
     ],
     ha: [
       "Yaya ake shuka masara?",
       "Abincin shanu mafi kyau",
       "Farashin kasuwa yau",
-      "Hana cututtukan amfanin gona",
-    ],
+      "Hana cututtukan amfanin gona"
+    ]
   };
 
   return (
     <div className="flex flex-col min-h-[600px] bg-white rounded-lg shadow-lg border border-gray-200">
       {/* Header */}
-      <div className="bg-linear-to-r from-green-600 to-green-700 text-white p-4 rounded-t-lg">
+      <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 rounded-t-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <MessageCircle size={24} />
             <h3 className="font-bold text-lg">AgroTrack AI</h3>
           </div>
-          <div className="flex items-center gap-2">
-            <Globe size={16} />
+          <div className="flex items-center gap-3">
             <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="bg-green-800 text-white rounded px-2 py-1 text-sm border-none outline-none"
+              value={apiProvider}
+              onChange={(e) => setApiProvider(e.target.value)}
+              className="bg-green-800 text-white rounded px-2 py-1 text-xs border-none outline-none"
+              title="AI Model"
             >
-              {Object.entries(languages).map(([code, lang]) => (
-                <option key={code} value={code}>
-                  {lang.flag} {lang.name}
-                </option>
-              ))}
+              <option value="natlas">🇳🇬 N-ATLaS</option>
+              <option value="groq">⚡ AgrotrackAI</option>
             </select>
+            <div className="flex items-center gap-2">
+              <Globe size={16} />
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="bg-green-800 text-white rounded px-2 py-1 text-sm border-none outline-none"
+              >
+                {Object.entries(languages).map(([code, lang]) => (
+                  <option key={code} value={code}>
+                    {lang.flag} {lang.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
+        
+        {/* Model status indicator */}
+        {apiProvider === "natlas" && modelStatus === "loading" && (
+          <div className="mt-2 text-xs bg-yellow-500 bg-opacity-20 px-2 py-1 rounded flex items-center gap-1">
+            <AlertCircle size={12} />
+            <span>Model is loading... First request may take 30 seconds</span>
+          </div>
+        )}
       </div>
 
       {/* Quick Suggestions */}
@@ -341,11 +454,8 @@ const AgroTrackChatBot = () => {
                   : "bg-white text-gray-800 rounded-bl-none border border-gray-200"
               }`}
             >
-              <p className="text-sm leading-relaxed whitespace-pre-line">
-                {msg.content}
-              </p>
-
-              {/* More Info Button */}
+              <p className="text-sm leading-relaxed whitespace-pre-line">{msg.content}</p>
+              
               {msg.role === "assistant" && msg.hasMoreInfo && (
                 <button
                   onClick={() => getDetailedResponse(idx)}
@@ -356,7 +466,7 @@ const AgroTrackChatBot = () => {
                   More Details
                 </button>
               )}
-
+              
               <div className="flex items-center justify-between mt-1">
                 <span className="text-xs opacity-70">
                   {msg.timestamp?.toLocaleTimeString([], {
@@ -383,9 +493,11 @@ const AgroTrackChatBot = () => {
             <div className="bg-white text-gray-800 px-4 py-2 rounded-lg shadow-md border border-gray-200">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce delay-100"></div>
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce delay-200"></div>
-                <span className="text-sm ml-2">Thinking...</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                <span className="text-sm ml-2">
+                  {modelStatus === "loading" ? "Loading model..." : "Thinking..."}
+                </span>
               </div>
             </div>
           </div>
@@ -396,8 +508,9 @@ const AgroTrackChatBot = () => {
 
       {/* Error Message */}
       {error && (
-        <div className="px-4 py-2 bg-red-50 border-l-4 border-red-400 text-red-700 text-sm">
-          {error}
+        <div className="px-4 py-2 bg-red-50 border-l-4 border-red-400 text-red-700 text-sm flex items-start gap-2">
+          <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+          <span>{error}</span>
         </div>
       )}
 
@@ -436,9 +549,9 @@ const AgroTrackChatBot = () => {
           </button>
         </div>
 
-        <div className="mt-2 text-xs text-gray-500 text-center">
-          Powered by AgroTrack AI • Multilingual Agricultural Assistant
-        </div>
+        {/* <div className="mt-2 text-xs text-gray-500 text-center">
+          Powered by {apiProvider === 'natlas' ? 'N-ATLaS (Awarri AI)' : 'Groq AI'} • Multilingual Agricultural Assistant
+        </div> */}
       </div>
     </div>
   );
