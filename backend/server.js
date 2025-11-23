@@ -14,6 +14,12 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/ai", aiRoutes);
 
+// ADD THESE LINES TEMPORARILY TO DEBUG
+console.log('=== Environment Check ===');
+console.log('PORT:', process.env.PORT);
+console.log('VITE_GROQ_API_KEY exists:', process.env.VITE_GROQ_API_KEY ? 'YES' : 'NO');
+console.log('========================');
+
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "ok",
