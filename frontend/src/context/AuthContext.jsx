@@ -15,11 +15,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, async (user) => {
       setUser(user);
-      setLoading(false);
       if (user) {
         const userProfile = await UserService.getProfile(user.uid);
         setProfile(userProfile);
       }
+      setLoading(false);
+
     });
 
     const unsubToken = onIdTokenChanged(auth, async (user) => {

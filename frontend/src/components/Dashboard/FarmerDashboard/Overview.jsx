@@ -1,8 +1,18 @@
+import React from "react";
 import { Map, MapPin, MessageSquare, Tractor } from "lucide-react";
 import GeoTracker from "../../Cowtracking/GeoTracker";
+import { useAuth } from "../../../context/AuthContext";
+import { usePresence } from "../../../hooks/activity/usePresence";
 
 const Overview = () => {
-  const userRole = "farmer";
+
+  const { role } = useAuth()
+  
+
+ 
+
+  const userRole = role;
+  
   return (
     <div className="space-y-6 m-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

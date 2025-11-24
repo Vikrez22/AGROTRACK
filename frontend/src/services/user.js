@@ -110,12 +110,5 @@ export class UserService {
   }
 
   
-  static setAuthToken(token) {
-    APIConfig.authToken = token;
-  }
-
   
-  static clearAuthToken() {
-    APIConfig.authToken = null;
-  }
 }

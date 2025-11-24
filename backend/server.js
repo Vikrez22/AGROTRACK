@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import userRoutes from "./routes/user.js";
 import aiRoutes from "./routes/ai.js";
+import chatRoutes from './routes/chat.js'
 import "dotenv/config";
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
+app.use("/api/chats", chatRoutes)
 app.use("/api/ai", aiRoutes);
 
 // ADD THESE LINES TEMPORARILY TO DEBUG
@@ -30,7 +32,6 @@ app.get("/health", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`SERVER is live on port ${PORT}`);
-  console.log("project id value");
 });
 
 export default app;
