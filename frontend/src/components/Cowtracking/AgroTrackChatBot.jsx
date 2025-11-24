@@ -57,7 +57,7 @@ const AgroTrackChatBot = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        // console.error("API Error Response:", errorData);
+        console.error("API Error Response:", errorData);
         
         if (errorData.error === 'MODEL_LOADING') {
           setModelStatus("loading");
@@ -73,7 +73,7 @@ const AgroTrackChatBot = () => {
       }
 
       const data = await response.json();
-      // console.log("API Response received:", data);
+      console.log("API Response received:", data);
       
       setModelStatus("ready");
       
@@ -84,7 +84,7 @@ const AgroTrackChatBot = () => {
       return data.content;
 
     } catch (error) {
-      // console.error("N-ATLaS API error:", error);
+      console.error("N-ATLaS API error:", error);
 
       if (error.message.startsWith("MODEL_LOADING")) {
         const time = error.message.split(":")[1] || "30";
