@@ -12,7 +12,7 @@ import {
 import { ChatServices } from "../../services/chat";
 import { useOnlineUsers } from "../../hooks/activity/useOnlineUsers";
 
-const ChatBox = ({ userId, role, userLGA, userProfile }) => {
+const ChatBox = ({ userId, role, userLGA }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -42,6 +42,8 @@ const ChatBox = ({ userId, role, userLGA, userProfile }) => {
 
     return () => unsubscribe();
   }, []);
+
+  console.log("chat messages", chatMessages);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -108,8 +110,6 @@ const ChatBox = ({ userId, role, userLGA, userProfile }) => {
     return date.toLocaleDateString();
   };
 
-  console.log("from chatbox profile name:", userProfile);
-
   return (
     <div className="flex flex-col h-full bg-white rounded-lg shadow-lg border border-gray-200">
       {/* Header */}
@@ -141,9 +141,9 @@ const ChatBox = ({ userId, role, userLGA, userProfile }) => {
             </p>
           </div>
         ) : (
-          chatMessages.map((msg, idx) => (
+          chatMessages.map((msg, id) => (
             <div
-              key={idx}
+              key={id}
               className={`flex ${
                 msg.userId === userId ? "justify-end" : "justify-start"
               }`}
@@ -163,7 +163,7 @@ const ChatBox = ({ userId, role, userLGA, userProfile }) => {
                   >
                     {getRoleIcon(msg.role)}
                     <span className="capitalize">
-                      {msg.role + " " + userProfile}
+                      {msg.role + " " + msg.displayName}
                     </span>
                   </div>
                 )}

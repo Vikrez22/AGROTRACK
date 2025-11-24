@@ -60,13 +60,7 @@ const ResponsiveChatBox = ({ userId, role, LGA, herderUsername }) => (
       <h3 className="text-xl font-semibold">Community Chat</h3>
     </div>
     <div className="flex-1 min-h-0">
-      <ChatBox
-        userId={userId}
-        role={role}
-        userLGA={LGA}
-        userProfile={herderUsername}
-      />
-      {console.log("herderrrr", herderUsername)}
+      <ChatBox userId={userId} role={role} userLGA={LGA} />
     </div>
   </div>
 );
@@ -271,12 +265,7 @@ const HerderDashboard = () => {
                 and share important updates.
               </p>
             </div>
-            <ResponsiveChatBox
-              userId={userId}
-              role={role}
-              LGA={LGA}
-              herderUsername={herderUsername}
-            />
+            <ResponsiveChatBox userId={userId} role={role} LGA={LGA} />
           </div>
         );
 
