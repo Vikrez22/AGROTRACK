@@ -3,14 +3,12 @@ import { Users } from "lucide-react";
 import ChatBox from "../../Cowtracking/ChatBox";
 import { useAuth } from "../../../context/AuthContext";
 const Chat = () => {
+  const { role, profile } = useAuth();
 
-  const { role, profile } = useAuth()
-  
- 
-  const userId = profile?.uid
-  const LGA = profile?.LGA
+  const userId = profile?.uid;
+  const LGA = profile?.LGA;
 
-  console.log('data from farmer chat', role, userId)
+  console.log("data from farmer chat", profile.displayName);
 
   return (
     <div className="space-y-6 m-6">
@@ -28,7 +26,12 @@ const Chat = () => {
             <h3 className="text-xl font-semibold">Community Chat</h3>
           </div>
           <div className="flex-1 min-h-0">
-            <ChatBox userId={userId} role={role} userLGA={LGA} />
+            <ChatBox
+              userId={userId}
+              role={role}
+              userLGA={LGA}
+              userProfile={profile.displayName}
+            />
           </div>
         </div>
       </div>

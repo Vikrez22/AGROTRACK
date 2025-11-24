@@ -10,9 +10,9 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { ChatServices } from "../../services/chat";
-import {useOnlineUsers} from '../../hooks/activity/useOnlineUsers'
+import { useOnlineUsers } from "../../hooks/activity/useOnlineUsers";
 
-const ChatBox = ({ userId, role, userLGA }) => {
+const ChatBox = ({ userId, role, userLGA, userProfile }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -22,30 +22,26 @@ const ChatBox = ({ userId, role, userLGA }) => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-   
     if (!userLGA) {
       console.log("No LGA found for user");
       return;
     }
-  
+
     const q = query(
       collection(db, "lgas", userLGA, "chatMessages"),
       orderBy("timestamp", "asc")
     );
-  
+
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const messages = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
       setChatMessages(messages);
-
     });
-  
+
     return () => unsubscribe();
   }, []);
-
-  console.log('chat messages', chatMessages)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,15 +53,13 @@ const ChatBox = ({ userId, role, userLGA }) => {
     setIsTyping(true);
 
     try {
-
-      await ChatServices.sendMessage({ message })
+      await ChatServices.sendMessage({ message });
 
       setMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
       setIsTyping(false);
-
     }
   };
 
@@ -114,10 +108,12 @@ const ChatBox = ({ userId, role, userLGA }) => {
     return date.toLocaleDateString();
   };
 
+  console.log("from chatbox profile name:", userProfile);
+
   return (
     <div className="flex flex-col h-full bg-white rounded-lg shadow-lg border border-gray-200">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-green-50 to-indigo-50 rounded-t-lg">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-linear-to-r from-green-50 to-indigo-50 rounded-t-lg">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-green-500 rounded-lg">
             <MessageCircle className="text-white" size={20} />
@@ -166,7 +162,9 @@ const ChatBox = ({ userId, role, userLGA }) => {
                     )} px-2 py-1 rounded-full text-xs font-medium w-fit`}
                   >
                     {getRoleIcon(msg.role)}
-                    <span className="capitalize">{msg.role}</span>
+                    <span className="capitalize">
+                      {msg.role + " " + userProfile}
+                    </span>
                   </div>
                 )}
 

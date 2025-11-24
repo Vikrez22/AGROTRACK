@@ -60,7 +60,7 @@ const ResponsiveChatBox = ({ userId, role, LGA }) => (
       <h3 className="text-xl font-semibold">Community Chat</h3>
     </div>
     <div className="flex-1 min-h-0">
-      <ChatBox userId={userId} role={role} userLGA={LGA}/>
+      <ChatBox userId={userId} role={role} userLGA={LGA} />
     </div>
   </div>
 );
@@ -73,29 +73,19 @@ const ResponsiveAgroTrackChatBot = () => (
 );
 
 const HerderDashboard = () => {
+  const { role, loading, profile } = useAuth();
 
+  usePresence();
 
-  const { 
-    role, 
-    loading, 
-    profile 
-} = useAuth()
+  const [activeTab, setActiveTab] = useState("overview");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [settingsTab, setSettingsTab] = useState("profiles");
 
-usePresence()
+  const userId = profile?.uid;
+  const herderUsername = profile?.displayName;
+  const LGA = profile?.LGA;
 
-
-
-
-const [activeTab, setActiveTab] = useState("overview");
-const [sidebarOpen, setSidebarOpen] = useState(false);
-const [settingsTab, setSettingsTab] = useState("profiles");
-
-
-
-const userId = profile?.uid
-const herderUsername = profile?.displayName 
-const LGA = profile?.LGA 
-  
+  console.log("Herder Dashboard username", profile.displayName);
 
   const firstLetters = herderUsername
     .split(" ")
@@ -110,7 +100,6 @@ const LGA = profile?.LGA
     { id: "ai-assistant", label: "AI Assistant", icon: Bot },
     { id: "settings", label: "Settings", icon: Settings },
   ];
-
 
   const renderContent = () => {
     switch (activeTab) {
@@ -276,7 +265,12 @@ const LGA = profile?.LGA
                 and share important updates.
               </p>
             </div>
-            <ResponsiveChatBox userId={userId} role={role} LGA={LGA} />
+            <ResponsiveChatBox
+              userId={userId}
+              role={role}
+              LGA={LGA}
+              userProfile={profile.displayName}
+            />
           </div>
         );
 

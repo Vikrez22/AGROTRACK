@@ -536,7 +536,7 @@ const AgroTrackLandingPage = () => {
 
           {/* Marketplace Coming Soon */}
           <div
-            className="mt-16 bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-8 text-center text-green-600"
+            className="mt-16 bg-linear-to-r from-green-600 to-green-700 rounded-2xl p-8 text-center text-green-600"
             style={{
               backgroundImage: `url(${marketplace})`,
               backgroundSize: "cover",
@@ -846,7 +846,7 @@ const AgroTrackLandingPage = () => {
                 <X size={24} />
               </button>
             </div>
-            <div className="flex-grow p-6 space-y-4">
+            <div className="grow p-6 space-y-4">
               <div className="text-gray-700">
                 <p>Hello! I'm your AI assistant. How can I help you today?</p>
               </div>
