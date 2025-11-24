@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   MapPin,
   MessageSquare,
@@ -14,6 +14,7 @@ import Tracking from "./Tracking";
 import AiAssistant from "./AiAssistant";
 import Chat from "./Chat";
 import Settings from "./Settings";
+import { useAuth } from "../../../context/AuthContext";
 
 const FarmerDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -27,8 +28,12 @@ const FarmerDashboard = () => {
     { id: "settings", label: "Settings", icon: SettingsIcon },
   ];
 
+
+  const { role, profile} = useAuth()
+
+
   //replace my name with the actual username
-  const farmerUsername = "Munachi Onyebuchi";
+  const farmerUsername = profile?.displayName;
   const firstLetters = farmerUsername
     .split(" ")
     .map((name) => name[0])
