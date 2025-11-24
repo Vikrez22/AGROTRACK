@@ -53,14 +53,20 @@ const ResponsiveGeoTrackerHerder = ({ userId, role }) => (
 );
 
 // Responsive wrapper for ChatBox
-const ResponsiveChatBox = ({ userId, role, LGA }) => (
+const ResponsiveChatBox = ({ userId, role, LGA, herderUsername }) => (
   <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
     <div className="flex items-center gap-2 mb-4">
       <Users className="text-green-600" size={24} />
       <h3 className="text-xl font-semibold">Community Chat</h3>
     </div>
     <div className="flex-1 min-h-0">
-      <ChatBox userId={userId} role={role} userLGA={LGA} />
+      <ChatBox
+        userId={userId}
+        role={role}
+        userLGA={LGA}
+        userProfile={herderUsername}
+      />
+      {console.log("herderrrr", herderUsername)}
     </div>
   </div>
 );
@@ -269,7 +275,7 @@ const HerderDashboard = () => {
               userId={userId}
               role={role}
               LGA={LGA}
-              userProfile={profile.displayName}
+              herderUsername={herderUsername}
             />
           </div>
         );
