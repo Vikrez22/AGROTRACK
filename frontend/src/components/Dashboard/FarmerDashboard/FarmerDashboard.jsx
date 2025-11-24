@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import {
   MapPin,
   MessageSquare,
@@ -16,13 +16,14 @@ import Chat from "./Chat";
 import Settings from "./Settings";
 import { useAuth } from "../../../context/AuthContext";
 import { usePresence } from "../../../hooks/activity/usePresence";
+import { useOnlineUsers } from "../../../hooks/activity/useOnlineUsers";
 
 const FarmerDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { role, profile} = useAuth()
+  const { role, profile } = useAuth();
 
-  usePresence()
+  usePresence();
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Tractor },
@@ -31,9 +32,6 @@ const FarmerDashboard = () => {
     { id: "ai-assistant", label: "AI Assistant", icon: Bot },
     { id: "settings", label: "Settings", icon: SettingsIcon },
   ];
-
-
-
 
   //replace my name with the actual username
   const farmerUsername = profile?.displayName;
