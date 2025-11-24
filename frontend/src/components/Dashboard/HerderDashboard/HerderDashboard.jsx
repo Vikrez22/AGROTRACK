@@ -23,6 +23,7 @@ import ChatBox from "../../Cowtracking/ChatBox";
 import AgroTrackChatBot from "../../Cowtracking/AgroTrackChatBot";
 import sideBarLogo from "../../../assets/sidebar_logo_white.png";
 import { useAuth } from "../../../context/AuthContext";
+import { usePresence } from "../../../hooks/activity/usePresence";
 
 // Responsive wrapper for GeoTrackerHerder
 const ResponsiveGeoTrackerHerder = ({ userId, role }) => (
@@ -79,6 +80,9 @@ const HerderDashboard = () => {
     loading, 
     profile 
 } = useAuth()
+
+usePresence()
+
 
 
 

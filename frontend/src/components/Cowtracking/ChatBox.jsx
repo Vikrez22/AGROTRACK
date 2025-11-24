@@ -10,12 +10,14 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { ChatServices } from "../../services/chat";
+import {useOnlineUsers} from '../../hooks/activity/useOnlineUsers'
 
 const ChatBox = ({ userId, role, userLGA }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [onlineUsers] = useState(3); 
+
+  const { onlineCount, onlineUsers } = useOnlineUsers(userLGA?.trim());
   const chatRef = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -55,13 +57,6 @@ const ChatBox = ({ userId, role, userLGA }) => {
     setIsTyping(true);
 
     try {
-      // Real Firebase addDoc call
-      // await addDoc(collection(db, "chatMessages"), {
-      //   userId,
-      //   role,
-      //   message: message.trim(),
-      //   timestamp: serverTimestamp(),
-      // });
 
       await ChatServices.sendMessage({ message })
 
@@ -129,7 +124,7 @@ const ChatBox = ({ userId, role, userLGA }) => {
           </div>
           <div>
             <h3 className="font-semibold text-gray-800">Community Chat</h3>
-            <p className="text-sm text-gray-500">{onlineUsers} users online</p>
+            <p className="text-sm text-gray-500">{onlineCount} users online</p>
           </div>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-600">
