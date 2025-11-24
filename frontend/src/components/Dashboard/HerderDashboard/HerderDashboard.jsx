@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   MapPin,
   MessageSquare,
@@ -22,16 +22,18 @@ import GeoTrackerHerder from "../../Cowtracking/GeoTracker";
 import ChatBox from "../../Cowtracking/ChatBox";
 import AgroTrackChatBot from "../../Cowtracking/AgroTrackChatBot";
 import sideBarLogo from "../../../assets/sidebar_logo_white.png";
+import { useAuth } from "../../../context/AuthContext";
+import { usePresence } from "../../../hooks/activity/usePresence";
 
 // Responsive wrapper for GeoTrackerHerder
-const ResponsiveGeoTrackerHerder = ({ userId }) => (
+const ResponsiveGeoTrackerHerder = ({ userId, role }) => (
   <div className="bg-white rounded-lg shadow-lg p-6">
     <div className="flex items-center gap-2 mb-4">
       <Map className="text-green-600" size={24} />
       <h3 className="text-xl font-semibold">Live Location Tracking</h3>
     </div>
     <div className="rounded-lg overflow-hidden border">
-      <GeoTrackerHerder userRole="herder" userId={userId} />
+      <GeoTrackerHerder userRole={role} userId={userId} />
     </div>
     <div className="mt-4 flex gap-4 text-sm">
       <div className="flex items-center gap-2">
@@ -51,14 +53,14 @@ const ResponsiveGeoTrackerHerder = ({ userId }) => (
 );
 
 // Responsive wrapper for ChatBox
-const ResponsiveChatBox = ({ userId, role }) => (
+const ResponsiveChatBox = ({ userId, role, LGA }) => (
   <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
     <div className="flex items-center gap-2 mb-4">
       <Users className="text-green-600" size={24} />
       <h3 className="text-xl font-semibold">Community Chat</h3>
     </div>
     <div className="flex-1 min-h-0">
-      <ChatBox userId={userId} role={role} />
+      <ChatBox userId={userId} role={role} userLGA={LGA}/>
     </div>
   </div>
 );
@@ -70,11 +72,31 @@ const ResponsiveAgroTrackChatBot = () => (
   </div>
 );
 
-const HerderDashboard = ({ userId }) => {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [settingsTab, setSettingsTab] = useState("profiles");
-  const herderUsername = " Alhaji Musa";
+const HerderDashboard = () => {
+
+
+  const { 
+    role, 
+    loading, 
+    profile 
+} = useAuth()
+
+usePresence()
+
+
+
+
+const [activeTab, setActiveTab] = useState("overview");
+const [sidebarOpen, setSidebarOpen] = useState(false);
+const [settingsTab, setSettingsTab] = useState("profiles");
+
+
+
+const userId = profile?.uid
+const herderUsername = profile?.displayName 
+const LGA = profile?.LGA 
+  
+
   const firstLetters = herderUsername
     .split(" ")
     .map((name) => name[0])
@@ -88,6 +110,7 @@ const HerderDashboard = ({ userId }) => {
     { id: "ai-assistant", label: "AI Assistant", icon: Bot },
     { id: "settings", label: "Settings", icon: Settings },
   ];
+
 
   const renderContent = () => {
     switch (activeTab) {
@@ -132,7 +155,7 @@ const HerderDashboard = ({ userId }) => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ResponsiveGeoTrackerHerder userId={userId} />
+              <ResponsiveGeoTrackerHerder role={role} userId={userId} />
               <div className="space-y-6">
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-xl font-semibold mb-4">
@@ -253,7 +276,7 @@ const HerderDashboard = ({ userId }) => {
                 and share important updates.
               </p>
             </div>
-            <ResponsiveChatBox userId={userId} role="herder" />
+            <ResponsiveChatBox userId={userId} role={role} LGA={LGA} />
           </div>
         );
 
