@@ -1,4 +1,4 @@
-import { auth } from "../config/firebase.js"
+import { auth, db } from "../config/firebase.js"
 
 
 export const authenticateUser = async (req, res, next ) => {
@@ -25,6 +25,7 @@ export const requireRole = (...allowedRoles) => {
     return async (req, res, next) => {
       try {
         const { db } = require('../config/firebase');
+
         const userDoc = await db.collection('users').doc(req.user.uid).get();
         
         if (!userDoc.exists) {
@@ -50,3 +51,33 @@ export const requireRole = (...allowedRoles) => {
     };
   };
   
+
+export const getProfile = async (req, res, next) => {
+    try
+    {
+      const decodedToken = req.user
+
+    if (!decodedToken) {
+      return (
+        res.status(401).json({message: 'decodedToken not provided'})
+      )
+    }
+
+    const userDoc = await db.collection('users').doc(req.user.uid).get()
+
+    if (!userDoc.exists) {
+      return (
+        res.status(403).json({message: "User profile doesn't exist"})
+      )
+    }
+
+    const userData = userDoc.data()
+
+    req.userData = userData
+    next()
+  } catch (error){
+    console.error('getProfile failed', error)
+    return res.status(500).json({ message: 'Error getting user data' });
+
+  }
+}
