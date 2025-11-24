@@ -9,28 +9,41 @@ import {
   query,
   serverTimestamp,
 } from "firebase/firestore";
+import { ChatServices } from "../../services/chat";
 
-const ChatBox = ({ userId, role }) => {
+const ChatBox = ({ userId, role, userLGA }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [onlineUsers] = useState(3); // You can implement real online user count later
+  const [onlineUsers] = useState(3); 
   const chatRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    // Real Firebase query
+   
+    if (!userLGA) {
+      console.log("No LGA found for user");
+      return;
+    }
+  
     const q = query(
-      collection(db, "chatMessages"),
+      collection(db, "lgas", userLGA, "chatMessages"),
       orderBy("timestamp", "asc")
     );
+  
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const messages = snapshot.docs.map((doc) => doc.data());
+      const messages = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      }));
       setChatMessages(messages);
-    });
 
+    });
+  
     return () => unsubscribe();
   }, []);
+
+  console.log('chat messages', chatMessages)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,18 +56,21 @@ const ChatBox = ({ userId, role }) => {
 
     try {
       // Real Firebase addDoc call
-      await addDoc(collection(db, "chatMessages"), {
-        userId,
-        role,
-        message: message.trim(),
-        timestamp: serverTimestamp(),
-      });
+      // await addDoc(collection(db, "chatMessages"), {
+      //   userId,
+      //   role,
+      //   message: message.trim(),
+      //   timestamp: serverTimestamp(),
+      // });
+
+      await ChatServices.sendMessage({ message })
 
       setMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
       setIsTyping(false);
+
     }
   };
 
