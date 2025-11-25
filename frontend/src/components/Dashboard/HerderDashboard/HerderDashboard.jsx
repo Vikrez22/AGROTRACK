@@ -680,6 +680,13 @@ const HerderDashboard = () => {
             </div>
           </div>
         </div>
+
+        <div
+          className="bg-white p-2 h-fit m-2 rounded-lg cursor-pointer hover:bg-white/80 transition-colors"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          <X size={25} className="text-red-600" />
+        </div>
       </div>
 
       {/* Main Content */}
