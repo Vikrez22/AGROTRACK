@@ -589,7 +589,7 @@ const HerderDashboard = () => {
         onClick={() => setSidebarOpen(!sidebarOpen)}
       >
         <div
-          className={`bg-white shadow-lg transition-all duration-300 flex flex-col border-r border-gray-200/30 h-full ${
+          className={`bg-white shadow-lg transition-all duration-300 flex flex-col border-r border-gray-200/30 h-full pointer-events-auto ${
             sidebarOpen
               ? "w-64 translate-x-0"
               : "w-0 -translate-x-full lg:translate-x-0 lg:w-64"
