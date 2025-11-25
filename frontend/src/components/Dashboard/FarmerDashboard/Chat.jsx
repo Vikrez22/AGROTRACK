@@ -26,12 +26,7 @@ const Chat = () => {
             <h3 className="text-xl font-semibold">Community Chat</h3>
           </div>
           <div className="flex-1 min-h-0">
-            <ChatBox
-              userId={userId}
-              role={role}
-              userLGA={LGA}
-              userProfile={profile.displayName}
-            />
+            <ChatBox userId={userId} role={role} userLGA={LGA} />
           </div>
         </div>
       </div>
