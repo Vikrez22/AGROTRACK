@@ -62,13 +62,21 @@ const FarmerDashboard = () => {
   return (
     <div className="flex h-screen w-full bg-gray-50 overflow-hidden transition-all duration-300">
       {/* Sidebar  */}
-      <div className={`${sidebarOpen ? "block" : "hidden"} lg:block h-full`}>
+      <div
+        className={`${
+          sidebarOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        } lg:opacity-100 lg:pointer-events-none h-full bg-black/10 lg:bg-transparent fixed top-0 left-0 w-full z-2000! flex justify-between backdrop-blur-xs lg:backdrop-blur-none`}
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+      >
         <div
-          className={`bg-white shadow-lg transition-all duration-300 flex flex-col border-r border-gray-200/30 h-full ${
+          className={`bg-white shadow-lg lg:shadow-none transition-all duration-300 flex flex-col border-r border-gray-200/30 h-full ${
             sidebarOpen
               ? "w-64 translate-x-0"
               : "w-0 -translate-x-full lg:translate-x-0 lg:w-64"
-          } ${"overflow-hidden"}`}
+          } overflow-hidden`}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="p-2.5 border-b border-gray-200 flex items-center shrink-0">
@@ -92,34 +100,35 @@ const FarmerDashboard = () => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-2 overflow-y-auto">
-            <div className="space-y-2">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`${
-                      sidebarOpen ? "w-full" : "w-full"
-                    } flex items-center gap-3 px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${
-                      activeTab === tab.id
-                        ? "bg-green-500 text-white shadow-lg"
-                        : "text-gray-600 hover:bg-gray-100"
+          <nav className="flex-1 p-4 overflow-y-auto space-y-1">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+                    isActive
+                      ? "bg-green-50 text-green-600 font-semibold shadow-sm"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
+                >
+                  <Icon
+                    size={20}
+                    className={`transition-colors ${
+                      isActive
+                        ? "text-green-600"
+                        : "text-gray-400 group-hover:text-gray-600"
                     }`}
-                  >
-                    <Icon size={20} />
-                    <span
-                      className={`${
-                        sidebarOpen ? "block" : "hidden"
-                      } lg:block font-medium`}
-                    >
-                      {tab.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                  />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
           </nav>
 
           {/* Footer */}
@@ -152,11 +161,18 @@ const FarmerDashboard = () => {
             </div>
           </div>
         </div>
+
+        <div
+          className="bg-white p-2 h-fit m-2 rounded-lg cursor-pointer hover:bg-white/80 transition-colors block lg:hidden"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          <X size={25} className="text-red-600" />
+        </div>
       </div>
 
       {/* Main */}
-      <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
-        <header className="bg-white border-b border-gray-200 p-1.5 flex items-center justify-between z-50 shrink-0">
+      <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden lg:ml-64">
+        <header className="bg-white border-b border-gray-200 p-1.5 flex items-center justify-between z-20 shrink-0 px-2.5">
           <div className="flex items-center gap-4">
             <div>
               <h2 className="text-xl font-semibold text-gray-800">
