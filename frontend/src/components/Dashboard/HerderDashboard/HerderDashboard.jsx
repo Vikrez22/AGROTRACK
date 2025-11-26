@@ -556,10 +556,7 @@ const HerderDashboard = () => {
                           View Animals
                         </button>
                         <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                          Send Message
-                        </button>
-                        <button className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
-                          Contact Info
+                          Send a Report
                         </button>
                         <button className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
                           View Reports
