@@ -1,0 +1,141 @@
+// 1. Define the modem model FIRST
+#define TINY_GSM_MODEM_SIM800
+
+#include <TinyGsmClient.h>
+#include <TinyGPS++.h>
+#include <Wire.h>
+
+// --- TTGO T-Call v1.3 Internal Pins ---
+#define MODEM_RST 5
+#define MODEM_PWKEY 4
+#define MODEM_POWER_ON 23
+#define MODEM_TX 27
+#define MODEM_RX 26
+#define I2C_SDA 21
+#define I2C_SCL 22
+
+// --- GPS Pins (Blue=33, Yellow=32) ---
+#define GPS_RX_PIN 33  // Connect to Blue Wire
+#define GPS_TX_PIN 32  // Connect to Yellow Wire
+
+// Set serial for debug console
+#define SerialMon Serial
+
+// Set serial for AT commands (SIM800)
+#define SerialAT Serial1
+
+// Set serial for GPS
+HardwareSerial SerialGPS(2);
+
+// Define Objects
+TinyGsm modem(SerialAT);
+TinyGPSPlus gps;
+
+// IP5306 Power Management
+#define IP5306_ADDR 0x75
+#define IP5306_REG_SYS_CTL0 0x00
+
+void setupPower() {
+  Wire.begin(I2C_SDA, I2C_SCL);
+  bool isOk = setPowerBoostKeepOn(1);
+  SerialMon.println(String("IP5306 KeepOn ") + (isOk ? "OK" : "FAIL"));
+}
+
+bool setPowerBoostKeepOn(int en) {
+  Wire.beginTransmission(IP5306_ADDR);
+  Wire.write(IP5306_REG_SYS_CTL0);
+  if (en) {
+    Wire.write(0x37);
+  } else {
+    Wire.write(0x35);
+  }
+  return Wire.endTransmission() == 0;
+}
+
+void setup() {
+  SerialMon.begin(115200);
+  delay(1000);
+
+  // 1. Setup Power
+  setupPower();
+
+  // 2. Setup Modem Pins
+  pinMode(MODEM_PWKEY, OUTPUT);
+  pinMode(MODEM_RST, OUTPUT);
+  pinMode(MODEM_POWER_ON, OUTPUT);
+  digitalWrite(MODEM_PWKEY, LOW);
+  digitalWrite(MODEM_RST, HIGH);
+  digitalWrite(MODEM_POWER_ON, HIGH);
+
+  // 3. Start Modem Serial
+  SerialAT.begin(115200, SERIAL_8N1, MODEM_RX, MODEM_TX);
+
+  // 4. Start GPS Serial at 115200 baud
+  SerialGPS.begin(115200, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
+  delay(1000); // Give GPS time to boot
+
+  SerialMon.println("Initializing modem...");
+  modem.restart();
+
+  SerialMon.println("--- AGROTRACK SYSTEM STARTED ---");
+  SerialMon.println("GPS Serial Started at 115200 baud");
+  SerialMon.println("Waiting for Satellite Lock...");
+}
+
+void loop() {
+  static unsigned long lastLog = 0;
+  static int byteCount = 0;
+  static bool showRaw = true; // Set to false once you confirm data is good
+  
+  // Read and process GPS data
+  while (SerialGPS.available()) {
+    char c = SerialGPS.read();
+    if (showRaw) {
+      SerialMon.write(c); // Show raw NMEA for debugging
+    }
+    gps.encode(c);
+    byteCount++;
+  }
+
+  // Print status every 2 seconds
+  if (millis() - lastLog > 2000) {
+    lastLog = millis();
+    
+    if (showRaw) {
+      SerialMon.println(); // New line for clarity
+    }
+    
+    SerialMon.println("========== GPS DIAGNOSTICS ==========");
+    SerialMon.print("Bytes received in last 2s: ");
+    SerialMon.println(byteCount);
+    SerialMon.print("Chars processed by TinyGPS++: ");
+    SerialMon.println(gps.charsProcessed());
+    SerialMon.print("Sentences with fix: ");
+    SerialMon.println(gps.sentencesWithFix());
+    SerialMon.print("Failed checksum: ");
+    SerialMon.println(gps.failedChecksum());
+    SerialMon.print("Satellites in view: ");
+    SerialMon.println(gps.satellites.value());
+    
+    byteCount = 0;
+
+    if (gps.location.isValid()) {
+      SerialMon.println("-----------------------------");
+      SerialMon.println("✅ SATELLITE LOCKED");
+      SerialMon.print("   LATITUDE:  ");
+      SerialMon.println(gps.location.lat(), 6);
+      SerialMon.print("   LONGITUDE: ");
+      SerialMon.println(gps.location.lng(), 6);
+      SerialMon.print("   SPEED (km/h): ");
+      SerialMon.println(gps.speed.kmph());
+      SerialMon.print("   ALTITUDE (m): ");
+      SerialMon.println(gps.altitude.meters());
+      SerialMon.println("-----------------------------");
+    } else {
+      SerialMon.println("⏳ Searching for satellites...");
+    }
+    SerialMon.println("=====================================\n");
+  }
+}
+
+
