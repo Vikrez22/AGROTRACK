@@ -769,7 +769,7 @@ const LawEnforcementDashboard = () => {
               <div className="bg-linear-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold">Patrol Units</h3>
+                    <h3 className="text-lg font-semibold">Emergency Units</h3>
                     <p className="text-3xl font-bold mt-2">
                       {stats.patrolUnits}
                     </p>
