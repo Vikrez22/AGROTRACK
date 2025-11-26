@@ -276,9 +276,6 @@ const Settings = () => {
 
               <div className="mt-6 pt-4 border-t border-gray-200">
                 <div className="flex flex-wrap gap-2">
-                  <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                    View Animals
-                  </button>
                   <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
                     Send Message
                   </button>
