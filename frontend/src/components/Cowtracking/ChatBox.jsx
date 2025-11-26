@@ -1,5 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { Send, Users, MessageCircle, Clock, User, Shield } from "lucide-react";
+import {
+  Send,
+  Users,
+  MessageCircle,
+  Clock,
+  User,
+  Shield,
+  GalleryHorizontalEnd,
+  CheckCheck,
+} from "lucide-react";
 import { db } from "../../config/firebase";
 import {
   collection,
@@ -11,6 +20,7 @@ import {
 } from "firebase/firestore";
 import { ChatServices } from "../../services/chat";
 import { useOnlineUsers } from "../../hooks/activity/useOnlineUsers";
+import doubleTickSVG from "../../assets/doubleTickSVG";
 
 const ChatBox = ({ userId, role, userLGA }) => {
   const [message, setMessage] = useState("");
@@ -177,7 +187,7 @@ const ChatBox = ({ userId, role, userLGA }) => {
                     msg.userId === userId ? "text-green-100" : "text-gray-500"
                   }`}
                 >
-                  <Clock size={10} />
+                  <CheckCheck size={16} />
                   <span>{formatTimestamp(msg.timestamp)}</span>
                 </div>
               </div>
