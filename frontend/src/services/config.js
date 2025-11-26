@@ -18,7 +18,6 @@ export class APIConfig {
         retries = this.maxRetries
     ) {
         const url = `${this.baseURL}/api${endpoint}`;
-        console.log('url is', url);
         
         // Get fresh token from Firebase
         const token = await this.getAuthToken();

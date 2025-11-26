@@ -15,7 +15,6 @@ export class UserService {
           body: JSON.stringify(userData),
         }
       );
-
       
       const data = await response.json();
       
@@ -39,7 +38,6 @@ export class UserService {
       );
 
       const data = await response.json();
-      console.log('the data from user service', data)
 
       return data;
     } catch (err) {

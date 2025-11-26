@@ -3,20 +3,11 @@ import { Map, MapPin, MessageSquare, Tractor } from "lucide-react";
 import GeoTracker from "../../Cowtracking/GeoTracker";
 import { useAuth } from "../../../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
-import {
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import { db } from "../../../config/firebase";
 import { ChatServices } from "../../../services/chat";
 
 const Overview = () => {
 
   const { role, profile } = useAuth()
-
-  
 
   const userLGA = profile?.LGA
   
@@ -64,7 +55,7 @@ const Overview = () => {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold">Messages</h3>
-              <p className="text-3xl font-bold mt-2">{ isLoadingUnreadCount ? "⁕" :  unreadCount}</p>
+              <p className="text-3xl font-bold mt-2">{ unreadCount ? unreadCount: 0   }</p>
             </div>
             <MessageSquare size={48} className="opacity-80" />
           </div>
