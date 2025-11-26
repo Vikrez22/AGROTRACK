@@ -38,12 +38,6 @@ export const AuthProvider = ({ children }) => {
       unsubToken();
     };
   }, []);
-  console.log(
-    "profile data from context",
-    user,
-    "this is from firestore",
-    profile
-  );
 
   return (
     <AuthContext.Provider
@@ -54,6 +48,8 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated: !!user,
         token,
         profile,
+        setUser,
+        setProfile,
       }}
     >
       {children}
