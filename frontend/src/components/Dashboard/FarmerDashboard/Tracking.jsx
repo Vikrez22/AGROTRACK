@@ -17,11 +17,6 @@ const Tracking = () => {
           <p>Map Name</p>
           <p>Date created: 11/26/2025</p>
         </div>
-        <div>
-          <div className="border w-65 h-43"></div>
-          <p>Map Name</p>
-          <p>Date created: 11/26/2025</p>
-        </div>
 
         <div
           className="flex items-center justify-center size-15 rounded-full border"
