@@ -49,6 +49,7 @@ import AiSupport from "./AiSupport";
 import Reports from "./Reports";
 import Settings from "./Settings";
 import { useAuthMutations } from "../../hooks/useAuthMutations";
+import { usePresence } from "../../hooks/activity/usePresence";
 
 const iotFirebaseConfig = {
   apiKey: "AIzaSyDaw8OdK1eaMCcOJgB6lHDFGn_hb9YIEdM",
@@ -668,6 +669,8 @@ const LawEnforcementDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { signOut } = useAuthMutations();
+  usePresence();
+
 
 
   // Get real-time data from Firebase
