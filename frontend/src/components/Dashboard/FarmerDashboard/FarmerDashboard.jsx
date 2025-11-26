@@ -18,7 +18,6 @@ import Settings from "./Settings";
 import { useAuth } from "../../../context/AuthContext";
 import { usePresence } from "../../../hooks/activity/usePresence";
 import { useOnlineUsers } from "../../../hooks/activity/useOnlineUsers";
-import Requests from "./Requests";
 
 const FarmerDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -29,9 +28,8 @@ const FarmerDashboard = () => {
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Tractor },
-    // { id: "tracking", label: "Livestock Tracking", icon: MapPin },
+    { id: "tracking", label: "Geo Fencing", icon: MapPin },
     { id: "chat", label: "Community", icon: MessageSquare },
-    { id: "requests", label: "Request Mapping", icon: ClipboardEdit },
     { id: "ai-assistant", label: "AI Assistant", icon: Bot },
     { id: "settings", label: "Settings", icon: SettingsIcon },
   ];
@@ -53,9 +51,6 @@ const FarmerDashboard = () => {
 
       case "chat":
         return <Chat />;
-
-      case "requests":
-        return <Requests />;
 
       case "ai-assistant":
         return <AiAssistant />;
