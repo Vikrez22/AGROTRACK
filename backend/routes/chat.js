@@ -7,7 +7,7 @@ const router = express.Router()
 
 router.post('/send', authenticateUser, getProfile, chatController.sendMessage)
 
-
+router.get('/unread-count', authenticateUser, getProfile, chatController.getUserUnreadCount);
 
 
 
