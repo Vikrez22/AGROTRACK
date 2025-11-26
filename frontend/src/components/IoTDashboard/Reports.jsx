@@ -94,7 +94,7 @@ const Reports = () => {
             {/* Report 1 - Critical */}
             <tr className="hover:bg-gray-50">
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                #RPT-2024-001
+                #AGT-2025-001
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
@@ -148,7 +148,7 @@ const Reports = () => {
             {/* Report 2 - Pending */}
             <tr className="hover:bg-gray-50">
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                #RPT-2024-002
+                #AGT-2025-002
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
@@ -202,7 +202,7 @@ const Reports = () => {
             {/* Report 3 - In Progress */}
             <tr className="hover:bg-gray-50">
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                #RPT-2024-003
+                #AGT-2025-003
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
@@ -256,7 +256,7 @@ const Reports = () => {
             {/* Report 4 - Resolved */}
             <tr className="hover:bg-gray-50">
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                #RPT-2024-004
+                #AGT-2025-004
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
@@ -310,7 +310,7 @@ const Reports = () => {
             {/* Report 5 - Theft */}
             <tr className="hover:bg-gray-50">
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                #RPT-2024-005
+                #AGT-2025-005
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
@@ -407,7 +407,7 @@ const Reports = () => {
       </div>
 
       {/* Quick Actions Panel */}
-      <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+      {/* <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">
           Quick Actions
         </h3>
@@ -429,7 +429,7 @@ const Reports = () => {
             Analytics Dashboard
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
