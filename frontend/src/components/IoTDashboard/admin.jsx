@@ -48,6 +48,7 @@ import Communications from "./Communications";
 import AiSupport from "./AiSupport";
 import Reports from "./Reports";
 import Settings from "./Settings";
+import { useAuthMutations } from "../../hooks/useAuthMutations";
 
 const iotFirebaseConfig = {
   apiKey: "AIzaSyDaw8OdK1eaMCcOJgB6lHDFGn_hb9YIEdM",
@@ -331,6 +332,8 @@ const IoTLivestockDashboard = ({ userRole = "law-enforcement" }) => {
     message: "",
     type: "",
   });
+
+
 
   const showMessageBox = (message, type) => {
     setMessageBox({ visible: true, message, type });
@@ -663,6 +666,9 @@ const IoTLivestockDashboard = ({ userRole = "law-enforcement" }) => {
 const LawEnforcementDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const { signOut } = useAuthMutations();
+
 
   // Get real-time data from Firebase
   const {
@@ -1111,22 +1117,18 @@ const LawEnforcementDashboard = () => {
           {/* Footer */}
           {/* //logout button here */}
           <div className="shrink-0">
-            <a href="/login">
-              <button
-                className={`w-full bg-red-100 flex mb-3 items-center gap-3 px-3 py-2 ${
-                  sidebarOpen ? "rounded-lg" : "rounded-none"
-                } text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap`}
-              >
-                <X size={20} />
-                <span
-                  className={`${
-                    sidebarOpen ? "block" : "hidden"
-                  } lg:block font-medium`}
-                >
-                  Logout
-                </span>
-              </button>
-            </a>
+          <button
+            onClick={() => signOut.mutate()}
+            className={`w-full bg-red-100 flex mb-3 items-center gap-3 px-3 py-2 ${
+              sidebarOpen ? "rounded-lg" : "rounded-none"
+            } text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap`}
+          >
+            <X size={20} />
+            <span className={`${sidebarOpen ? "block" : "hidden"} lg:block font-medium`}>
+              Logout
+            </span>
+          </button>
+
             <div className="p-4 border-t border-gray-200">
               <div
                 className={`${
