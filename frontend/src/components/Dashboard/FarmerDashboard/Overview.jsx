@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Map, MapPin, MessageSquare, Tractor } from "lucide-react";
 import GeoTracker from "../../Cowtracking/GeoTracker";
 import { useAuth } from "../../../context/AuthContext";
-import { usePresence } from "../../../hooks/activity/usePresence";
+import { useQuery } from "@tanstack/react-query";
+import { ChatServices } from "../../../services/chat";
 
 const Overview = () => {
 
-  const { role } = useAuth()
-  
+  const { role, profile } = useAuth()
 
- 
+  const userLGA = profile?.LGA
+  
+  const getUnreadCount = async () => {
+    const { unreadCount } = await ChatServices.getUserUnreadCount()
+    return unreadCount;
+  }
+
+  const { data: unreadCount, isLoading: isLoadingUnreadCount, isError } = useQuery({
+    queryKey: ["unreadCount"],
+    queryFn: getUnreadCount,
+    refetchOnWindowFocus: true,
+  })
 
   const userRole = role;
   
@@ -44,7 +55,7 @@ const Overview = () => {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold">Messages</h3>
-              <p className="text-3xl font-bold mt-2">12</p>
+              <p className="text-3xl font-bold mt-2">{ unreadCount ? unreadCount: 0   }</p>
             </div>
             <MessageSquare size={48} className="opacity-80" />
           </div>

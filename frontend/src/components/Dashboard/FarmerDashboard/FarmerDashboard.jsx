@@ -18,6 +18,7 @@ import Settings from "./Settings";
 import { useAuth } from "../../../context/AuthContext";
 import { usePresence } from "../../../hooks/activity/usePresence";
 import { useOnlineUsers } from "../../../hooks/activity/useOnlineUsers";
+import { useAuthMutations } from "../../../hooks/useAuthMutations";
 
 const FarmerDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -25,6 +26,9 @@ const FarmerDashboard = () => {
   const { role, profile } = useAuth();
 
   usePresence();
+
+  const { signOut } = useAuthMutations();
+
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Tractor },
@@ -134,22 +138,18 @@ const FarmerDashboard = () => {
 
           {/* Footer */}
           <div className="shrink-0">
-            <a href="/login">
-              <button
-                className={`w-full bg-red-100 flex mb-3 items-center gap-3 px-3 py-2 ${
-                  sidebarOpen ? "rounded-lg" : "rounded-none"
-                } text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap`}
-              >
-                <X size={20} />
-                <span
-                  className={`${
-                    sidebarOpen ? "block" : "hidden"
-                  } lg:block font-medium`}
-                >
-                  Logout
-                </span>
-              </button>
-            </a>
+          <button
+            onClick={() => signOut.mutate()}
+            className={`w-full bg-red-100 flex mb-3 items-center gap-3 px-3 py-2 ${
+              sidebarOpen ? "rounded-lg" : "rounded-none"
+            } text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap`}
+          >
+            <X size={20} />
+            <span className={`${sidebarOpen ? "block" : "hidden"} lg:block font-medium`}>
+              Logout
+            </span>
+          </button>
+
             <div className="p-4 border-t border-gray-200">
               <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
                 <div className="text-center">
