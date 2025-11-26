@@ -585,11 +585,11 @@ const HerderDashboard = () => {
           sidebarOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
-        } lg:opacity-100 h-full bg-black/10 fixed top-0 left-0 w-full z-2000! flex justify-between backdrop-blur-xs`}
+        } lg:opacity-100 lg:pointer-events-none lg:bg-transparent h-full bg-black/10 fixed top-0 left-0 w-full z-2000! flex justify-between backdrop-blur-xs lg:backdrop-blur-none`}
         onClick={() => setSidebarOpen(!sidebarOpen)}
       >
         <div
-          className={`bg-white shadow-lg transition-all duration-300 flex flex-col border-r border-gray-200/30 h-full pointer-events-auto ${
+          className={`bg-white shadow-lg lg:shadow-none transition-all duration-300 flex flex-col border-r border-gray-200/30 h-full pointer-events-auto ${
             sidebarOpen
               ? "w-64 translate-x-0"
               : "w-0 -translate-x-full lg:translate-x-0 lg:w-64"
@@ -682,7 +682,7 @@ const HerderDashboard = () => {
         </div>
 
         <div
-          className="bg-white p-2 h-fit m-2 rounded-lg cursor-pointer hover:bg-white/80 transition-colors"
+          className="bg-white p-2 h-fit m-2 rounded-lg cursor-pointer hover:bg-white/80 transition-colors block lg:hidden"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <X size={25} className="text-red-600" />
@@ -690,7 +690,7 @@ const HerderDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden lg:ml-64">
         {/* Top Bar */}
         <header className="bg-white border-b border-gray-200 p-1.5 flex items-center justify-between z-50 shrink-0 px-2.5">
           <div className="flex items-center gap-4">
