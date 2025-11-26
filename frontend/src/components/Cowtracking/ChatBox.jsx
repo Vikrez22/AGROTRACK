@@ -10,12 +10,7 @@ import {
   CheckCheck,
 } from "lucide-react";
 import { db } from "../../config/firebase";
-import {
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-} from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { ChatServices } from "../../services/chat";
 import { useOnlineUsers } from "../../hooks/activity/useOnlineUsers";
 import { useMessageReads } from "../../hooks/chat/useMessageReads";
@@ -75,7 +70,7 @@ const ChatBox = ({ userId, role, userLGA }) => {
       const containerRect = container.getBoundingClientRect();
 
       // Get all message elements
-      const messageElements = container.querySelectorAll('[data-message-id]');
+      const messageElements = container.querySelectorAll("[data-message-id]");
       const visibleMessageIds = [];
 
       messageElements.forEach((element) => {
@@ -85,7 +80,7 @@ const ChatBox = ({ userId, role, userLGA }) => {
           rect.top >= containerRect.top &&
           rect.bottom <= containerRect.bottom
         ) {
-          const messageId = element.getAttribute('data-message-id');
+          const messageId = element.getAttribute("data-message-id");
           visibleMessageIds.push(messageId);
         }
       });
@@ -104,13 +99,13 @@ const ChatBox = ({ userId, role, userLGA }) => {
     // Mark messages as read on scroll
     const container = messagesContainerRef.current;
     if (container) {
-      container.addEventListener('scroll', markVisibleMessagesAsRead);
+      container.addEventListener("scroll", markVisibleMessagesAsRead);
     }
 
     return () => {
       clearTimeout(timeoutId);
       if (container) {
-        container.removeEventListener('scroll', markVisibleMessagesAsRead);
+        container.removeEventListener("scroll", markVisibleMessagesAsRead);
       }
     };
   }, [chatMessages, markMessagesAsRead]);
@@ -178,7 +173,7 @@ const ChatBox = ({ userId, role, userLGA }) => {
   return (
     <div className="flex flex-col h-full bg-white rounded-lg shadow-lg border border-gray-200">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-green-50 to-indigo-50 rounded-t-lg">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-linear-to-r from-green-50 to-indigo-50 rounded-t-lg">
         <div className="flex items-center gap-3">
           <div className="relative p-2 bg-green-500 rounded-lg">
             <MessageCircle className="text-white" size={20} />
@@ -210,7 +205,7 @@ const ChatBox = ({ userId, role, userLGA }) => {
       </div>
 
       {/* Messages */}
-      <div 
+      <div
         ref={messagesContainerRef}
         className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 max-h-96"
       >
@@ -266,13 +261,14 @@ const ChatBox = ({ userId, role, userLGA }) => {
                     {msg.message}
                   </p>
 
-                <div
-                  className={`flex items-center gap-2 mt-2 text-xs ${
-                    msg.userId === userId ? "text-green-100" : "text-gray-500"
-                  }`}
-                >
-                  <CheckCheck size={16} />
-                  <span>{formatTimestamp(msg.timestamp)}</span>
+                  <div
+                    className={`flex items-center gap-2 mt-2 text-xs ${
+                      msg.userId === userId ? "text-green-100" : "text-gray-500"
+                    }`}
+                  >
+                    <CheckCheck size={16} />
+                    <span>{formatTimestamp(msg.timestamp)}</span>
+                  </div>
                 </div>
               </div>
             );
@@ -316,7 +312,7 @@ const ChatBox = ({ userId, role, userLGA }) => {
           <button
             onClick={sendMessage}
             disabled={!message.trim() || isTyping}
-            className="p-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center min-w-[44px]"
+            className="p-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center min-w-11"
             title="Send message"
           >
             {isTyping ? (
