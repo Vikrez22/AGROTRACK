@@ -4,13 +4,19 @@ const VALID_ROLES = ['farmer', 'herder', 'admin'];
 
 export const createUserProfile = async (req, res) => {
   try {
-    const { uid, email, displayName, role } = req.body;
+    const { uid, email, displayName, phoneNumber, state, LGA, role } = req.body;
 
-    console.log('we got here!!')
+    console.log('Creating user profile with data:', req.body);
 
     if (!uid || !email || !role) {
       return res.status(400).json({ 
         message: 'Missing required fields: uid, email, and role are required' 
+      });
+    }
+
+    if (!displayName || !phoneNumber || !state || !LGA) {
+      return res.status(400).json({ 
+        message: 'Missing required fields: displayName, phoneNumber, state, and lga are required' 
       });
     }
 
@@ -33,7 +39,10 @@ export const createUserProfile = async (req, res) => {
     const userProfile = {
       uid,
       email,
-      displayName: displayName || null,
+      displayName,
+      phoneNumber,
+      state,
+      LGA,
       role,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -56,8 +65,7 @@ export const createUserProfile = async (req, res) => {
 
 export const getUserProfile = async (req, res) => {
   try {
-
-    console.log('we in get user profile')
+    console.log('Getting user profile for uid:', req.params.uid);
 
     const { uid } = req.params;
 
@@ -68,8 +76,7 @@ export const getUserProfile = async (req, res) => {
       return res.status(404).json({ message: 'User profile not found' });
     }
 
-    console.log('we got to the data side of things', userDoc.data())
-
+    console.log('User profile data:', userDoc.data());
 
     return res.status(200).json(userDoc.data());
   } catch (error) {
@@ -86,6 +93,7 @@ export const updateUserProfile = async (req, res) => {
     const { uid } = req.params;
     const updates = req.body;
 
+    // Prevent updating certain fields
     delete updates.uid;
     delete updates.createdAt;
 
