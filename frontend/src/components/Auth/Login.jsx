@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { User, Lock, LogIn, Users } from "lucide-react";
 import { useAuthMutations } from "../../hooks/useAuthMutations";
 import sideBarLogo from "../../assets/logo_white.png";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from 'react-router-dom';
+
 
 const DEMO_ACCOUNTS = [
   { label: "Farmer", email: "farmer@gmail.com" },
@@ -11,6 +14,24 @@ const DEMO_ACCOUNTS = [
 ];
 
 const Login = () => {
+
+  const { user, role } = useAuth()
+
+  const navigate = useNavigate()
+
+  const redirectByRole = (role) => {
+    if (role === 'herder') navigate('/herder-dashboard');
+    else if (role === 'farmer') navigate('/farmer-dashboard');
+    else if (role === 'admin') navigate('/admin-dashboard');
+    else navigate('/404');
+  };
+
+  if (user && role) {
+    redirectByRole(role)
+
+  }
+
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
