@@ -27,7 +27,7 @@ const FarmerDashboard = () => {
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Tractor },
-    { id: "tracking", label: "Livestock Tracking", icon: MapPin },
+    // { id: "tracking", label: "Livestock Tracking", icon: MapPin },
     { id: "chat", label: "Community", icon: MessageSquare },
     { id: "ai-assistant", label: "AI Assistant", icon: Bot },
     { id: "settings", label: "Settings", icon: SettingsIcon },
