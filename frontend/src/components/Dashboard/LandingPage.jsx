@@ -9,8 +9,8 @@ import {
   X,
   Eye,
   TrendingUp,
-  Hash,
   ArrowRightIcon,
+  MessageSquare,
 } from "lucide-react";
 import sideBarLogo from "../../assets/logo.png";
 import sideBarLogoW from "../../assets/logo_white.png";
@@ -93,11 +93,11 @@ const AgroTrackLandingPage = () => {
         "Educational support and guidance for farmers and herders in multiple languages",
     },
     {
-      icon: Hash,
-      title: "USSD Access",
-      description:
-        "Affordable offline access for checking grazing and non-grazing areas",
+      icon: MessageSquare,
+      title: "SMS and Automated calls",
       comingSoon: true,
+      description:
+        "Affordable sms and automated calls for notifying farmers of trespassers",
     },
   ];
 
