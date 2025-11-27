@@ -1,9 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { AuthService } from '../services/auth';
+import { useAuth } from '../context/AuthContext';
 
 export const useAuthMutations = () => {
   const navigate = useNavigate();
+
+  const { setUser, setProfile } = useAuth()
 
   const redirectByRole = (role) => {
     if (role === 'herder') navigate('/herder-dashboard');
@@ -12,22 +15,24 @@ export const useAuthMutations = () => {
     else navigate('/404');
   };
 
-  const signInWithGoogle = useMutation({
-    mutationFn: ({ role, isNew }) => AuthService.signInWithGoogle(role, isNew),
-    onSuccess: (data, variables) => {
-      if (data.user) redirectByRole(data.profile.role);
-      console.log('this is data from usemutation', data)
-    },
-  });
-
   const signUpWithEmail = useMutation({
-    mutationFn: ({ email, password, role, isNew }) =>
-      AuthService.signUpWithEmail(email, password, role, isNew),
-    onSuccess: (data, variables) => {
-      if (data.user) redirectByRole(data.role);
-      
+    mutationFn: (userData) => AuthService.signUpWithEmail(userData),
+  
+    onSuccess: (data) => {
+      console.log("Signup success data:", data);
+  
+      if (data.user && data.profile) {
+        setUser(data.user);
+        setProfile(data.profile);
+        redirectByRole(data.profile.role);
+      }
+    },
+  
+    onError: (error) => {
+      console.error("Signup error:", error);
     },
   });
+  
 
   const signInWithEmail = useMutation({
     mutationFn: ({ email, password }) =>
@@ -37,10 +42,15 @@ export const useAuthMutations = () => {
         redirectByRole(data.profile.role);
       }
     },
+
+    onError: (err) => {
+      console.error("Sign-in error:", err);
+    }
   });
 
   const sendMagicLink = useMutation({
-    mutationFn: ({ email, role, isNew }) => AuthService.sendMagicLink(email, role, isNew),
+    mutationFn: (userData) => 
+      AuthService.sendMagicLink(userData),
   });
 
   const signOut = useMutation({
@@ -55,7 +65,6 @@ export const useAuthMutations = () => {
   });
 
   return {
-    signInWithGoogle,
     signUpWithEmail,
     signInWithEmail,
     sendMagicLink,
