@@ -13,7 +13,6 @@ export const NIGERIAN_STATES = [
     { value: 'edo', label: 'Edo' },
     { value: 'ekiti', label: 'Ekiti' },
     { value: 'enugu', label: 'Enugu' },
-    { value: 'fct', label: 'Federal Capital Territory' },
     { value: 'gombe', label: 'Gombe' },
     { value: 'imo', label: 'Imo' },
     { value: 'jigawa', label: 'Jigawa' },
@@ -36,6 +35,7 @@ export const NIGERIAN_STATES = [
     { value: 'taraba', label: 'Taraba' },
     { value: 'yobe', label: 'Yobe' },
     { value: 'zamfara', label: 'Zamfara' },
+    { value: 'fct', label: 'Federal Capital Territory' },
   ];
   
   export const LGA_BY_STATE = {
