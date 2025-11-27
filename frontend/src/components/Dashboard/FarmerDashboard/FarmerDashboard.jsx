@@ -7,6 +7,7 @@ import {
   X,
   Tractor,
   SettingsIcon,
+  ClipboardEdit,
 } from "lucide-react";
 import sideBarLogo from "../../../assets/sidebar_logo_white.png";
 import Overview from "./Overview";
@@ -31,7 +32,7 @@ const FarmerDashboard = () => {
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Tractor },
-    // { id: "tracking", label: "Livestock Tracking", icon: MapPin },
+    { id: "tracking", label: "Geo Fencing", icon: MapPin },
     { id: "chat", label: "Community", icon: MessageSquare },
     { id: "ai-assistant", label: "AI Assistant", icon: Bot },
     { id: "settings", label: "Settings", icon: SettingsIcon },
