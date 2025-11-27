@@ -190,30 +190,6 @@ const Settings = () => {
               </div>
             </div>
           </div>
-
-          {/* Test Notifications */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Send Automated Notifications{" "}
-              <small className="text-red-500">(Coming Soon)</small>
-            </h3>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                  Test SMS to All Farmers
-                </button>
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                  Test Emergency Calls
-                </button>
-                <button className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
-                  Send Email Report
-                </button>
-                <button className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
-                  Push Notification Test
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       )}
 
@@ -303,46 +279,6 @@ const Settings = () => {
                 <p className="text-xs text-gray-500 mt-1">
                   Environmental temperature alerts
                 </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Emergency Response{" "}
-              <small className="text-red-500">(Coming Soon)</small>
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                <h4 className="font-semibold text-red-800 mb-2">
-                  Critical Alerts
-                </h4>
-                <p className="text-sm text-red-600 mb-3">
-                  Immediate response required
-                </p>
-                <button className="w-full px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-                  Configure Critical
-                </button>
-              </div>
-              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                <h4 className="font-semibold text-yellow-800 mb-2">
-                  Warning Alerts
-                </h4>
-                <p className="text-sm text-yellow-600 mb-3">Monitor closely</p>
-                <button className="w-full px-3 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
-                  Configure Warnings
-                </button>
-              </div>
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h4 className="font-semibold text-blue-800 mb-2">
-                  Info Alerts
-                </h4>
-                <p className="text-sm text-blue-600 mb-3">
-                  General notifications
-                </p>
-                <button className="w-full px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                  Configure Info
-                </button>
               </div>
             </div>
           </div>
