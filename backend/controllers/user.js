@@ -4,7 +4,9 @@ const VALID_ROLES = ['farmer', 'herder', 'admin'];
 
 export const createUserProfile = async (req, res) => {
   try {
-    const { uid, email, displayName, phoneNumber, state, LGA, role } = req.body;
+    const { email, displayName, phoneNumber, state, LGA, role } = req.body;
+    const { uid } = req.userData
+
 
     console.log('Creating user profile with data:', req.body);
 
@@ -65,9 +67,9 @@ export const createUserProfile = async (req, res) => {
 
 export const getUserProfile = async (req, res) => {
   try {
-    console.log('Getting user profile for uid:', req.params.uid);
 
-    const { uid } = req.params;
+    const { uid } = req.userData
+
 
     const userRef = db.collection('users').doc(uid);
     const userDoc = await userRef.get();
@@ -90,7 +92,9 @@ export const getUserProfile = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
   try {
-    const { uid } = req.params;
+
+    const { uid } = req.userData
+
     const updates = req.body;
 
     // Prevent updating certain fields
