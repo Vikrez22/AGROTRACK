@@ -33,7 +33,6 @@ export class AuthService {
       try {
         if (isNew && role) {
           profile = await UserService.createProfile({
-            uid: result.user.uid,
             email: result.user.email,
             displayName,
             phoneNumber,
@@ -72,7 +71,7 @@ export class AuthService {
 
       let profile = null;
       try {
-        profile = await UserService.getProfile(result.user.uid);
+        profile = await UserService.getProfile();
       } catch (error) {
         console.error('Profile fetch error:', error.message);
         throw error
@@ -149,7 +148,6 @@ export class AuthService {
           // Only create profile if isNew is truthy
           if (isNew && role) {
             profile = await UserService.createProfile({
-              uid: result.user.uid,
               email: result.user.email,
               displayName,
               phoneNumber,
@@ -158,7 +156,7 @@ export class AuthService {
               role,
             });
           } else {
-            profile = await UserService.getProfile(result.user.uid);
+            profile = await UserService.getProfile();
           }
         } catch (error) {
           console.error('Profile operation error:', error.message);
