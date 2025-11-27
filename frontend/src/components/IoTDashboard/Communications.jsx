@@ -1,7 +1,15 @@
 import { Users } from "lucide-react";
 import ChatBox from "../Cowtracking/ChatBox";
+import { useAuth } from "../../context/AuthContext";
+import React from "react";
 
-const Communications = ({ userId = "law-enforcement" }) => {
+const Communications = () => {
+
+  const { role, profile } = useAuth();
+
+  const userId = profile?.uid;
+  const LGA = profile?.LGA;
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-lg p-6">
@@ -20,7 +28,8 @@ const Communications = ({ userId = "law-enforcement" }) => {
           <h3 className="text-xl font-semibold">Community Chat</h3>
         </div>
         <div className="flex-1 min-h-0">
-          <ChatBox userId={userId} role="admin" />
+          <ChatBox userId={userId} role={role} userLGA={LGA} />
+
         </div>
       </div>
     </div>

@@ -1,5 +1,4 @@
 import {
-  signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
@@ -8,7 +7,7 @@ import {
   signInWithEmailLink,
   sendPasswordResetEmail,
 } from 'firebase/auth';
-import { auth, googleProvider } from '../config/firebase';
+import { auth } from '../config/firebase';
 import { UserService } from './user';
 import { APIConfig } from './config';
 
@@ -22,41 +21,10 @@ export class AuthService {
     APIConfig.authToken = token;
   }
 
-  static async signInWithGoogle(role = null, isNew = false) {
+  static async signUpWithEmail(userData) {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const token = await result.user.getIdToken();
-      await this.setAuthToken(token);
-
-      let profile = null;
-      try {
-        // Only create profile if isNew is truthy
-        if (isNew && role) {
-          profile = await UserService.createProfile({
-            uid: result.user.uid,
-            email: result.user.email,
-            displayName: result.user.displayName,
-            photoURL: result.user.photoURL,
-            role,
-          });
-        } else {
-          // Fetch existing profile for login
-          profile = await UserService.getProfile(result.user.uid);
-
-          if (!profile) throw new Error('User needs to create a profile')
-        }
-      } catch (error) {
-        console.error('Profile operation error:', error.message);
-      }
-
-      return { user: result.user, profile, error: null };
-    } catch (error) {
-      return { user: null, profile: null, error: error.message };
-    }
-  }
-
-  static async signUpWithEmail(email, password, role, isNew = false) {
-    try {
+      const { email, password, role, displayName, phoneNumber, state, lga, isNew = false } = userData;
+      
       const result = await createUserWithEmailAndPassword(auth, email, password);
       const token = await result.user.getIdToken();
       await this.setAuthToken(token);
@@ -67,20 +35,32 @@ export class AuthService {
           profile = await UserService.createProfile({
             uid: result.user.uid,
             email: result.user.email,
+            displayName,
+            phoneNumber,
+            state,
+            LGA: lga,
             role,
           });
         }
-      } catch (error) {
-        console.error('Profile creation error:', error.message);
+      } catch (profileError) {
+        console.error('Profile creation error:', profileError.message);
+        try {
+          await result.user.delete();
+          console.log('Firebase Auth user deleted due to profile creation failure.');
+        } catch (deleteError) {
+          console.error('Failed to delete Firebase user after profile error:', deleteError);
+        }
+        throw profileError
       }
 
       return {
         user: result.user,
-        profile: profile,
+        profile: profile.profile,
         error: null,
       };
     } catch (error) {
-      return { user: null, profile: null, error: error.message };
+      console.error('User error:', error.message);
+      throw error
     }
   }
 
@@ -95,6 +75,7 @@ export class AuthService {
         profile = await UserService.getProfile(result.user.uid);
       } catch (error) {
         console.error('Profile fetch error:', error.message);
+        throw error
       }
 
       return {
@@ -102,19 +83,35 @@ export class AuthService {
         profile: profile,
         error: null,
       };
+
     } catch (error) {
-      return { user: null, profile: null, error: error.message };
+      console.error('User error:', error.message);
+      throw error
     }
   }
 
   // Send Magic Link with conditional profile creation flag
-  static async sendMagicLink(email, role = null, isNew = false) {
+  static async sendMagicLink(userData) {
     try {
+      const { email, role = null, displayName = null, phoneNumber = null, state = null, lga = null, isNew = false } = userData;
+      
       await sendSignInLinkToEmail(auth, email, this.actionCodeSettings);
       
       window.localStorage.setItem('emailForSignIn', email);
       if (role) {
         window.localStorage.setItem('roleForSignIn', role);
+      }
+      if (displayName) {
+        window.localStorage.setItem('displayNameForSignIn', displayName);
+      }
+      if (phoneNumber) {
+        window.localStorage.setItem('phoneNumberForSignIn', phoneNumber);
+      }
+      if (state) {
+        window.localStorage.setItem('stateForSignIn', state);
+      }
+      if (lga) {
+        window.localStorage.setItem('lgaForSignIn', lga);
       }
       if (isNew) {
         window.localStorage.setItem('isNewForSignIn', 'true');
@@ -132,6 +129,10 @@ export class AuthService {
       if (isSignInWithEmailLink(auth, url)) {
         let email = window.localStorage.getItem('emailForSignIn');
         const role = window.localStorage.getItem('roleForSignIn');
+        const displayName = window.localStorage.getItem('displayNameForSignIn');
+        const phoneNumber = window.localStorage.getItem('phoneNumberForSignIn');
+        const state = window.localStorage.getItem('stateForSignIn');
+        const lga = window.localStorage.getItem('lgaForSignIn');
         const isNew = window.localStorage.getItem('isNewForSignIn') === 'true';
 
         if (!email) {
@@ -150,6 +151,10 @@ export class AuthService {
             profile = await UserService.createProfile({
               uid: result.user.uid,
               email: result.user.email,
+              displayName,
+              phoneNumber,
+              state,
+              lga,
               role,
             });
           } else {
@@ -162,6 +167,10 @@ export class AuthService {
         // Clean up localStorage
         window.localStorage.removeItem('emailForSignIn');
         window.localStorage.removeItem('roleForSignIn');
+        window.localStorage.removeItem('displayNameForSignIn');
+        window.localStorage.removeItem('phoneNumberForSignIn');
+        window.localStorage.removeItem('stateForSignIn');
+        window.localStorage.removeItem('lgaForSignIn');
         window.localStorage.removeItem('isNewForSignIn');
 
         return { user: result.user, profile, error: null };

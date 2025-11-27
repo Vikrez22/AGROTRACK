@@ -7,6 +7,7 @@ import {
   X,
   Tractor,
   SettingsIcon,
+  ClipboardEdit,
 } from "lucide-react";
 import sideBarLogo from "../../../assets/sidebar_logo_white.png";
 import Overview from "./Overview";
@@ -17,6 +18,7 @@ import Settings from "./Settings";
 import { useAuth } from "../../../context/AuthContext";
 import { usePresence } from "../../../hooks/activity/usePresence";
 import { useOnlineUsers } from "../../../hooks/activity/useOnlineUsers";
+import { useAuthMutations } from "../../../hooks/useAuthMutations";
 
 const FarmerDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -25,9 +27,12 @@ const FarmerDashboard = () => {
 
   usePresence();
 
+  const { signOut } = useAuthMutations();
+
+
   const tabs = [
     { id: "overview", label: "Overview", icon: Tractor },
-    // { id: "tracking", label: "Livestock Tracking", icon: MapPin },
+    { id: "tracking", label: "Geo Fencing", icon: MapPin },
     { id: "chat", label: "Community", icon: MessageSquare },
     { id: "ai-assistant", label: "AI Assistant", icon: Bot },
     { id: "settings", label: "Settings", icon: SettingsIcon },
@@ -133,22 +138,18 @@ const FarmerDashboard = () => {
 
           {/* Footer */}
           <div className="shrink-0">
-            <a href="/login">
-              <button
-                className={`w-full bg-red-100 flex mb-3 items-center gap-3 px-3 py-2 ${
-                  sidebarOpen ? "rounded-lg" : "rounded-none"
-                } text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap`}
-              >
-                <X size={20} />
-                <span
-                  className={`${
-                    sidebarOpen ? "block" : "hidden"
-                  } lg:block font-medium`}
-                >
-                  Logout
-                </span>
-              </button>
-            </a>
+          <button
+            onClick={() => signOut.mutate()}
+            className={`w-full bg-red-100 flex mb-3 items-center gap-3 px-3 py-2 ${
+              sidebarOpen ? "rounded-lg" : "rounded-none"
+            } text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap`}
+          >
+            <X size={20} />
+            <span className={`${sidebarOpen ? "block" : "hidden"} lg:block font-medium`}>
+              Logout
+            </span>
+          </button>
+
             <div className="p-4 border-t border-gray-200">
               <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
                 <div className="text-center">
