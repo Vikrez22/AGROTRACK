@@ -97,7 +97,7 @@ const AgroTrackLandingPage = () => {
       title: "SMS and Automated calls",
       comingSoon: true,
       description:
-        "Affordable sms and automated calls for notifying farmers of trespassers",
+        "Affordable sms and automated calls for notifications",
     },
   ];
 
