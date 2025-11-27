@@ -1,16 +1,4 @@
-import {
-  Bell,
-  Edit,
-  Mail,
-  MapPin,
-  MessageSquare,
-  Phone,
-  Save,
-  Smartphone,
-  User,
-  Users,
-} from "lucide-react";
-import { useState } from "react";
+import { MessageSquare, Phone, User } from "lucide-react";
 
 const Settings = () => {
   return (
@@ -128,6 +116,37 @@ const Settings = () => {
                       name="change-emergency-details"
                       id="change-emergency-details"
                       defaultValue={+2348987654321}
+                      className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
+                    />
+                  </div>
+                  <div className="flex flex-col w-full">
+                    <label
+                      htmlFor="change-state"
+                      className="text-gray-600 font-medium"
+                    >
+                      State:
+                    </label>
+                    <input
+                      type="text"
+                      name="change-state"
+                      id="change-state"
+                      defaultValue={"enugu"}
+                      className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
+                    />
+                  </div>
+
+                  <div className="flex flex-col w-full">
+                    <label
+                      htmlFor="change-lga"
+                      className="text-gray-600 font-medium"
+                    >
+                      LGA:
+                    </label>
+                    <input
+                      type="text"
+                      name="change-lga"
+                      id="change-lga"
+                      defaultValue={"Nkanu-west"}
                       className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
                     />
                   </div>
