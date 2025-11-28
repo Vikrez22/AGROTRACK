@@ -78,7 +78,7 @@ const AgroTrackLandingPage = () => {
       icon: MapPin,
       title: "Real-time GPS Tracking",
       description:
-        "ESP32 & NEO6M GPS modules provide precise livestock location data",
+        "ESP32, SIM800L & NEO8M GPS modules to provide precise livestock location data",
     },
     {
       icon: AlertTriangle,
@@ -603,7 +603,7 @@ const AgroTrackLandingPage = () => {
               </div>
               <p className="text-gray-400">
                 Smart AgriTech solution preventing farmer-herder conflicts
-                through IoT technology.
+                through technology.
               </p>
             </div>
 
