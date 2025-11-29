@@ -29,7 +29,6 @@ const FarmerDashboard = () => {
 
   const { signOut } = useAuthMutations();
 
-
   const tabs = [
     { id: "overview", label: "Overview", icon: Tractor },
     { id: "tracking", label: "Geo Fencing", icon: MapPin },
@@ -138,17 +137,21 @@ const FarmerDashboard = () => {
 
           {/* Footer */}
           <div className="shrink-0">
-          <button
-            onClick={() => signOut.mutate()}
-            className={`w-full bg-red-100 flex mb-3 items-center gap-3 px-3 py-2 ${
-              sidebarOpen ? "rounded-lg" : "rounded-none"
-            } text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap`}
-          >
-            <X size={20} />
-            <span className={`${sidebarOpen ? "block" : "hidden"} lg:block font-medium`}>
-              Logout
-            </span>
-          </button>
+            <button
+              onClick={() => signOut.mutate()}
+              className={`w-full bg-red-100 flex mb-3 items-center gap-3 px-3 py-2 ${
+                sidebarOpen ? "rounded-lg" : "rounded-none"
+              } text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap`}
+            >
+              <X size={20} />
+              <span
+                className={`${
+                  sidebarOpen ? "block" : "hidden"
+                } lg:block font-medium`}
+              >
+                Logout
+              </span>
+            </button>
 
             <div className="p-4 border-t border-gray-200">
               <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
