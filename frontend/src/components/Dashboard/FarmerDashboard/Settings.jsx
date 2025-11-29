@@ -9,12 +9,13 @@ const Settings = () => {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [lga, setLga] = useState("");
-  const [loading, setLoading] = useState(false);
   const [state, setState] = useState("Enugu");
   const [homeAddress, setHomeAddress] = useState(
     "no 12, sample street, sample city"
   );
-  console.log("first call", loading);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [additionalLoading, setAdditionalLoading] = useState(false);
+  console.log("user Profile", profile);
 
   useEffect(() => {
     if (profile) {
@@ -27,28 +28,51 @@ const Settings = () => {
 
   const userId = profile?.uid;
 
-  async function onSubmit(e) {
+  async function onProfileSubmit(e) {
     e.preventDefault();
 
-    setLoading(true);
+    setProfileLoading(true);
 
     try {
       const updates = {
         displayName: fullName,
         email: email,
         phoneNumber: phoneNumber,
-        LGA: lga,
       };
 
       await UserService.updateProfile(userId, updates);
 
-      setLoading(false);
+      setProfileLoading(false);
 
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile. Check console for details.");
-      setLoading(false);
+      setProfileLoading(false);
+    }
+  }
+
+  async function onAdditionalSubmit(e) {
+    e.preventDefault();
+
+    setAdditionalLoading(true);
+
+    try {
+      const updates = {
+        displayName: fullName,
+        email: email,
+        phoneNumber: phoneNumber,
+      };
+
+      await UserService.updateProfile(userId, updates);
+
+      setAdditionalLoading(false);
+
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile. Check console for details.");
+      setAdditionalLoading(false);
     }
   }
 
@@ -64,8 +88,8 @@ const Settings = () => {
 
         {/* Farmer List */}
         <div className="space-y-4">
-          <div className="">
-            <form onSubmit={onSubmit} className="space-y-6">
+          <div className="space-y-6">
+            <form onSubmit={onProfileSubmit}>
               <div className="space-y-3 bg-white border border-slate-200 rounded-lg shadow-sm p-6">
                 <div className="font-semibold flex items-center gap-2 mb-3 text-green-500">
                   <div className="size-10 rounded-full flex items-center justify-center bg-green-100">
@@ -147,10 +171,10 @@ const Settings = () => {
                 <div className="flex items-center justify-end mt-4 pt-4 border-t border-gray-100">
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={profileLoading}
                     className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 active:bg-green-700 flex items-center gap-2 font-medium disabled:opacity-70 transition-all shadow-sm hover:shadow"
                   >
-                    {loading ? (
+                    {profileLoading ? (
                       <>
                         <Loader2 className="animate-spin" size={18} />
                         Saving...
@@ -161,7 +185,9 @@ const Settings = () => {
                   </button>
                 </div>
               </div>
+            </form>
 
+            <form onSubmit={onAdditionalSubmit}>
               <div className="space-y-3 bg-white border border-slate-200 rounded-lg shadow-sm p-6">
                 <div className="font-semibold flex items-center gap-2 mb-3 text-green-500">
                   <div className="size-10 rounded-full flex items-center justify-center bg-green-100">
@@ -227,11 +253,11 @@ const Settings = () => {
 
                 <div className="flex items-center justify-end mt-4 pt-4 border-t border-gray-100">
                   <button
-                    onClick={onSubmit}
-                    disabled={loading}
+                    type="submit"
+                    disabled={additionalLoading}
                     className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 active:bg-green-700 flex items-center gap-2 font-medium disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow"
                   >
-                    {loading ? (
+                    {additionalLoading ? (
                       <>
                         <Loader2 className="animate-spin" size={18} />
                         Saving...
