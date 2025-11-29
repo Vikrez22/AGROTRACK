@@ -6,8 +6,8 @@ import {
   Clock,
   User,
   Shield,
-  GalleryHorizontalEnd,
   CheckCheck,
+  Check,
 } from "lucide-react";
 import { db } from "../../config/firebase";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
@@ -173,7 +173,7 @@ const ChatBox = ({ userId, role, userLGA }) => {
   return (
     <div className="flex flex-col h-full bg-white rounded-lg shadow-lg border border-gray-200">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-linear-to-r from-green-50 to-indigo-50 rounded-t-lg">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-green-50 to-indigo-50 rounded-t-lg">
         <div className="flex items-center gap-3">
           <div className="relative p-2 bg-green-500 rounded-lg">
             <MessageCircle className="text-white" size={20} />
@@ -262,12 +262,26 @@ const ChatBox = ({ userId, role, userLGA }) => {
                   </p>
 
                   <div
-                    className={`flex items-center gap-2 mt-2 text-xs ${
-                      msg.userId === userId ? "text-green-100" : "text-gray-500"
+                    className={`flex items-center justify-between gap-3 mt-2 text-xs ${
+                      isOwn ? "text-green-100" : "text-gray-500"
                     }`}
                   >
-                    <CheckCheck size={16} />
                     <span>{formatTimestamp(msg.timestamp)}</span>
+
+                    {isOwn && (
+                      <div className="flex items-center gap-1 ">
+                        {readCount > 1 ? (
+                          <>
+                            <CheckCheck size={14} className="text-blue-200" />
+                            <span className="text-[10px]">{readCount}</span>
+                          </>
+                        ) : readCount === 1 ? (
+                          <Check size={14} />
+                        ) : (
+                          <Check size={14} className="opacity-50" />
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -312,7 +326,7 @@ const ChatBox = ({ userId, role, userLGA }) => {
           <button
             onClick={sendMessage}
             disabled={!message.trim() || isTyping}
-            className="p-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center min-w-11"
+            className="p-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center min-w-[44px]"
             title="Send message"
           >
             {isTyping ? (
