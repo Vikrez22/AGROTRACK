@@ -1,6 +1,57 @@
-import { MessageSquare, Phone, User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../../context/AuthContext";
+import { Loader2, MessageSquare, Phone, User } from "lucide-react";
+import { UserService } from "../../../services/user";
 
 const Settings = () => {
+  const { profile } = useAuth();
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [lga, setLga] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [state, setState] = useState("Enugu");
+  const [homeAddress, setHomeAddress] = useState(
+    "no 12, sample street, sample city"
+  );
+  console.log("first call", loading);
+
+  useEffect(() => {
+    if (profile) {
+      setFullName(profile.displayName || "");
+      setEmail(profile.email || "");
+      setPhoneNumber(profile.phoneNumber || "");
+      setLga(profile.LGA || "");
+    }
+  }, [profile]);
+
+  const userId = profile?.uid;
+
+  async function onSubmit(e) {
+    e.preventDefault();
+
+    setLoading(true);
+
+    try {
+      const updates = {
+        displayName: fullName,
+        email: email,
+        phoneNumber: phoneNumber,
+        LGA: lga,
+      };
+
+      await UserService.updateProfile(userId, updates);
+
+      setLoading(false);
+
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile. Check console for details.");
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="space-y-6 m-6">
       {/* Farmer Profiles Content */}
@@ -13,183 +64,185 @@ const Settings = () => {
 
         {/* Farmer List */}
         <div className="space-y-4">
-          {/* Farmer 1 */}
           <div className="">
-            <div className="space-y-6">
-              <div className="space-y-3 bg-white border border-gray-200 rounded-lg shadow-lg p-6">
-                <div className="font-semibold flex items-center gap-2 mb-3 text-green-400">
-                  <div className="size-10 rounded-full flex items-center justify-center bg-green-400">
-                    <User size={16} color="#fff" />
+            <form onSubmit={onSubmit} className="space-y-6">
+              <div className="space-y-3 bg-white border border-slate-200 rounded-lg shadow-sm p-6">
+                <div className="font-semibold flex items-center gap-2 mb-3 text-green-500">
+                  <div className="size-10 rounded-full flex items-center justify-center bg-green-100">
+                    <User size={20} className="text-green-600" />
                   </div>
-                  <p className="text-lg">Personal Information</p>
+                  <p className="text-lg text-gray-800">Personal Information</p>
                 </div>
 
-                <div className="space-y-2 text-lg">
-                  <div className="flex flex-col w-full">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="flex flex-col w-full md:col-span-2">
                     <label
                       htmlFor="change-nin"
-                      className="text-gray-600 font-medium"
+                      className="text-gray-600 font-medium mb-1"
                     >
                       NIN:
                     </label>
-                    <div>
-                      <input
-                        type="text"
-                        name="change-nin"
-                        id="change-nin"
-                        defaultValue={12345678901}
-                        className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      id="change-nin"
+                      disabled
+                      defaultValue={"12345678901"}
+                      className="h-10 w-full pl-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-500 text-sm font-medium cursor-not-allowed"
+                    />
                   </div>
+
+                  {/* Full Name */}
                   <div className="flex flex-col w-full">
                     <label
                       htmlFor="change-name"
-                      className="text-gray-600 font-medium"
+                      className="text-gray-600 font-medium mb-1"
                     >
                       Fullname:
                     </label>
                     <input
                       type="text"
-                      name="change-name"
                       id="change-name"
-                      defaultValue={"Onyebuchi Munachi"}
-                      className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="h-10 w-full pl-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm font-medium transition-all"
                     />
                   </div>
+
+                  {/* Phone */}
                   <div className="flex flex-col w-full">
                     <label
                       htmlFor="change-phone"
-                      className="text-gray-600 font-medium"
+                      className="text-gray-600 font-medium mb-1"
                     >
                       Phone:
                     </label>
                     <input
                       type="text"
-                      name="change-phone"
                       id="change-phone"
-                      defaultValue={+2348123456789}
-                      className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      className="h-10 w-full pl-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm font-medium transition-all"
                     />
                   </div>
-                  <div className="flex flex-col w-full">
+
+                  {/* Email */}
+                  <div className="flex flex-col w-full md:col-span-2">
                     <label
                       htmlFor="change-email"
-                      className="text-gray-600 font-medium"
+                      className="text-gray-600 font-medium mb-1"
                     >
                       Email:
                     </label>
                     <input
                       type="email"
-                      name="change-email"
                       id="change-email"
-                      defaultValue={"Munachi.Onyebuchi@email.com"}
-                      className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="h-10 w-full pl-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm font-medium transition-all"
                     />
                   </div>
                 </div>
-                <div className="flex items-center justify-end">
-                  <button className="px-2.5 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2 whitespace-nowrap">
-                    {/* <Edit size={16} /> */}
-                    Save changes
+
+                {/* Save Button */}
+                <div className="flex items-center justify-end mt-4 pt-4 border-t border-gray-100">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 active:bg-green-700 flex items-center gap-2 font-medium disabled:opacity-70 transition-all shadow-sm hover:shadow"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="animate-spin" size={18} />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save changes"
+                    )}
                   </button>
                 </div>
               </div>
 
-              <div className="space-y-3 bg-white border border-gray-200 rounded-lg shadow-lg p-6">
-                <div className="font-semibold flex items-center gap-2 mb-3 text-green-400">
-                  <div className="size-10 rounded-full flex items-center justify-center bg-green-400">
-                    <Phone size={16} color="#fff" />
+              <div className="space-y-3 bg-white border border-slate-200 rounded-lg shadow-sm p-6">
+                <div className="font-semibold flex items-center gap-2 mb-3 text-green-500">
+                  <div className="size-10 rounded-full flex items-center justify-center bg-green-100">
+                    <Phone size={20} className="text-green-600" />
                   </div>
-                  <p className="text-lg">Additional Information</p>
+                  <p className="text-lg text-gray-800">
+                    Additional Information
+                  </p>
                 </div>
-                <div className="space-y-2 text-lg">
-                  <div className="flex flex-col w-full">
-                    <label
-                      htmlFor="change-emergency-details"
-                      className="text-gray-600 font-medium"
-                    >
-                      Emergency:
-                    </label>
-                    <input
-                      type="phone"
-                      name="change-emergency-details"
-                      id="change-emergency-details"
-                      defaultValue={+2348987654321}
-                      className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
-                    />
-                  </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  {/* State */}
                   <div className="flex flex-col w-full">
                     <label
                       htmlFor="change-state"
-                      className="text-gray-600 font-medium"
+                      className="text-gray-600 font-medium mb-1"
                     >
                       State:
                     </label>
                     <input
                       type="text"
-                      name="change-state"
                       id="change-state"
-                      defaultValue={"enugu"}
-                      className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                      className="h-10 w-full pl-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm font-medium transition-all"
                     />
                   </div>
 
+                  {/* LGA */}
                   <div className="flex flex-col w-full">
                     <label
                       htmlFor="change-lga"
-                      className="text-gray-600 font-medium"
+                      className="text-gray-600 font-medium mb-1"
                     >
                       LGA:
                     </label>
                     <input
                       type="text"
-                      name="change-lga"
                       id="change-lga"
-                      defaultValue={"Nkanu-west"}
-                      className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
+                      value={lga}
+                      onChange={(e) => setLga(e.target.value)}
+                      className="h-10 w-full pl-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm font-medium transition-all"
                     />
                   </div>
-                  <div className="flex flex-col w-full">
+
+                  {/* Address */}
+                  <div className="flex flex-col w-full md:col-span-2">
                     <label
-                      htmlFor="change-home-address"
-                      className="text-gray-600 font-medium"
+                      htmlFor="change-address"
+                      className="text-gray-600 font-medium mb-1"
                     >
                       Home Address:
                     </label>
                     <input
-                      type="phone"
-                      name="change-home-address"
-                      id="change-home-address"
-                      defaultValue={"no 12, sample street, sample city"}
-                      className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
-                    />
-                  </div>
-                  <div className="flex flex-col w-full">
-                    <label
-                      htmlFor="change-cooperative-name"
-                      className="text-gray-600 font-medium"
-                    >
-                      Cooperative:
-                    </label>
-                    <input
-                      type="phone"
-                      name="change-cooperative-name"
-                      id="change-cooperative-name"
-                      defaultValue={"Plateau Cattle Farmers Assoc."}
-                      className="h-10 w-full pl-3 rounded-lg border-green-400 border outline-none text-sm font-medium"
+                      type="text"
+                      id="change-address"
+                      value={homeAddress}
+                      onChange={(e) => setAddress(e.target.value)}
+                      className="h-10 w-full pl-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm font-medium transition-all"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end">
-                  <button className="px-2.5 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2 whitespace-nowrap">
-                    {/* <Edit size={16} /> */}
-                    Save changes
+                <div className="flex items-center justify-end mt-4 pt-4 border-t border-gray-100">
+                  <button
+                    onClick={onSubmit}
+                    disabled={loading}
+                    className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 active:bg-green-700 flex items-center gap-2 font-medium disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="animate-spin" size={18} />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save changes"
+                    )}
                   </button>
                 </div>
               </div>
-            </div>
+            </form>
 
             <div className="space-y-6 mt-4">
               {/* Header */}
