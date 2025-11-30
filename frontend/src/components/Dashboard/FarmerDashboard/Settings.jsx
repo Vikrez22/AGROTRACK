@@ -3,6 +3,8 @@ import { useAuth } from "../../../context/AuthContext";
 import { Loader2, MessageSquare, Phone, User } from "lucide-react";
 import { UserService } from "../../../services/user";
 
+import { toast } from "react-toastify";
+
 const Settings = () => {
   const { profile } = useAuth();
   const [fullName, setFullName] = useState("");
@@ -15,7 +17,6 @@ const Settings = () => {
   );
   const [profileLoading, setProfileLoading] = useState(false);
   const [additionalLoading, setAdditionalLoading] = useState(false);
-  console.log("user Profile", profile);
 
   useEffect(() => {
     if (profile) {
@@ -30,8 +31,9 @@ const Settings = () => {
 
   async function onProfileSubmit(e) {
     e.preventDefault();
-
     setProfileLoading(true);
+
+    const toastId = toast.loading("Updating profile...");
 
     try {
       const updates = {
@@ -43,25 +45,39 @@ const Settings = () => {
       await UserService.updateProfile(userId, updates);
 
       setProfileLoading(false);
+      toast.update(toastId, {
+        render: "Profile updated successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
 
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile. Check console for details.");
       setProfileLoading(false);
+      toast.update(toastId, {
+        render: "Failed to update profile.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     }
   }
+
+  console.log(profile);
 
   async function onAdditionalSubmit(e) {
     e.preventDefault();
 
     setAdditionalLoading(true);
 
+    const toastId = toast;
+
     try {
       const updates = {
-        displayName: fullName,
-        email: email,
-        phoneNumber: phoneNumber,
+        LGA: lga,
       };
 
       await UserService.updateProfile(userId, updates);
@@ -80,6 +96,7 @@ const Settings = () => {
     <div className="space-y-6 m-6">
       {/* Farmer Profiles Content */}
       <div className="space-y-6">
+        {/* <ToastContainer /> */}
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-2xl font-bold mb-2">User Settings</h2>
@@ -245,7 +262,7 @@ const Settings = () => {
                       type="text"
                       id="change-address"
                       value={homeAddress}
-                      onChange={(e) => setAddress(e.target.value)}
+                      onChange={(e) => setHomeAddress(e.target.value)}
                       className="h-10 w-full pl-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm font-medium transition-all"
                     />
                   </div>
