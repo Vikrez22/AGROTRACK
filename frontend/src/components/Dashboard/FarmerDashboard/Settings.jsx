@@ -3,8 +3,6 @@ import { useAuth } from "../../../context/AuthContext";
 import { Loader2, MessageSquare, Phone, User } from "lucide-react";
 import { UserService } from "../../../services/user";
 
-import { toast } from "react-toastify";
-
 const Settings = () => {
   const { profile } = useAuth();
   const [fullName, setFullName] = useState("");
@@ -33,8 +31,6 @@ const Settings = () => {
     e.preventDefault();
     setProfileLoading(true);
 
-    const toastId = toast.loading("Updating profile...");
-
     try {
       const updates = {
         displayName: fullName,
@@ -45,24 +41,12 @@ const Settings = () => {
       await UserService.updateProfile(userId, updates);
 
       setProfileLoading(false);
-      toast.update(toastId, {
-        render: "Profile updated successfully!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
 
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile. Check console for details.");
       setProfileLoading(false);
-      toast.update(toastId, {
-        render: "Failed to update profile.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
     }
   }
 
@@ -72,8 +56,6 @@ const Settings = () => {
     e.preventDefault();
 
     setAdditionalLoading(true);
-
-    const toastId = toast;
 
     try {
       const updates = {
@@ -96,7 +78,6 @@ const Settings = () => {
     <div className="space-y-6 m-6">
       {/* Farmer Profiles Content */}
       <div className="space-y-6">
-        {/* <ToastContainer /> */}
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-2xl font-bold mb-2">User Settings</h2>
