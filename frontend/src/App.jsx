@@ -17,7 +17,6 @@ import LawEnforcementDashboard from "./components/IoTDashboard/admin";
 import Marketplace from "./components/Marketplace/marketplace";
 
 import NotFound from "./NotFound";
-import { ToastContainer } from "react-toastify";
 
 // const HerderDashboardWithUser = withUserId(HerderDashboard);
 // const FarmerDashboardWithUser = withUserId(FarmerDashboard);
@@ -34,8 +33,6 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <ToastContainer position="top-right" autoClose={3000} />
-
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<Signup />} />
