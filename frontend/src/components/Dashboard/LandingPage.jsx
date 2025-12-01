@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import {
   MapPin,
   Shield,
@@ -20,6 +20,7 @@ import marketplace from "../../assets/marketplace.avif";
 import agrotrackCollar from "../../assets/cow-wearing-agrotrack-collar.jpg";
 import emergencyResponseImg from "../../assets/focused-medical-worker-outdoor-clinic_192345-2792.jpg";
 import geoFencingImg from "../../assets/Screenshot 2025-10-01 at 01-17-48 AgroTrack Peace through Technology.png";
+import { AnonymousServices } from "../../services/anonymous";
 
 const AgroTrackLandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,36 +31,78 @@ const AgroTrackLandingPage = () => {
     phone: "",
     email: "",
     location: "",
+    LGA: "",
     incidentType: "",
     description: "",
-    evidence: null,
+    evidence: [], // Changed to array
   });
-
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const fileInputRef = useRef(null);
-
-  const handleReportSubmit = (e) => {
+  
+  const handleReportSubmit = async (e) => {
     e.preventDefault();
     console.log("Report submitted:", reportForm);
-    alert(
-      "Report submitted successfully! We will investigate and respond within 24 hours."
-    );
-    setReportModalOpen(false);
-    setReportForm({
-      name: "",
-      phone: "",
-      email: "",
-      location: "",
-      incidentType: "",
-      description: "",
-      evidence: null,
-    });
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setReportForm((prev) => ({ ...prev, evidence: file }));
+  
+    setIsSubmitting(true);
+  
+    try {
+      const result = await AnonymousServices.createReport({
+        type: reportForm.incidentType,
+        description: reportForm.description,
+        location: reportForm.location,
+        displayName: reportForm.name,
+        LGA: reportForm.LGA,
+        phoneNumber: reportForm.phone
+      }, reportForm.evidence); 
+  
+      console.log('Report created successfully:', result);
+      
+      alert(
+        "Report submitted successfully! We will investigate and respond within 24 hours."
+      );
+      
+      setReportModalOpen(false);
+      setReportForm({
+        name: "",
+        phone: "",
+        email: "",
+        location: "",
+        LGA: "",
+        incidentType: "",
+        description: "",
+        evidence: [],
+      });
+      
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+  
+    } catch (error) {
+      console.error('Handle report submit error:', error);
+      alert("Failed to submit report. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+  
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files); 
+    if (files.length > 0) {
+      setReportForm((prev) => ({ 
+        ...prev, 
+        evidence: [...prev.evidence, ...files] 
+      }));
+    }
+  };
+  
+  const removeFile = (indexToRemove) => {
+    setReportForm((prev) => ({
+      ...prev,
+      evidence: prev.evidence.filter((_, index) => index !== indexToRemove)
+    }));
   };
 
   const features = [
@@ -650,189 +693,242 @@ const AgroTrackLandingPage = () => {
 
       {/* Report Incident Modal */}
       {reportModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-gray-900">
-                  Report an Incident
-                </h3>
-                <button
-                  onClick={() => setReportModalOpen(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-              <p className="text-gray-600 mt-2">
-                Help us prevent conflicts by reporting incidents with detailed
-                evidence.
-              </p>
-            </div>
+  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <h3 className="text-2xl font-bold text-gray-900">
+            Report an Incident
+          </h3>
+          <button
+            onClick={() => setReportModalOpen(false)}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
+            <X size={24} />
+          </button>
+        </div>
+        <p className="text-gray-600 mt-2">
+          Help us prevent conflicts by reporting incidents with detailed
+          evidence.
+        </p>
+      </div>
 
-            <form onSubmit={handleReportSubmit} className="p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Your Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={reportForm.name}
-                    onChange={(e) =>
-                      setReportForm((prev) => ({
-                        ...prev,
-                        name: e.target.value,
-                      }))
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="Full name"
-                  />
-                </div>
+      <form onSubmit={handleReportSubmit} className="p-6 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Your Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={reportForm.name}
+              onChange={(e) =>
+                setReportForm((prev) => ({
+                  ...prev,
+                  name: e.target.value,
+                }))
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Full name"
+            />
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={reportForm.phone}
-                    onChange={(e) =>
-                      setReportForm((prev) => ({
-                        ...prev,
-                        phone: e.target.value,
-                      }))
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="+234..."
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={reportForm.email}
-                  onChange={(e) =>
-                    setReportForm((prev) => ({
-                      ...prev,
-                      email: e.target.value,
-                    }))
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="your.email@example.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Incident Location *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={reportForm.location}
-                  onChange={(e) =>
-                    setReportForm((prev) => ({
-                      ...prev,
-                      location: e.target.value,
-                    }))
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="State, LGA, Village/Area"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Incident Type *
-                </label>
-                <select
-                  required
-                  value={reportForm.incidentType}
-                  onChange={(e) =>
-                    setReportForm((prev) => ({
-                      ...prev,
-                      incidentType: e.target.value,
-                    }))
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                >
-                  <option value="">Select incident type</option>
-                  <option value="crop_damage">Crop Damage by Livestock</option>
-                  <option value="boundary_dispute">Boundary Dispute</option>
-                  <option value="violence">Physical Violence/Conflict</option>
-                  <option value="theft">Livestock Theft</option>
-                  <option value="trespassing">
-                    Illegal Grazing/Trespassing
-                  </option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Incident Description *
-                </label>
-                <textarea
-                  required
-                  rows={4}
-                  value={reportForm.description}
-                  onChange={(e) =>
-                    setReportForm((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="Describe what happened in detail..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Upload Evidence (Photo/Video/Document)
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileUpload}
-                    accept="image/*,video/*,.pdf,.doc,.docx"
-                    className="hidden"
-                  />
-                  <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-600 mb-2">
-                    {reportForm.evidence
-                      ? reportForm.evidence.name
-                      : "Click to upload evidence"}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Choose File
-                  </button>
-                </div>
-              </div>
-              <div className="text-right">
-                <button
-                  type="submit"
-                  className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
-                >
-                  Submit Report
-                </button>
-              </div>
-            </form>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Phone Number *
+            </label>
+            <input
+              type="tel"
+              required
+              value={reportForm.phone}
+              onChange={(e) =>
+                setReportForm((prev) => ({
+                  ...prev,
+                  phone: e.target.value,
+                }))
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="+234..."
+            />
           </div>
         </div>
-      )}
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Email Address
+          </label>
+          <input
+            type="email"
+            value={reportForm.email}
+            onChange={(e) =>
+              setReportForm((prev) => ({
+                ...prev,
+                email: e.target.value,
+              }))
+            }
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            placeholder="your.email@example.com"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Incident Location *
+            </label>
+            <input
+              type="text"
+              required
+              value={reportForm.location}
+              onChange={(e) =>
+                setReportForm((prev) => ({
+                  ...prev,
+                  location: e.target.value,
+                }))
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="State, Village/Area"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              LGA (Local Government Area) *
+            </label>
+            <input
+              type="text"
+              required
+              value={reportForm.LGA}
+              onChange={(e) =>
+                setReportForm((prev) => ({
+                  ...prev,
+                  LGA: e.target.value,
+                }))
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="e.g., Obio/Akpor"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Incident Type *
+          </label>
+          <select
+            required
+            value={reportForm.incidentType}
+            onChange={(e) =>
+              setReportForm((prev) => ({
+                ...prev,
+                incidentType: e.target.value,
+              }))
+            }
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          >
+            <option value="">Select incident type</option>
+            <option value="crop_damage">Crop Damage by Livestock</option>
+            <option value="boundary_dispute">Boundary Dispute</option>
+            <option value="violence">Physical Violence/Conflict</option>
+            <option value="theft">Livestock Theft</option>
+            <option value="trespassing">
+              Illegal Grazing/Trespassing
+            </option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Incident Description *
+          </label>
+          <textarea
+            required
+            rows={4}
+            value={reportForm.description}
+            onChange={(e) =>
+              setReportForm((prev) => ({
+                ...prev,
+                description: e.target.value,
+              }))
+            }
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            placeholder="Describe what happened in detail..."
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Upload Evidence (Photo/Video/Document)
+          </label>
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              accept="image/*,video/*,.pdf,.doc,.docx"
+              multiple
+              className="hidden"
+            />
+            <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+            <p className="text-gray-600 mb-2">
+              {reportForm.evidence.length > 0
+                ? `${reportForm.evidence.length} file(s) selected`
+                : "Click to upload evidence (multiple files allowed)"}
+            </p>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Choose Files
+            </button>
+          </div>
+
+          {/* Display selected files */}
+          {reportForm.evidence.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {reportForm.evidence.map((file, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
+                >
+                  <div className="flex items-center space-x-2">
+                    <Upload size={16} className="text-gray-500" />
+                    <span className="text-sm text-gray-700">
+                      {file.name}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      ({(file.size / 1024).toFixed(2)} KB)
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(index)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="text-right">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? "Submitting..." : "Submit Report"}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
       {/* Chat Bot Modal */}
       {chatBotOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">

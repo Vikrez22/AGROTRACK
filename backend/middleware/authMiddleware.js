@@ -24,7 +24,6 @@ export const authenticateUser = async (req, res, next ) => {
 export const requireRole = (...allowedRoles) => {
     return async (req, res, next) => {
       try {
-        const { db } = require('../config/firebase');
 
         const userDoc = await db.collection('users').doc(req.user.uid).get();
         
