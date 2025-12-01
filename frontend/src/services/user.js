@@ -25,10 +25,10 @@ export class UserService {
   }
 
  
-  static async getProfile(uid) {
+  static async getProfile() {
     try {
       const response = await APIConfig.fetchWithRetry(
-        `${this.endpoint}/profile/${uid}`,
+        `${this.endpoint}/profile`,
         {
           method: 'GET',
           headers: {
@@ -46,10 +46,10 @@ export class UserService {
   }
 
   
-  static async updateProfile(uid, updates) {
+  static async updateProfile(updates) {
     try {
       const response = await APIConfig.fetchWithRetry(
-        `${this.endpoint}/profile/${uid}`,
+        `${this.endpoint}/profile`,
         {
           method: 'PUT',
           headers: {
