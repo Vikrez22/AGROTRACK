@@ -3,10 +3,32 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, FileText, User, Activity, Loader2, X, ExternalLink, Download, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { ReportServices } from "../../services/report";
 
-// Helper function for formatting date (kept consistent)
+// Helper function for formatting date (REVISED)
+// Helper function for formatting date (REVISED FOR _seconds)
 const formatDate = (timestamp, isLong = false) => {
     if (!timestamp) return 'N/A';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    
+    let date;
+
+    // 1. Handle live Firebase Timestamp objects (or any object with .toDate())
+    if (typeof timestamp.toDate === 'function') {
+        date = timestamp.toDate();
+    } 
+    // 2. Handle serialized Firebase Timestamp objects { _seconds, _nanoseconds }
+    else if (typeof timestamp === 'object' && timestamp._seconds) {
+        // We use _seconds (Unix seconds) and convert it to milliseconds
+        date = new Date(timestamp._seconds * 1000); 
+    }
+    // 3. Handle standard date strings, numbers, or Date objects
+    else {
+        date = new Date(timestamp);
+    }
+    
+    // Check if the resulting date object is valid
+    if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+    }
+
     if (isLong) {
         return date.toLocaleDateString('en-US', { 
             year: 'numeric', 
@@ -78,7 +100,7 @@ const ReportDetailRow = ({ reportId, onUpdate, onDelete }) => {
                     </div>
                     <div>
                         <label className={labelStyle}>Last Updated</label>
-                        <p className={detailFieldStyle}>{formatDate(reportDetail.updatedAt, true)}</p>
+                        <p className={detailFieldStyle}>{formatDate(reportDetail.createdAt, true)}</p>
                     </div>
                 </div>
 
@@ -187,6 +209,8 @@ const Reports = () => {
             return await ReportServices.getReports(params);
         }
     });
+
+    console.log('this is what reports data looks like', reportsData)
 
     // Fetch statistics
     const { data: statsData, isLoading: statsLoading } = useQuery({
