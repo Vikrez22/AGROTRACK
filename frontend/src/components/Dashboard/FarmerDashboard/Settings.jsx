@@ -25,7 +25,7 @@ const Settings = () => {
     }
   }, [profile]);
 
-  const userId = profile?.uid;
+  //const userId = profile?.uid;
 
   async function onProfileSubmit(e) {
     e.preventDefault();
@@ -38,7 +38,7 @@ const Settings = () => {
         phoneNumber: phoneNumber,
       };
 
-      await UserService.updateProfile(userId, updates);
+      await UserService.updateProfile(updates);
 
       setProfileLoading(false);
 
@@ -62,7 +62,7 @@ const Settings = () => {
         LGA: lga,
       };
 
-      await UserService.updateProfile(userId, updates);
+      await UserService.updateProfile(updates);
 
       setAdditionalLoading(false);
 
