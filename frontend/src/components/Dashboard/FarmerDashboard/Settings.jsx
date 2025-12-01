@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { Edit, Loader2, MessageSquare, Phone, User } from "lucide-react";
 import { UserService } from "../../../services/user";
+import { NIGERIAN_STATES } from "../../../data/nigerianStatesData";
+import { LGA_BY_STATE } from "../../../data/nigerianStatesData";
 
 const Settings = () => {
   const { profile } = useAuth();
@@ -63,6 +65,7 @@ const Settings = () => {
   }
 
   console.log(profile);
+  const availableLGAs = state ? LGA_BY_STATE[state.toLowerCase()] || [] : [];
 
   async function onAdditionalSubmit(e) {
     e.preventDefault();
@@ -235,14 +238,22 @@ const Settings = () => {
                   >
                     State:
                   </label>
-                  <input
+                  <select
                     type="text"
                     id="change-state"
                     disabled={additionalEdit}
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
+                    onChange={(e) => {
+                      setState(e.target.value), setLga("");
+                    }}
                     className="h-10 w-full pl-3 rounded-lg border border-gray-300 disabled:bg-gray-50 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm font-medium transition-all"
-                  />
+                  >
+                    <option>{state}</option>
+                    {NIGERIAN_STATES.map((stateOption) => (
+                      <option key={stateOption.value} value={stateOption.value}>
+                        {stateOption.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* LGA */}
@@ -253,14 +264,23 @@ const Settings = () => {
                   >
                     LGA:
                   </label>
-                  <input
+                  <select
                     type="text"
                     id="change-lga"
-                    disabled={additionalEdit}
-                    value={lga}
+                    disabled={
+                      additionalEdit || !state || availableLGAs.length === 0
+                    }
+                    required={availableLGAs.length > 0}
                     onChange={(e) => setLga(e.target.value)}
                     className="h-10 w-full pl-3 rounded-lg border border-gray-300 disabled:bg-gray-50 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm font-medium transition-all"
-                  />
+                  >
+                    <option>{lga}</option>
+                    {availableLGAs.map((lgaOption) => (
+                      <option key={lgaOption.value} value={lgaOption.value}>
+                        {lgaOption.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Address */}
