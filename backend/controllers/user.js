@@ -32,7 +32,7 @@ export const createUserProfile = async (req, res) => {
     const userDoc = await userRef.get();
 
     if (userDoc.exists) {
-      return res.status(200).json({ 
+      return res.status(409).json({ 
         message: 'User profile already exists',
         profile: userDoc.data()
       });

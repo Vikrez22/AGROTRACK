@@ -4,6 +4,8 @@ import GeoTracker from "../../Cowtracking/GeoTracker";
 import { useAuth } from "../../../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { ChatServices } from "../../../services/chat";
+import { ReportServices } from "../../../services/report";
+import { AnonymousServices } from "../../../services/anonymous";
 
 const Overview = () => {
 
@@ -16,6 +18,8 @@ const Overview = () => {
     return unreadCount;
   }
 
+
+
   const { data: unreadCount, isLoading: isLoadingUnreadCount, isError } = useQuery({
     queryKey: ["unreadCount"],
     queryFn: getUnreadCount,
@@ -23,6 +27,29 @@ const Overview = () => {
   })
 
   const userRole = role;
+
+  useEffect(()=> {
+    const createReport = async () => {
+      // await ReportServices.createReport({
+      //   type: "Violence",
+      //   description: "A cow trespassed and damaged my crops",
+      //   location: "Very close to my farmland"
+      // }, )
+
+      // await AnonymousServices.createReport({
+      //   type: "Crop Damage",
+      //   description: "An herder was inconsiderate again!",
+      //   location: "Around market junction",
+      //   displayName: "Okenwa",
+      //   LGA: "obio/akpor",
+      //   phoneNumber: "08123456789"
+      // },)
+    }
+
+    createReport()
+  }, [])
+
+
   
   return (
     <div className="space-y-6 m-6">
