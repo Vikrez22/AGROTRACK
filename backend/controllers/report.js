@@ -3,10 +3,7 @@ import { storage } from "../config/appwrite.js";
 import { ID } from 'node-appwrite';
 import { InputFile } from 'node-appwrite/file';
 
-/**
- * Controller to create a new report in the centralized 'reports' collection
- * with optional file evidence uploaded to Appwrite Storage
- */
+
 export const createReport = async (req, res) => {
     try {
         const { type, location, description } = req.body;
@@ -86,9 +83,7 @@ export const createReport = async (req, res) => {
     }
 };
 
-/**
- * Controller to get the count of unresolved reports for a specific LGA
- */
+
 export const getUnresolvedReportCount = async (req, res) => {
     try {
         const LGA = req.body.LGA || req.userData.LGA;
@@ -122,10 +117,7 @@ export const getUnresolvedReportCount = async (req, res) => {
     }
 };
 
-/**
- * Controller to get all reports with optional filters
- * NOTE: For status and type filtering to work, you need to create composite indexes in Firebase
- */
+
 export const getReports = async (req, res) => {
     try {
         const { 
@@ -201,9 +193,7 @@ export const getReports = async (req, res) => {
     }
 };
 
-/**
- * Controller to get a single report by ID
- */
+
 export const getReportById = async (req, res) => {
     try {
         const { reportId } = req.params;
@@ -243,10 +233,7 @@ export const getReportById = async (req, res) => {
     }
 };
 
-/**
- * Controller to update report status
- * Now includes 'Dismissed', 'Escalated', and 'Police' statuses
- */
+
 export const updateReportStatus = async (req, res) => {
     try {
         const { reportId } = req.params;
@@ -289,9 +276,7 @@ export const updateReportStatus = async (req, res) => {
     }
 };
 
-/**
- * Controller to update report priority
- */
+
 export const updateReportPriority = async (req, res) => {
     try {
         const { reportId } = req.params;
@@ -334,9 +319,7 @@ export const updateReportPriority = async (req, res) => {
     }
 };
 
-/**
- * NEW: Controller to escalate a report (sets status to 'Escalated' and priority to 'High')
- */
+
 export const escalateReport = async (req, res) => {
     try {
         const { reportId } = req.params;
@@ -371,10 +354,7 @@ export const escalateReport = async (req, res) => {
     }
 };
 
-/**
- * Controller to delete a report
- * Also deletes associated files from Appwrite Storage
- */
+
 export const deleteReport = async (req, res) => {
     try {
         const { reportId } = req.params;
@@ -429,10 +409,7 @@ export const deleteReport = async (req, res) => {
     }
 };
 
-/**
- * Controller to get report statistics
- * Updated to include new statuses
- */
+
 export const getReportStatistics = async (req, res) => {
     try {
         const { LGA } = req.query;
