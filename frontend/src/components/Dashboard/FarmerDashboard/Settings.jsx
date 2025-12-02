@@ -22,11 +22,11 @@ const Settings = () => {
 
   useEffect(() => {
     if (profile) {
-      setFullName(profile.displayName || "");
-      setEmail(profile.email || "");
-      setPhoneNumber(profile.phoneNumber || "");
-      setLga(profile.LGA || "");
-      setState(profile.state || "");
+      setFullName(profile.displayName);
+      setEmail(profile.email);
+      setPhoneNumber(profile.phoneNumber);
+      setLga(profile.LGA);
+      setState(profile.state);
     }
   }, [profile]);
 
@@ -64,7 +64,6 @@ const Settings = () => {
     }
   }
 
-  console.log(profile);
   const availableLGAs = state ? LGA_BY_STATE[state.toLowerCase()] || [] : [];
 
   async function onAdditionalSubmit(e) {
@@ -91,7 +90,7 @@ const Settings = () => {
       setAdditionalLoading(false);
       setAdditionalEdit(true);
 
-      alert("Profile updated successfully!");
+      alert("Additional information updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile. Check console for details.");
@@ -368,7 +367,7 @@ const Settings = () => {
                   </p>
                 </div>
 
-                <div className="text-blue-600 bg-blue-50 p-4 rounded-lg border">
+                <div className="text-green-600 bg-green-50 p-4 rounded-lg border">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <Phone size={20} />
@@ -378,7 +377,7 @@ const Settings = () => {
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
                     </label>
                   </div>
                   <p className="text-sm text-gray-600">
@@ -405,16 +404,16 @@ const Settings = () => {
             </div>
           </div>
 
-          {/* <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="flex flex-wrap gap-2">
-                  <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                    Send a Report
-                  </button>
-                  <button className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
-                    View Reports
-                  </button>
-                </div>
-              </div> */}
+          <div className="mt-6 pt-4 bg-white rounded-lg shadow-lg p-6">
+            <div className="flex flex-wrap gap-2">
+              <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                Send a Report
+              </button>
+              <button className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+                View Reports
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
