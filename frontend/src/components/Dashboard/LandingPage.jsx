@@ -828,14 +828,14 @@ const AgroTrackLandingPage = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           >
             <option value="">Select incident type</option>
-            <option value="crop_damage">Crop Damage by Livestock</option>
-            <option value="boundary_dispute">Boundary Dispute</option>
-            <option value="violence">Physical Violence/Conflict</option>
-            <option value="theft">Livestock Theft</option>
-            <option value="trespassing">
+            <option value="Crop Damage">Crop Damage by Livestock</option>
+            <option value="Boundary Dispute">Boundary Dispute</option>
+            <option value="Violence">Physical Violence/Conflict</option>
+            <option value="Theft">Livestock Theft</option>
+            <option value="Trespassing">
               Illegal Grazing/Trespassing
             </option>
-            <option value="other">Other</option>
+            <option value="Other">Other</option>
           </select>
         </div>
 
