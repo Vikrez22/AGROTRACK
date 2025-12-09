@@ -358,7 +358,6 @@ export const escalateReport = async (req, res) => {
 export const deleteReport = async (req, res) => {
     try {
         const { reportId } = req.params;
-        const { userId } = req.body;
 
         const reportRef = db.collection('reports').doc(reportId);
 
@@ -372,13 +371,6 @@ export const deleteReport = async (req, res) => {
         }
 
         const reportData = reportDoc.data();
-
-        if (userId && reportData.userId !== userId) {
-            return res.status(403).json({
-                success: false,
-                error: "You don't have permission to delete this report"
-            });
-        }
 
         if (reportData.evidence && reportData.evidence.length > 0) {
             const BUCKET_ID = process.env.APPWRITE_BUCKET_ID;

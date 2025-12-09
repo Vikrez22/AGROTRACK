@@ -11,8 +11,6 @@ const Overview = () => {
 
   const { role, profile } = useAuth()
 
-  const userLGA = profile?.LGA
-  
   const getUnreadCount = async () => {
     const { unreadCount } = await ChatServices.getUserUnreadCount()
     return unreadCount;
@@ -28,26 +26,7 @@ const Overview = () => {
 
   const userRole = role;
 
-  useEffect(()=> {
-    const createReport = async () => {
-      // await ReportServices.createReport({
-      //   type: "Violence",
-      //   description: "A cow trespassed and damaged my crops",
-      //   location: "Very close to my farmland"
-      // }, )
-
-      // await AnonymousServices.createReport({
-      //   type: "Crop Damage",
-      //   description: "An herder was inconsiderate again!",
-      //   location: "Around market junction",
-      //   displayName: "Okenwa",
-      //   LGA: "obio/akpor",
-      //   phoneNumber: "08123456789"
-      // },)
-    }
-
-    createReport()
-  }, [])
+  
 
 
   
