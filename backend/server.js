@@ -5,6 +5,7 @@ import aiRoutes from "./routes/ai.js";
 import chatRoutes from './routes/chat.js'
 import reportRoutes from './routes/report.js'
 import anonymousRoutes from './routes/anonymous.js'
+import activityRoutes from './routes/activity.js'
 import "dotenv/config";
 
 const app = express();
@@ -19,6 +20,7 @@ app.use("/api/chats", chatRoutes)
 app.use("/api/ai", aiRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/anonymous", anonymousRoutes);
+app.use("/api/activities", activityRoutes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({
