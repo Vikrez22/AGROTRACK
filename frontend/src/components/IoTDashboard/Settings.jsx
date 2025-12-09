@@ -1,6 +1,64 @@
-import { Plus } from "lucide-react";
+import { useState } from "react";
+import { Trash2, AlertCircle } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { UserService } from "../../services/user";
 
 const Settings = () => {
+  const queryClient = useQueryClient();
+  const [deleteLoading, setDeleteLoading] = useState(null);
+
+  const { data: usersData, isLoading, error } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => UserService.getAllUsers(),
+    staleTime: 1000 * 60 * 5, 
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (uid) => UserService.deleteProfile(uid),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+  });
+
+  const users = usersData?.users || [];
+
+  const stats = {
+    total: users.length,
+    farmers: users.filter(u => u.role === 'farmer').length,
+    herders: users.filter(u => u.role === 'herder').length,
+    suspended: 0 
+  };
+
+  const handleDeleteUser = async (uid, userName) => {
+    if (!window.confirm(`Are you sure you want to delete ${userName}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setDeleteLoading(uid);
+      await deleteMutation.mutateAsync(uid);
+      alert(`User ${userName} has been deleted successfully`);
+    } catch (err) {
+      alert(`Failed to delete user: ${err.message}`);
+      console.error('Error deleting user:', err);
+    } finally {
+      setDeleteLoading(null);
+    }
+  };
+
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['users'] });
+  };
+
+  const formatLocation = (user) => {
+    return `${user.LGA || 'N/A'}, ${user.state || 'N/A'}`;
+  };
+
+  const capitalizeFirst = (str) => {
+    if (!str) return 'N/A';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
   return (
     <div className="space-y-6">
       {/* Users Profiles */}
@@ -12,123 +70,139 @@ const Settings = () => {
           </p>
         </div>
 
-        {/* Farmer Statistics */}
+        {/* User Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg">
             <h3 className="text-lg font-semibold">Total Users</h3>
-            <p className="text-3xl font-bold">3</p>
+            <p className="text-3xl font-bold">{stats.total}</p>
           </div>
           <div className="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
             <h3 className="text-lg font-semibold">Active Farmers</h3>
-            <p className="text-3xl font-bold">2</p>
+            <p className="text-3xl font-bold">{stats.farmers}</p>
           </div>
           <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-lg">
             <h3 className="text-lg font-semibold">Active Herders</h3>
-            <p className="text-3xl font-bold">1</p>
+            <p className="text-3xl font-bold">{stats.herders}</p>
           </div>
           <div className="bg-red-500 text-white p-6 rounded-lg shadow-lg">
             <h3 className="text-lg font-semibold">Suspended Accounts</h3>
-            <p className="text-3xl font-bold">0</p>
+            <p className="text-3xl font-bold">{stats.suspended}</p>
           </div>
         </div>
+
         {/* Users List */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-800">
               Registered Users
             </h3>
-            <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2">
-              <Plus size={16} />
-              Add User
+            <button 
+              onClick={handleRefresh}
+              disabled={isLoading}
+              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {isLoading ? 'Refreshing...' : 'Refresh List'}
             </button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full border border-gray-200">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
-                    Name
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
-                    Contact
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
-                    Location
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
-                    Role
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
-                    Status
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  {
-                    name: "Munachi Onyebuchi",
-                    contact: "+2348123456789",
-                    location: "Lagos, Nigeria",
-                    role: "Farmer",
-                    status: "Active",
-                  },
-                  {
-                    name: "Alhaji Musa",
-                    contact: "+2348987654321",
-                    location: "Abuja, Nigeria",
-                    role: "Herder",
-                    status: "Active",
-                  },
-                  {
-                    name: "Samuel Eze",
-                    contact: "+2348012345678",
-                    location: "Kano, Nigeria",
-                    role: "Farmer",
-                    status: "Active",
-                  },
-                ].map((farmer, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 border-b text-sm text-gray-800">
-                      {farmer.name}
-                    </td>
-                    <td className="px-4 py-2 border-b text-sm text-gray-800">
-                      {farmer.contact}
-                    </td>
-                    <td className="px-4 py-2 border-b text-sm text-gray-800">
-                      {farmer.location}
-                    </td>
-                    <td className="px-4 py-2 border-b text-sm text-gray-800">
-                      {farmer.role}
-                    </td>
-                    <td className="px-4 py-2 border-b text-sm">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          farmer.status === "Active"
-                            ? "bg-green-100 text-green-800"
-                            : farmer.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {farmer.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2 border-b text-sm">
-                      <button className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 mr-2">
-                        Edit
-                      </button>
-                      <button className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">
-                        Delete
-                      </button>
-                    </td>
+
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-800">
+              <AlertCircle size={20} />
+              <span>{error?.message || 'Failed to fetch users'}</span>
+            </div>
+          )}
+
+          {isLoading ? (
+            <div className="text-center py-8">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+              <p className="mt-2 text-gray-600">Loading users...</p>
+            </div>
+          ) : users.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No users found
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
+                      Name
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
+                      Email
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
+                      Contact
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
+                      Location
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
+                      Role
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
+                      Joined
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.uid} className="hover:bg-gray-50">
+                      <td className="px-4 py-2 border-b text-sm text-gray-800">
+                        {user.displayName || 'N/A'}
+                      </td>
+                      <td className="px-4 py-2 border-b text-sm text-gray-600">
+                        {user.email}
+                      </td>
+                      <td className="px-4 py-2 border-b text-sm text-gray-800">
+                        {user.phoneNumber || 'N/A'}
+                      </td>
+                      <td className="px-4 py-2 border-b text-sm text-gray-800">
+                        {formatLocation(user)}
+                      </td>
+                      <td className="px-4 py-2 border-b text-sm">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          user.role === 'farmer' 
+                            ? 'bg-green-100 text-green-800' 
+                            : user.role === 'herder'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {capitalizeFirst(user.role)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 border-b text-sm text-gray-600">
+                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                      </td>
+                      <td className="px-4 py-2 border-b text-sm">
+                        <button
+                          onClick={() => handleDeleteUser(user.uid, user.displayName)}
+                          disabled={deleteLoading === user.uid || deleteMutation.isPending}
+                          className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                        >
+                          {deleteLoading === user.uid ? (
+                            <>
+                              <div className="inline-block animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                              <span>Deleting...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 size={14} />
+                              <span>Delete</span>
+                            </>
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
 
@@ -270,4 +344,5 @@ const Settings = () => {
     </div>
   );
 };
+
 export default Settings;
