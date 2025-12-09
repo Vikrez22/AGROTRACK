@@ -1,4 +1,4 @@
-import { db } from '../config/firebase.js';
+import { db, admin } from '../config/firebase.js';
 
 const VALID_ROLES = ['farmer', 'herder', 'admin'];
 
@@ -133,15 +133,31 @@ export const getAllUsers = async (req, res) => {
     
     let query = db.collection('users');
     
+    // Filter by role if provided, but exclude admins
     if (role && VALID_ROLES.includes(role)) {
+      if (role === 'admin') {
+        // Don't allow querying for admin users
+        return res.status(403).json({ 
+          message: 'Cannot query admin users',
+          count: 0,
+          users: []
+        });
+      }
       query = query.where('role', '==', role);
+    } else {
+      // If no specific role requested, exclude admin users
+      query = query.where('role', 'in', ['farmer', 'herder']);
     }
 
     const snapshot = await query.get();
     const users = [];
 
     snapshot.forEach(doc => {
-      users.push(doc.data());
+      const userData = doc.data();
+      // Extra safety check: filter out any admin users
+      if (userData.role !== 'admin') {
+        users.push(userData);
+      }
     });
 
     return res.status(200).json({
@@ -161,10 +177,42 @@ export const deleteUserProfile = async (req, res) => {
   try {
     const { uid } = req.params;
 
-    await db.collection('users').doc(uid).delete();
+    // Check if the user exists and get their data first
+    const userRef = db.collection('users').doc(uid);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ 
+        message: 'User profile not found' 
+      });
+    }
+
+    const userData = userDoc.data();
+
+    // Prevent deletion of admin users
+    if (userData.role === 'admin') {
+      return res.status(403).json({ 
+        message: 'Cannot delete admin users' 
+      });
+    }
+
+    // Delete from Firebase Authentication first
+    try {
+      await admin.auth().deleteUser(uid);
+      console.log('Successfully deleted user from Firebase Authentication:', uid);
+    } catch (authError) {
+      console.error('Error deleting user from Authentication:', authError);
+      // If user doesn't exist in Auth, we can still proceed to delete from Firestore
+      if (authError.code !== 'auth/user-not-found') {
+        throw authError;
+      }
+    }
+
+    // Delete from Firestore database
+    await userRef.delete();
 
     return res.status(200).json({
-      message: 'User profile deleted successfully',
+      message: 'User profile deleted successfully from both Authentication and Database',
     });
   } catch (error) {
     console.error('Error deleting user profile:', error);
