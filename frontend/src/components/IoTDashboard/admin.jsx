@@ -14,6 +14,7 @@ import {
   FileText,
   Clock,
   SettingsIcon,
+  Database,
 } from "lucide-react";
 
 // Import Leaflet components
@@ -24,7 +25,9 @@ import {
   Popup,
   Polygon,
   useMap,
+  LayersControl,
 } from "react-leaflet";
+const { BaseLayer } = LayersControl;
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -48,6 +51,7 @@ import Communications from "./Communications";
 import AiSupport from "./AiSupport";
 import Reports from "./Reports";
 import Settings from "./Settings";
+import FirebaseDataTester from "./FirebaseDataTester";
 import { useAuthMutations } from "../../hooks/useAuthMutations";
 import { usePresence } from "../../hooks/activity/usePresence";
 
@@ -214,6 +218,17 @@ const DrawControl = ({ onCreated, onDeleted, drawType }) => {
   return null;
 };
 
+// Component to handle map re-centering when props change
+const RecenterMap = ({ center, zoom }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center) {
+      map.setView(center, zoom || map.getZoom());
+    }
+  }, [center, zoom, map]);
+  return null;
+};
+
 // Real Map Component with Leaflet
 const LiveTrackingMap = ({
   center,
@@ -224,16 +239,38 @@ const LiveTrackingMap = ({
   onCreated,
   onDeleted,
   drawType,
+  userLocation,
 }) => (
   <MapContainer
     center={center}
-    zoom={13}
+    zoom={userLocation || markers.length > 0 ? 13 : 6}
     style={{ height: "100%", width: "100%" }}
   >
-    <TileLayer
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      attribution="&copy; OpenStreetMap contributors"
-    />
+    <RecenterMap center={center} />
+    <LayersControl position="topright">
+      <BaseLayer checked name="OpenStreetMap">
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; OpenStreetMap contributors"
+        />
+      </BaseLayer>
+      <BaseLayer name="Satellite View">
+        <TileLayer
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community"
+        />
+      </BaseLayer>
+    </LayersControl>
+
+    {/* User Location Marker */}
+    {userLocation && (
+      <Marker position={userLocation}>
+        <Popup>
+          <strong>My Location</strong> <br />
+          {userLocation[0].toFixed(6)}, {userLocation[1].toFixed(6)}
+        </Popup>
+      </Marker>
+    )}
 
     {/* Animal Markers */}
     {markers.map((animal) => (
@@ -322,7 +359,7 @@ const LiveTrackingMap = ({
   </MapContainer>
 );
 
-const IoTLivestockDashboard = ({ userRole = "law-enforcement" }) => {
+const IoTLivestockDashboard = ({ userRole = "law-enforcement", userLocation }) => {
   const [livestockData, setLivestockData] = useState({});
   const [grazingAreas, setGrazingAreas] = useState([]);
   const [nonGrazingAreas, setNonGrazingAreas] = useState([]);
@@ -576,6 +613,8 @@ const IoTLivestockDashboard = ({ userRole = "law-enforcement" }) => {
   );
 
   const getMapCenter = useCallback(() => {
+    if (userLocation) return userLocation;
+
     if (livestockData.latest_position) {
       return [
         livestockData.latest_position.latitude,
@@ -591,8 +630,8 @@ const IoTLivestockDashboard = ({ userRole = "law-enforcement" }) => {
       return [firstAnimalPos.latitude, firstAnimalPos.longitude];
     }
 
-    return [9.082, 8.6753]; // Default to Nigeria coordinate
-  }, [livestockData]);
+    return [9.081999, 8.675277]; // Nigeria Precise Coordinate
+  }, [livestockData, userLocation]);
 
   const getAnimalMarkers = useCallback(() => {
     const markers = [];
@@ -667,6 +706,20 @@ const IoTLivestockDashboard = ({ userRole = "law-enforcement" }) => {
 const LawEnforcementDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+
+  // Fetch user location for precise monitoring
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation([position.coords.latitude, position.coords.longitude]);
+        },
+        (error) => console.error("Error getting location:", error),
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      );
+    }
+  }, []);
 
   const { signOut } = useAuthMutations();
   usePresence();
@@ -686,7 +739,7 @@ const LawEnforcementDashboard = () => {
     setDrawType,
     handleCreated,
     handleDeleted,
-  } = IoTLivestockDashboard({ userRole: "law-enforcement" });
+  } = IoTLivestockDashboard({ userRole: "law-enforcement", userLocation });
 
   // Calculate statistics from real data
   const stats = {
@@ -707,6 +760,7 @@ const LawEnforcementDashboard = () => {
     { id: "communications", label: "Communications", icon: Radio },
     { id: "ai-support", label: "AI Support", icon: Bot },
     { id: "reports", label: "Reports", icon: FileText },
+    { id: "data-tester", label: "Firebase Tester", icon: Database },
     { id: "settings", label: "Settings", icon: SettingsIcon },
   ];
 
@@ -852,6 +906,7 @@ const LawEnforcementDashboard = () => {
                     onCreated={handleCreated}
                     onDeleted={handleDeleted}
                     drawType={drawType}
+                    userLocation={userLocation}
                   />
                 </div>
               </div>
@@ -1033,6 +1088,7 @@ const LawEnforcementDashboard = () => {
                   onCreated={handleCreated}
                   onDeleted={handleDeleted}
                   drawType={drawType}
+                  userLocation={userLocation}
                 />
               </div>
             </div>
@@ -1050,6 +1106,9 @@ const LawEnforcementDashboard = () => {
 
       case "reports":
         return <Reports />;
+
+      case "data-tester":
+        return <FirebaseDataTester />;
 
       case "settings":
         return <Settings />;
