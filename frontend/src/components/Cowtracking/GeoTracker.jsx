@@ -7,7 +7,9 @@ import {
   Popup,
   Polygon,
   useMap,
+  LayersControl,
 } from "react-leaflet";
+const { BaseLayer } = LayersControl;
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -164,6 +166,17 @@ const DrawControl = ({ onCreated, onDeleted, drawType }) => {
     };
   }, [map, onCreated, onDeleted, drawType]);
 
+  return null;
+};
+
+// Component to handle map re-centering when props change
+const RecenterMap = ({ center, zoom }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center) {
+      map.setView(center, zoom || map.getZoom());
+    }
+  }, [center, zoom, map]);
   return null;
 };
 
@@ -515,7 +528,7 @@ const GeoTracker = ({ userRole }) => {
           livestockData.latest_position.latitude,
           livestockData.latest_position.longitude,
         ]
-      : [9.082, 8.6753]);
+      : [9.081999, 8.675277]); // Precise center of Nigeria
 
   return (
     <div className="p-2 sm:p-3">
@@ -586,16 +599,19 @@ const GeoTracker = ({ userRole }) => {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-green-700 text-sm font-medium">
-                Location found: {userLocation[0].toFixed(4)},{" "}
+                Precise Location found: {userLocation[0].toFixed(4)},{" "}
                 {userLocation[1].toFixed(4)}
               </span>
             </div>
-            <button
-              onClick={requestLocationPermission}
-              className="px-3 py-1 text-xs font-medium text-green-600 hover:text-green-800 transition-colors"
-            >
-              Update
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={requestLocationPermission}
+                className="px-3 py-1 text-xs font-medium bg-green-600 hover:bg-green-700 text-white rounded transition-colors"
+                title="Refresh with high precision"
+              >
+                Refresh GPS
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -633,14 +649,25 @@ const GeoTracker = ({ userRole }) => {
       <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
         <MapContainer
           center={mapCenter}
-          zoom={13}
+          zoom={userLocation ? 13 : 6}
           style={{ width: "100%" }}
           className="w-full h-[400px]"
         >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="&copy; OpenStreetMap contributors"
-          />
+          <RecenterMap center={mapCenter} zoom={userLocation ? 13 : 6} />
+          <LayersControl position="topright">
+            <BaseLayer checked name="OpenStreetMap">
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; OpenStreetMap contributors"
+              />
+            </BaseLayer>
+            <BaseLayer name="Satellite View">
+              <TileLayer
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community"
+              />
+            </BaseLayer>
+          </LayersControl>
 
           {/* User Location Marker */}
           {userLocation && (
