@@ -1,11 +1,13 @@
 // src/components/Cowtracking/GeoTracker.js
 import { useEffect, useState, useRef, useCallback } from "react";
+import { MapPin } from "lucide-react";
 import {
   MapContainer,
   TileLayer,
   Marker,
   Popup,
   Polygon,
+  Circle,
   useMap,
   LayersControl,
 } from "react-leaflet";
@@ -177,6 +179,17 @@ const RecenterMap = ({ center, zoom }) => {
       map.setView(center, zoom || map.getZoom());
     }
   }, [center, zoom, map]);
+
+  useEffect(() => {
+    const handleRecenter = () => {
+      if (center) {
+        map.setView(center, zoom || 13);
+      }
+    };
+    window.addEventListener('recenter-map', handleRecenter);
+    return () => window.removeEventListener('recenter-map', handleRecenter);
+  }, [center, zoom, map]);
+
   return null;
 };
 
@@ -190,6 +203,7 @@ const GeoTracker = ({ userRole }) => {
   const [alarms, setAlarms] = useState([]);
   const [locationStatus, setLocationStatus] = useState("requesting"); // requesting, granted, denied, error
   const [locationError, setLocationError] = useState("");
+  const [locationPrecision, setLocationPrecision] = useState(null);
 
   // Point-in-polygon algorithm for geofencing
   const isPointInPolygon = useCallback((point, polygon) => {
@@ -289,20 +303,21 @@ const GeoTracker = ({ userRole }) => {
       }
 
       // Request high-accuracy position
+      // Request high-accuracy position
       const options = {
         enableHighAccuracy: true,
-        timeout: 15000, // Increased timeout
-        maximumAge: 0, // Don't use cached position
+        timeout: 45000, 
+        maximumAge: 0, 
       };
 
-      // Get current position
-      navigator.geolocation.getCurrentPosition(
+      const watchId = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude, accuracy } = position.coords;
           console.log(
-            `Location found: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`
+            `Location update: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`
           );
           setUserLocation([latitude, longitude]);
+          setLocationPrecision(accuracy);
           setLocationStatus("granted");
           setLocationError("");
         },
@@ -337,34 +352,12 @@ const GeoTracker = ({ userRole }) => {
         options
       );
 
-      // Also set up continuous watching for location changes (for herders especially)
-      if (userRole === "herder") {
-        const watchId = navigator.geolocation.watchPosition(
-          (position) => {
-            const { latitude, longitude, accuracy } = position.coords;
-            console.log(
-              `Location updated: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`
-            );
-            setUserLocation([latitude, longitude]);
-            setLocationStatus("granted");
-          },
-          (error) => {
-            console.error("Geolocation watch error:", error);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 30000, // Accept cached position up to 30 seconds old
-          }
-        );
-
-        // Cleanup watch on unmount
-        return () => {
-          if (watchId) {
-            navigator.geolocation.clearWatch(watchId);
-          }
-        };
-      }
+      // Cleanup watch on unmount
+      return () => {
+        if (watchId) {
+          navigator.geolocation.clearWatch(watchId);
+        }
+      };
     };
 
     requestLocation();
@@ -388,6 +381,7 @@ const GeoTracker = ({ userRole }) => {
           `Manual location request: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`
         );
         setUserLocation([latitude, longitude]);
+        setLocationPrecision(accuracy);
         setLocationStatus("granted");
         setLocationError("");
       },
@@ -522,13 +516,14 @@ const GeoTracker = ({ userRole }) => {
 
   // Determine map center
   const mapCenter =
-    userLocation ||
-    (livestockData.latest_position
-      ? [
-          livestockData.latest_position.latitude,
-          livestockData.latest_position.longitude,
-        ]
-      : [9.081999, 8.675277]); // Precise center of Nigeria
+    (userLocation && (!locationPrecision || locationPrecision < 5000))
+      ? userLocation
+      : (livestockData.latest_position
+          ? [
+              livestockData.latest_position.latitude,
+              livestockData.latest_position.longitude,
+            ]
+          : [9.081999, 8.675277]); // Precise center of Nigeria
 
   return (
     <div className="p-2 sm:p-3">
@@ -597,11 +592,11 @@ const GeoTracker = ({ userRole }) => {
         <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-green-700 text-sm font-medium">
-                Precise Location found: {userLocation[0].toFixed(4)},{" "}
-                {userLocation[1].toFixed(4)}
-              </span>
+              <div className={`w-2 h-2 rounded-full ${locationPrecision < 30 ? 'bg-green-500' : locationPrecision < 100 ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
+              <p className="text-green-700 text-sm font-medium">
+                {locationPrecision < 30 ? 'Precise Location found' : 'Acquiring Precise Location...'}
+                <span className="ml-2 text-xs font-normal opacity-75">(Precision: {locationPrecision ? locationPrecision.toFixed(0) + 'm' : 'Refitting...'})</span>
+              </p>
             </div>
             <div className="flex gap-2">
               <button
@@ -649,11 +644,11 @@ const GeoTracker = ({ userRole }) => {
       <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
         <MapContainer
           center={mapCenter}
-          zoom={userLocation ? 13 : 6}
+          zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || animalMarkers.length > 0 ? 13 : 6}
           style={{ width: "100%" }}
           className="w-full h-[400px]"
         >
-          <RecenterMap center={mapCenter} zoom={userLocation ? 13 : 6} />
+          <RecenterMap center={mapCenter} zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || animalMarkers.length > 0 ? 13 : 6} />
           <LayersControl position="topright">
             <BaseLayer checked name="OpenStreetMap">
               <TileLayer
@@ -669,14 +664,58 @@ const GeoTracker = ({ userRole }) => {
             </BaseLayer>
           </LayersControl>
 
-          {/* User Location Marker */}
-          {userLocation && (
+          {/* User Location Marker - only show pin if precision is good (< 5km) */}
+          {userLocation && (!locationPrecision || locationPrecision < 5000) && (
             <Marker position={userLocation}>
               <Popup>
-                <strong>{userRole}</strong> Location: <br />
-                {userLocation[0].toFixed(6)}, {userLocation[1].toFixed(6)}
+                <div className="text-xs">
+                  <strong className="text-sm">My Location</strong> <br />
+                  {userLocation[0].toFixed(6)}, {userLocation[1].toFixed(6) } <br />
+                  <span className="text-gray-500 italic">Accuracy: {locationPrecision ? locationPrecision.toFixed(0) + 'm' : 'Refining...'}</span>
+                </div>
               </Popup>
             </Marker>
+          )}
+
+          {/* User Coarse Location Circle - if precision is poor (> 5km) */}
+          {userLocation && locationPrecision && locationPrecision >= 5000 && (
+            <Circle
+              center={userLocation}
+              radius={locationPrecision}
+              pathOptions={{ fillColor: 'blue', fillOpacity: 0.1, color: 'blue', weight: 1, dashArray: '5, 10' }}
+            >
+              <Popup>
+                <div className="text-xs">
+                  <strong>Coarse Location</strong> <br />
+                  You are somewhere in this { (locationPrecision / 1000).toFixed(1) }km area. <br />
+                  Waiting for GPS fix...
+                </div>
+              </Popup>
+            </Circle>
+          )}
+
+          {/* Accuracy & Recenter Overlay (similar to admin) */}
+          {userLocation && locationPrecision && (
+            <div className="absolute bottom-5 left-5 z-[1000] flex flex-col gap-2">
+              <div className="bg-white px-2 py-1 rounded shadow border flex items-center gap-2 text-xs font-bold whitespace-nowrap">
+                <div className={`w-2 h-2 rounded-full ${locationPrecision < 30 ? 'bg-green-500' : locationPrecision < 100 ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
+                <span className="text-gray-700 font-bold">Precision: {(locationPrecision > 1000 ? (locationPrecision/1000).toFixed(1) + 'km' : locationPrecision.toFixed(0) + 'm')}</span>
+                <span className="text-gray-400 font-normal">
+                  ({locationPrecision < 30 ? 'GPS' : locationPrecision < 5000 ? 'Refining' : 'Coarse'})
+                </span>
+              </div>
+              
+              {(locationPrecision < 5000 || animalMarkers.length > 0) && (
+                <button 
+                  onClick={() => window.dispatchEvent(new CustomEvent('recenter-map'))}
+                  className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-blue-600 flex items-center gap-2 text-xs font-bold w-fit"
+                  title="Jump to my location"
+                >
+                  <MapPin size={14} />
+                  Recenter on Me
+                </button>
+              )}
+            </div>
           )}
 
           {/* IoT Animal Markers */}
