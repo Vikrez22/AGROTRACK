@@ -15,6 +15,7 @@ import {
   Clock,
   SettingsIcon,
   Database,
+  MapPin,
 } from "lucide-react";
 
 // Import Leaflet components
@@ -24,6 +25,7 @@ import {
   Marker,
   Popup,
   Polygon,
+  Circle,
   useMap,
   LayersControl,
 } from "react-leaflet";
@@ -226,6 +228,17 @@ const RecenterMap = ({ center, zoom }) => {
       map.setView(center, zoom || map.getZoom());
     }
   }, [center, zoom, map]);
+
+  useEffect(() => {
+    const handleRecenter = () => {
+      if (center) {
+        map.setView(center, zoom || 13);
+      }
+    };
+    window.addEventListener('recenter-map', handleRecenter);
+    return () => window.removeEventListener('recenter-map', handleRecenter);
+  }, [center, zoom, map]);
+
   return null;
 };
 
@@ -240,13 +253,38 @@ const LiveTrackingMap = ({
   onDeleted,
   drawType,
   userLocation,
+  locationPrecision,
 }) => (
   <MapContainer
     center={center}
-    zoom={userLocation || markers.length > 0 ? 13 : 6}
+    zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || markers.length > 0 ? 13 : 6}
     style={{ height: "100%", width: "100%" }}
   >
-    <RecenterMap center={center} />
+    <RecenterMap center={center} zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || markers.length > 0 ? 13 : 6} />
+    {/* Accuracy Badge */}
+    {userLocation && locationPrecision && (
+      <div className="absolute bottom-5 left-5 z-[1000] flex flex-col gap-2">
+        <div className="bg-white px-2 py-1 rounded shadow border flex items-center gap-2 text-xs font-bold whitespace-nowrap">
+          <div className={`w-2 h-2 rounded-full ${locationPrecision < 30 ? 'bg-green-500' : locationPrecision < 100 ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
+          <span className="text-gray-700">Precision: {(locationPrecision > 1000 ? (locationPrecision/1000).toFixed(1) + 'km' : locationPrecision.toFixed(0) + 'm')}</span>
+          <span className="text-gray-400 font-normal">
+            ({locationPrecision < 30 ? 'GPS' : locationPrecision < 5000 ? 'Refining' : 'Coarse'})
+          </span>
+        </div>
+        
+        {/* Recenter Button as part of the status cluster */}
+        {(locationPrecision < 5000 || markers.length > 0) && (
+          <button 
+            onClick={() => window.dispatchEvent(new CustomEvent('recenter-map'))}
+            className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-blue-600 flex items-center gap-2 text-xs font-bold"
+            title="Jump to my location"
+          >
+            <MapPin size={14} />
+            Recenter on Me
+          </button>
+        )}
+      </div>
+    )}
     <LayersControl position="topright">
       <BaseLayer checked name="OpenStreetMap">
         <TileLayer
@@ -262,14 +300,34 @@ const LiveTrackingMap = ({
       </BaseLayer>
     </LayersControl>
 
-    {/* User Location Marker */}
-    {userLocation && (
+    {/* User Location Marker - only show pin if precision is good (< 5km) */}
+    {userLocation && (!locationPrecision || locationPrecision < 5000) && (
       <Marker position={userLocation}>
         <Popup>
-          <strong>My Location</strong> <br />
-          {userLocation[0].toFixed(6)}, {userLocation[1].toFixed(6)}
+          <div className="text-xs">
+            <strong className="text-sm">My Location</strong> <br />
+            {userLocation[0].toFixed(6)}, {userLocation[1].toFixed(6)} <br />
+            <span className="text-gray-500 italic">Accuracy: {locationPrecision ? locationPrecision.toFixed(0) + 'm' : 'Refining...'}</span>
+          </div>
         </Popup>
       </Marker>
+    )}
+
+    {/* User Coarse Location Circle - if precision is poor (> 5km) */}
+    {userLocation && locationPrecision && locationPrecision >= 5000 && (
+      <Circle
+        center={userLocation}
+        radius={locationPrecision}
+        pathOptions={{ fillColor: 'blue', fillOpacity: 0.1, color: 'blue', weight: 1, dashArray: '5, 10' }}
+      >
+        <Popup>
+          <div className="text-xs">
+            <strong>Coarse Location</strong> <br />
+            You are somewhere in this { (locationPrecision / 1000).toFixed(1) }km area. <br />
+            Waiting for GPS fix...
+          </div>
+        </Popup>
+      </Circle>
     )}
 
     {/* Animal Markers */}
@@ -359,7 +417,11 @@ const LiveTrackingMap = ({
   </MapContainer>
 );
 
-const IoTLivestockDashboard = ({ userRole = "law-enforcement", userLocation }) => {
+const IoTLivestockDashboard = ({
+  userRole = "law-enforcement",
+  userLocation,
+  locationPrecision,
+}) => {
   const [livestockData, setLivestockData] = useState({});
   const [grazingAreas, setGrazingAreas] = useState([]);
   const [nonGrazingAreas, setNonGrazingAreas] = useState([]);
@@ -613,7 +675,10 @@ const IoTLivestockDashboard = ({ userRole = "law-enforcement", userLocation }) =
   );
 
   const getMapCenter = useCallback(() => {
-    if (userLocation) return userLocation;
+    // Only use user location if it's precise enough (under 5km)
+    if (userLocation && (!locationPrecision || locationPrecision < 5000)) {
+      return userLocation;
+    }
 
     if (livestockData.latest_position) {
       return [
@@ -631,7 +696,7 @@ const IoTLivestockDashboard = ({ userRole = "law-enforcement", userLocation }) =
     }
 
     return [9.081999, 8.675277]; // Nigeria Precise Coordinate
-  }, [livestockData, userLocation]);
+  }, [livestockData, userLocation, locationPrecision]);
 
   const getAnimalMarkers = useCallback(() => {
     const markers = [];
@@ -707,18 +772,30 @@ const LawEnforcementDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
+  const [locationPrecision, setLocationPrecision] = useState(null);
 
   // Fetch user location for precise monitoring
   useEffect(() => {
+    let watchId = null;
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+      watchId = navigator.geolocation.watchPosition(
         (position) => {
-          setUserLocation([position.coords.latitude, position.coords.longitude]);
+          const { latitude, longitude, accuracy } = position.coords;
+          console.log(`Updated location: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
+          setUserLocation([latitude, longitude]);
+          setLocationPrecision(accuracy);
         },
-        (error) => console.error("Error getting location:", error),
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+        (error) => console.error("Error watching location:", error),
+        { 
+          enableHighAccuracy: true, 
+          timeout: 45000, 
+          maximumAge: 0 
+        }
       );
     }
+    return () => {
+      if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+    };
   }, []);
 
   const { signOut } = useAuthMutations();
@@ -739,7 +816,11 @@ const LawEnforcementDashboard = () => {
     setDrawType,
     handleCreated,
     handleDeleted,
-  } = IoTLivestockDashboard({ userRole: "law-enforcement", userLocation });
+  } = IoTLivestockDashboard({ 
+    userRole: "law-enforcement", 
+    userLocation, 
+    locationPrecision 
+  });
 
   // Calculate statistics from real data
   const stats = {
@@ -1089,6 +1170,7 @@ const LawEnforcementDashboard = () => {
                   onDeleted={handleDeleted}
                   drawType={drawType}
                   userLocation={userLocation}
+                  locationPrecision={locationPrecision}
                 />
               </div>
             </div>
