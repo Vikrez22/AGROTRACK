@@ -16,6 +16,8 @@ import {
   SettingsIcon,
   Database,
   MapPin,
+  Maximize,
+  Minimize,
 } from "lucide-react";
 
 // Import Leaflet components
@@ -112,6 +114,26 @@ const alarmIcon = new L.Icon({
   iconAnchor: [16, 16],
   popupAnchor: [0, -16],
 });
+
+// Custom Blue Pin for User Location
+const userLocationIcon = new L.Icon({
+  iconUrl:
+    "data:image/svg+xml;charset=utf-8," +
+    encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="blue" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+      <circle cx="12" cy="10" r="3"></circle>
+    </svg>
+  `),
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
+const NIGERIA_BOUNDS = [
+  [4.2778, 2.6769], // Southwest
+  [13.8922, 14.6779], // Northeast
+];
 
 // Draw Control Component (for admin/farmer roles)
 // Draw Control Component with improved synchronization
@@ -242,7 +264,6 @@ const RecenterMap = ({ center, zoom }) => {
   return null;
 };
 
-// Real Map Component with Leaflet
 const LiveTrackingMap = ({
   center,
   markers,
@@ -254,14 +275,34 @@ const LiveTrackingMap = ({
   drawType,
   userLocation,
   locationPrecision,
+  isFullscreen,
+  onToggleFullscreen,
 }) => (
-  <MapContainer
-    center={center}
-    zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || markers.length > 0 ? 13 : 6}
-    style={{ height: "100%", width: "100%" }}
-  >
-    <RecenterMap center={center} zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || markers.length > 0 ? 13 : 6} />
-    {/* Accuracy Badge */}
+  <div className={isFullscreen ? "fixed inset-0 z-[9999] bg-white" : "relative h-full w-full"}>
+    <MapContainer
+      center={center}
+      zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || markers.length > 0 ? 13 : 6}
+      minZoom={6}
+      maxBounds={NIGERIA_BOUNDS}
+      maxBoundsViscosity={1.0}
+      style={{ height: "100%", width: "100%" }}
+    >
+      <RecenterMap center={center} zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || markers.length > 0 ? 13 : 6} />
+      
+      {/* Fullscreen Toggle Button */}
+      <div className="absolute top-20 left-3 z-[1000]">
+        <button
+          onClick={onToggleFullscreen}
+          className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-gray-700 flex items-center justify-center"
+          title={isFullscreen ? "Exit Fullscreen" : "View Fullscreen"}
+        >
+          {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+        </button>
+        b
+        
+      </div>
+
+      {/* Accuracy Badge */}
     {userLocation && locationPrecision && (
       <div className="absolute bottom-5 left-5 z-[1000] flex flex-col gap-2">
         <div className="bg-white px-2 py-1 rounded shadow border flex items-center gap-2 text-xs font-bold whitespace-nowrap">
@@ -302,7 +343,7 @@ const LiveTrackingMap = ({
 
     {/* User Location Marker - only show pin if precision is good (< 5km) */}
     {userLocation && (!locationPrecision || locationPrecision < 5000) && (
-      <Marker position={userLocation}>
+      <Marker position={userLocation} icon={userLocationIcon}>
         <Popup>
           <div className="text-xs">
             <strong className="text-sm">My Location</strong> <br />
@@ -414,7 +455,8 @@ const LiveTrackingMap = ({
         onDeleted={onDeleted}
       />
     )}
-  </MapContainer>
+    </MapContainer>
+  </div>
 );
 
 const IoTLivestockDashboard = ({
@@ -423,6 +465,7 @@ const IoTLivestockDashboard = ({
   locationPrecision,
 }) => {
   const [livestockData, setLivestockData] = useState({});
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [grazingAreas, setGrazingAreas] = useState([]);
   const [nonGrazingAreas, setNonGrazingAreas] = useState([]);
   const [drawType, setDrawType] = useState("grazing");
@@ -765,6 +808,8 @@ const IoTLivestockDashboard = ({
     setDrawType,
     handleCreated,
     handleDeleted,
+    isFullscreen,
+    setIsFullscreen,
   };
 };
 
@@ -816,6 +861,8 @@ const LawEnforcementDashboard = () => {
     setDrawType,
     handleCreated,
     handleDeleted,
+    isFullscreen,
+    setIsFullscreen,
   } = IoTLivestockDashboard({ 
     userRole: "law-enforcement", 
     userLocation, 
@@ -988,6 +1035,9 @@ const LawEnforcementDashboard = () => {
                     onDeleted={handleDeleted}
                     drawType={drawType}
                     userLocation={userLocation}
+                    locationPrecision={locationPrecision}
+                    isFullscreen={isFullscreen}
+                    onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
                   />
                 </div>
               </div>
@@ -1171,6 +1221,8 @@ const LawEnforcementDashboard = () => {
                   drawType={drawType}
                   userLocation={userLocation}
                   locationPrecision={locationPrecision}
+                  isFullscreen={isFullscreen}
+                  onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
                 />
               </div>
             </div>

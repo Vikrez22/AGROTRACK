@@ -1,6 +1,6 @@
 // src/components/Cowtracking/GeoTracker.js
 import { useEffect, useState, useRef, useCallback } from "react";
-import { MapPin } from "lucide-react";
+import { MapPin, Maximize, Minimize } from "lucide-react";
 import {
   MapContainer,
   TileLayer,
@@ -82,6 +82,26 @@ const alarmIcon = new L.Icon({
   iconAnchor: [16, 16],
   popupAnchor: [0, -16],
 });
+
+// Custom Blue Pin for User Location
+const userLocationIcon = new L.Icon({
+  iconUrl:
+    "data:image/svg+xml;charset=utf-8," +
+    encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="blue" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+      <circle cx="12" cy="10" r="3"></circle>
+    </svg>
+  `),
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
+const NIGERIA_BOUNDS = [
+  [4.2778, 2.6769], // Southwest
+  [13.8922, 14.6779], // Northeast
+];
 
 // Updated DrawControl component using the same structure as admin
 const DrawControl = ({ onCreated, onDeleted, drawType }) => {
@@ -204,6 +224,7 @@ const GeoTracker = ({ userRole }) => {
   const [locationStatus, setLocationStatus] = useState("requesting"); // requesting, granted, denied, error
   const [locationError, setLocationError] = useState("");
   const [locationPrecision, setLocationPrecision] = useState(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Point-in-polygon algorithm for geofencing
   const isPointInPolygon = useCallback((point, polygon) => {
@@ -642,13 +663,28 @@ const GeoTracker = ({ userRole }) => {
 
       {/* Map Container */}
       <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+      <div className={isFullscreen ? "fixed inset-0 z-[9999] bg-white" : "relative h-[500px] w-full"}>
         <MapContainer
           center={mapCenter}
           zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || animalMarkers.length > 0 ? 13 : 6}
-          style={{ width: "100%" }}
-          className="w-full h-[400px]"
+          minZoom={6}
+          maxBounds={NIGERIA_BOUNDS}
+          maxBoundsViscosity={1.0}
+          style={{ width: "100%", height: "100%" }}
+          className="w-full h-full"
         >
           <RecenterMap center={mapCenter} zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || animalMarkers.length > 0 ? 13 : 6} />
+          
+          {/* Fullscreen Toggle Button */}
+          <div className="absolute top-20 left-3 z-[1000]">
+            <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-gray-700 flex items-center justify-center"
+              title={isFullscreen ? "Exit Fullscreen" : "View Fullscreen"}
+            >
+              {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+            </button>
+          </div>
           <LayersControl position="topright">
             <BaseLayer checked name="OpenStreetMap">
               <TileLayer
@@ -666,7 +702,7 @@ const GeoTracker = ({ userRole }) => {
 
           {/* User Location Marker - only show pin if precision is good (< 5km) */}
           {userLocation && (!locationPrecision || locationPrecision < 5000) && (
-            <Marker position={userLocation}>
+            <Marker position={userLocation} icon={userLocationIcon}>
               <Popup>
                 <div className="text-xs">
                   <strong className="text-sm">My Location</strong> <br />
@@ -798,6 +834,7 @@ const GeoTracker = ({ userRole }) => {
             />
           )}
         </MapContainer>
+      </div>
       </div>
 
       {/* Statistics */}

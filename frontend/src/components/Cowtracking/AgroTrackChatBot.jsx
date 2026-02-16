@@ -18,9 +18,13 @@ const AgroTrackChatBot = () => {
   // const [apiProvider, setApiProvider] = useState("natlas");
   const [apiProvider, setApiProvider] = useState("groq");
   const [modelStatus, setModelStatus] = useState("ready");
+  const [useSpitch, setUseSpitch] = useState(true);
+  const [isSynthesizing, setIsSynthesizing] = useState(false);
 
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
 
   const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3000';
 
@@ -230,7 +234,11 @@ const AgroTrackChatBot = () => {
       };
       setMessages([...newMessages, aiMessage]);
 
-      speak(response);
+      if (useSpitch) {
+        speakSpitch(response);
+      } else {
+        speak(response);
+      }
     } catch (error) {
       setError(`Failed to get response: ${error.message}`);
       console.error("AI Response error:", error);
@@ -277,7 +285,11 @@ const AgroTrackChatBot = () => {
       };
       setMessages(updatedMessages);
       
-      speak(detailedResponse);
+      if (useSpitch) {
+        speakSpitch(detailedResponse);
+      } else {
+        speak(detailedResponse);
+      }
     } catch (error) {
       setError("Failed to get detailed response. Please try again.");
       console.error("Detailed response error:", error);
@@ -289,12 +301,109 @@ const AgroTrackChatBot = () => {
   const speak = (text) => {
     if ("speechSynthesis" in window) {
       speechSynthesis.cancel();
-      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = languages[language].code;
       utterance.rate = 0.8;
       utterance.pitch = 1;
       speechSynthesis.speak(utterance);
+    }
+  };
+
+  const speakSpitch = async (text) => {
+    if (!text) return;
+    
+    setIsSynthesizing(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ai/spitch/tts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, language }),
+      });
+
+      if (!response.ok) throw new Error("Spitch TTS failed");
+
+      const data = await response.json();
+      if (data.success && data.audioContent) {
+        const audio = new Audio(`data:audio/mp3;base64,${data.audioContent}`);
+        audio.play();
+      }
+    } catch (error) {
+      console.error("Spitch TTS Error:", error);
+      // Fallback to browser TTS if Spitch fails
+      speak(text);
+    } finally {
+      setIsSynthesizing(false);
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: mediaRecorderRef.current.mimeType });
+        setIsListening(false);
+        setLoading(true);
+
+        const formData = new FormData();
+        formData.append("audio", audioBlob);
+        formData.append("language", language);
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/ai/spitch/stt`, {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) throw new Error("Spitch STT failed");
+
+          const data = await response.json();
+          if (data.success && data.text) {
+            setInput(data.text);
+          }
+        } catch (error) {
+          console.error("Spitch STT Error:", error);
+          setError("Voice transcription failed. Please type your message.");
+        } finally {
+          setLoading(false);
+        }
+        
+        // Stop all tracks to release microphone
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsListening(true);
+      setError("");
+    } catch (err) {
+      console.error("MediaRecorder Error:", err);
+      setError("Microphone access denied or not supported.");
+      setIsListening(false);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+  };
+
+  const toggleListening = () => {
+    if (isListening) {
+      if (useSpitch) stopRecording();
+      else stopListening();
+    } else {
+      if (useSpitch) startRecording();
+      else startListening();
     }
   };
 
@@ -408,6 +517,16 @@ const AgroTrackChatBot = () => {
                 ))}
               </select>
             </div>
+            <button
+              onClick={() => setUseSpitch(!useSpitch)}
+              className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                useSpitch ? "bg-white text-green-700 font-bold" : "bg-green-800 text-green-200"
+              }`}
+              title={useSpitch ? "Using Spitch African Voice" : "Using Standard Browser Voice"}
+            >
+              <Volume2 size={14} />
+              {useSpitch ? "African Voice" : "Standard"}
+            </button>
           </div>
         </div>
         
@@ -476,11 +595,12 @@ const AgroTrackChatBot = () => {
                 </span>
                 {msg.role === "assistant" && (
                   <button
-                    onClick={() => speak(msg.content)}
-                    className="ml-2 p-1 rounded hover:bg-gray-100 transition-colors"
+                    onClick={() => useSpitch ? speakSpitch(msg.content) : speak(msg.content)}
+                    className={`ml-2 p-1 rounded hover:bg-gray-100 transition-colors ${isSynthesizing ? "animate-pulse" : ""}`}
                     title="Read aloud"
+                    disabled={isSynthesizing}
                   >
-                    <Volume2 size={12} className="text-gray-600" />
+                    <Volume2 size={12} className={useSpitch ? "text-green-600" : "text-gray-600"} />
                   </button>
                 )}
               </div>
@@ -528,13 +648,14 @@ const AgroTrackChatBot = () => {
           />
 
           <button
-            onClick={isListening ? stopListening : startListening}
+            onClick={toggleListening}
             className={`p-2 rounded-lg transition-colors ${
               isListening
-                ? "bg-red-500 hover:bg-red-600 text-white"
+                ? "bg-red-500 hover:bg-red-600 text-white animate-pulse"
                 : "bg-gray-100 hover:bg-gray-200 text-gray-600"
             }`}
             title={isListening ? "Stop listening" : "Start voice input"}
+            disabled={loading}
           >
             {isListening ? <MicOff size={18} /> : <Mic size={18} />}
           </button>
