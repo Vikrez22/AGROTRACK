@@ -453,9 +453,23 @@ const GeoTracker = ({ userRole }) => {
     }
   }, []);
 
+  const handleAreaDeletion = useCallback(async (id, type) => {
+    console.log(`Attempting to delete ${type} area with ID:`, id);
+    if (window.confirm(`Are you sure you want to delete this ${type} area?`)) {
+      try {
+        const areaRef = ref(iotDb, `geofencing_areas/${id}`);
+        await remove(areaRef);
+        console.log("Area removed from Firebase successfully!");
+      } catch (err) {
+        console.error("Error deleting area from Firebase:", err);
+      }
+    }
+  }, []);
+
   // Handle deleting geofencing areas (remove from Realtime Database)
   const handleDeleted = useCallback(
     async (layer) => {
+      // Fuzzy matching fallback for layers just drawn but not yet in state
       const latlngs = layer.getLatLngs()[0].map((ll) => ({
         lat: parseFloat(ll.lat.toFixed(6)),
         lng: parseFloat(ll.lng.toFixed(6)),
@@ -669,17 +683,17 @@ const GeoTracker = ({ userRole }) => {
           zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || animalMarkers.length > 0 ? 13 : 6}
           minZoom={6}
           maxBounds={NIGERIA_BOUNDS}
-          maxBoundsViscosity={1.0}
+          maxBoundsViscosity={0.7}
           style={{ width: "100%", height: "100%" }}
           className="w-full h-full"
         >
           <RecenterMap center={mapCenter} zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || animalMarkers.length > 0 ? 13 : 6} />
           
-          {/* Fullscreen Toggle Button */}
-          <div className="absolute top-20 left-3 z-[1000]">
+          {/* Fullscreen Toggle Button - Positioned to avoid overlap with Draw toolbar */}
+          <div className="absolute top-[12px] left-[52px] z-[1000]">
             <button
               onClick={() => setIsFullscreen(!isFullscreen)}
-              className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-gray-700 flex items-center justify-center"
+              className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-gray-700 flex items-center justify-center h-[34px] w-[34px]"
               title={isFullscreen ? "Exit Fullscreen" : "View Fullscreen"}
             >
               {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
@@ -805,7 +819,22 @@ const GeoTracker = ({ userRole }) => {
                 weight: 2,
               }}
             >
-              <Popup>Safe Grazing Area</Popup>
+              <Popup>
+                <div className="text-center">
+                  <p className="font-bold text-green-700 mb-2">Safe Grazing Area</p>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("Delete grazing area clicked:", id);
+                      handleAreaDeletion(id, "grazing");
+                    }}
+                    className="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded shadow"
+                  >
+                    Delete Area
+                  </button>
+                </div>
+              </Popup>
             </Polygon>
           ))}
 
@@ -821,12 +850,27 @@ const GeoTracker = ({ userRole }) => {
                 weight: 2,
               }}
             >
-              <Popup>Restricted Area</Popup>
+              <Popup>
+                <div className="text-center">
+                  <p className="font-bold text-red-700 mb-2">Restricted Area</p>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("Delete restricted area clicked:", id);
+                      handleAreaDeletion(id, "restricted");
+                    }}
+                    className="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded shadow"
+                  >
+                    Delete Area
+                  </button>
+                </div>
+              </Popup>
             </Polygon>
           ))}
 
-          {/* Draw Controls - only for admin/farmer roles */}
-          {(userRole === "admin" || userRole === "law-enforcement") && (
+          {/* Draw Controls - only for authorized roles */}
+          {(userRole === "admin" || userRole === "farmer" || userRole === "law-enforcement") && (
             <DrawControl
               drawType={drawType}
               onCreated={handleCreated}

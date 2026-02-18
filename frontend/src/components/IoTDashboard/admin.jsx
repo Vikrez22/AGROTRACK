@@ -272,6 +272,7 @@ const LiveTrackingMap = ({
   userRole,
   onCreated,
   onDeleted,
+  onDeleteArea,
   drawType,
   userLocation,
   locationPrecision,
@@ -284,22 +285,20 @@ const LiveTrackingMap = ({
       zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || markers.length > 0 ? 13 : 6}
       minZoom={6}
       maxBounds={NIGERIA_BOUNDS}
-      maxBoundsViscosity={1.0}
+      maxBoundsViscosity={0.7}
       style={{ height: "100%", width: "100%" }}
     >
       <RecenterMap center={center} zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || markers.length > 0 ? 13 : 6} />
       
-      {/* Fullscreen Toggle Button */}
-      <div className="absolute top-20 left-3 z-[1000]">
+      {/* Fullscreen Toggle Button - Positioned to the right of Zoom controls to avoid overlap with Draw toolbar */}
+      <div className="absolute top-[12px] left-[52px] z-[1000]">
         <button
           onClick={onToggleFullscreen}
-          className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-gray-700 flex items-center justify-center"
+          className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-gray-700 flex items-center justify-center h-[34px] w-[34px]"
           title={isFullscreen ? "Exit Fullscreen" : "View Fullscreen"}
         >
           {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
         </button>
-        b
-        
       </div>
 
       {/* Accuracy Badge */}
@@ -427,7 +426,22 @@ const LiveTrackingMap = ({
           weight: 2,
         }}
       >
-        <Popup>Grazing Area</Popup>
+        <Popup>
+          <div className="text-center">
+            <p className="font-bold text-green-700 mb-2">Grazing Area</p>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Delete grazing area clicked:", id);
+                onDeleteArea && onDeleteArea(id, "grazing");
+              }}
+              className="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded shadow"
+            >
+              Delete Area
+            </button>
+          </div>
+        </Popup>
       </Polygon>
     ))}
 
@@ -443,12 +457,27 @@ const LiveTrackingMap = ({
           weight: 2,
         }}
       >
-        <Popup>Restricted Area</Popup>
+        <Popup>
+          <div className="text-center">
+            <p className="font-bold text-red-700 mb-2">Restricted Area</p>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Delete restricted area clicked:", id);
+                onDeleteArea && onDeleteArea(id, "restricted");
+              }}
+              className="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded shadow"
+            >
+              Delete Area
+            </button>
+          </div>
+        </Popup>
       </Polygon>
     ))}
 
-    {/* Draw Controls - only for admin/farmer roles */}
-    {(userRole === "law-enforcement" || userRole === "farmer") && (
+    {/* Draw Controls - only for authorized roles */}
+    {(userRole === "admin" || userRole === "farmer" || userRole === "law-enforcement") && (
       <DrawControl
         drawType={drawType}
         onCreated={onCreated}
@@ -685,8 +714,24 @@ const IoTLivestockDashboard = ({
     }
   }, []);
 
+  const handleAreaDeletion = useCallback(async (id, type) => {
+    console.log(`Attempting to delete ${type} area with ID:`, id);
+    if (window.confirm(`Are you sure you want to delete this ${type} area?`)) {
+      try {
+        const areaRef = ref(iotDb, `geofencing_areas/${id}`);
+        await remove(areaRef);
+        console.log("Area removed from Firebase successfully!");
+        showMessageBox("Area deleted successfully!", "success");
+      } catch (err) {
+        console.error("Error deleting area from Firebase:", err);
+        showMessageBox(`Error deleting area: ${err.message}`, "error");
+      }
+    }
+  }, []);
+
   const handleDeleted = useCallback(
     async (layer) => {
+      // Keep fuzzy matching for layers just drawn but not yet in state
       const latlngs = layer.getLatLngs()[0].map((ll) => ({
         lat: ll.lat,
         lng: ll.lng,
@@ -808,6 +853,7 @@ const IoTLivestockDashboard = ({
     setDrawType,
     handleCreated,
     handleDeleted,
+    handleAreaDeletion,
     isFullscreen,
     setIsFullscreen,
   };
@@ -861,6 +907,7 @@ const LawEnforcementDashboard = () => {
     setDrawType,
     handleCreated,
     handleDeleted,
+    handleAreaDeletion,
     isFullscreen,
     setIsFullscreen,
   } = IoTLivestockDashboard({ 
@@ -1033,6 +1080,7 @@ const LawEnforcementDashboard = () => {
                     userRole="law-enforcement"
                     onCreated={handleCreated}
                     onDeleted={handleDeleted}
+                    onDeleteArea={handleAreaDeletion}
                     drawType={drawType}
                     userLocation={userLocation}
                     locationPrecision={locationPrecision}
@@ -1218,6 +1266,7 @@ const LawEnforcementDashboard = () => {
                   userRole="law-enforcement"
                   onCreated={handleCreated}
                   onDeleted={handleDeleted}
+                  onDeleteArea={handleAreaDeletion}
                   drawType={drawType}
                   userLocation={userLocation}
                   locationPrecision={locationPrecision}
