@@ -1,1 +1,45 @@
-node_modules
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Build outputs
+dist/
+build/
+out/
+
+# Environment files & secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+*.env.*
+!.env.example
+
+# Firebase
+.firebase/
+firebase-debug.log
+ui-debug.log
+
+# Database exports & configurations
+*.json
+!package.json
+!package-lock.json
+!firebase.json
+!manifest.json
+agrotrack-f4d87-default-rtdb-export.json
+AgrotrackRealtimeDatabase.json
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# OS Metadata
+.DS_Store
+Thumbs.db

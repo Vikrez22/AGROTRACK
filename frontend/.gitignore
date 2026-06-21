@@ -1,3 +1,8 @@
-/node_modulesnode_modules
-/node_modules
-*.pdf
+node_modules/
+dist/
+build/
+.env
+.env.local
+!.env.example
+.firebase/
+*.log
