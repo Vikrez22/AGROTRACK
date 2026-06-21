@@ -1,10 +1,10 @@
-# AgroTrack Dashboard - Frontend Client 🖥️📡
+# AgroTrack Dashboard - Frontend Client
 
 The frontend client of **AgroTrack** is a React single-page application built on Vite. It provides real-time tracking visualization, interactive map geofencing drawing tools, incident logs, and voice-assisted AI interfaces for farmers and herders.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 *   **Framework**: [React](https://react.dev/) (v18)
 *   **Build Tool**: [Vite](https://vite.dev/)
@@ -15,7 +15,7 @@ The frontend client of **AgroTrack** is a React single-page application built on
 
 ---
 
-## 📂 Folder Structure
+## Folder Structure
 
 ```
 frontend/
@@ -41,7 +41,7 @@ frontend/
 
 ---
 
-## ✨ Features Highlight
+## Features Highlight
 
 ### 1. Interactive GeoTracker Maps
 Built using Leaflet, this component displays real-time GPS signals sent from livestock collars. Users can toggle visibility of:
@@ -61,7 +61,7 @@ An AI assistant designed for rural herders and farmers.
 
 ---
 
-## 🚀 Setup & Installation
+## Setup & Installation
 
 1. Navigate to the frontend directory:
    ```bash

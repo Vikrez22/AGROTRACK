@@ -1,10 +1,10 @@
-# AgroTrack Backend - Node.js REST API 🌐📡
+# AgroTrack Backend - Node.js REST API
 
 The backend service of **AgroTrack** is a Node.js REST API built using Express. It coordinates data flows between Appwrite (for relational logs and incidents), Firebase Admin (for real-time GPS coordinates updates), and AI speech endpoints.
 
 ---
 
-## 🛠️ Technology Stack & API Providers
+## Technology Stack & API Providers
 
 *   **Runtime Environment**: Node.js (Express framework)
 *   **Database & File Storage**: [Appwrite](https://appwrite.io/) (via Appwrite Node SDK)
@@ -17,7 +17,7 @@ The backend service of **AgroTrack** is a Node.js REST API built using Express. 
 
 ---
 
-## 📂 Folder Structure
+## Folder Structure
 
 ```
 backend/
@@ -44,26 +44,26 @@ backend/
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
-### 🩺 System Health
+### System Health
 *   `GET /health` - Base server system health check.
 *   `GET /api/ai/health` - Check connection to AI APIs (Groq, Hugging Face, Spitch).
 
-### 🤖 AI & Voice Endpoints
+### AI & Voice Endpoints
 *   `POST /api/ai/natlas` - Chat with NCAIR N-ATLaS LLM (optimized for Nigerian agriculture).
 *   `POST /api/ai/groq` - Chat with Llama 3.3 via Groq API.
 *   `POST /api/ai/spitch/tts` - Spitch AI Text-to-Speech (translates text into voice: Yoruba Sade, Hausa Amina, Igbo Ngozi, Pidgin Ufoma).
 *   `POST /api/ai/spitch/stt` - Spitch AI Speech-to-Text (transcribes user voice recordings sent from client).
 
-### 👥 Users & Communication
+### Users & Communication
 *   `POST /api/users/` - User profiles and role assignments.
 *   `GET /api/chats/` - Message history logs between farmers and herders.
 *   `POST /api/reports/` - Log geofence breach reports or animal incidents.
 
 ---
 
-## 🚀 Setup & Installation
+## Setup & Installation
 
 1. Navigate to the backend directory:
    ```bash

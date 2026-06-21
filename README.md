@@ -1,4 +1,4 @@
-# AgroTrack 🚜🐄
+# AgroTrack
 
 ### *Ending Farmer-Herder Conflicts with IoT, Geofencing, and AI*
 
@@ -6,7 +6,7 @@ AgroTrack is a smart AgriTech solution designed to prevent and resolve historica
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
 *   **Real-time GPS Tracking**: Monitor livestock positions in real time on an interactive map.
 *   **Smart Geofencing**: Define virtual "grazing" and "non-grazing" zones. The system instantly detects if livestock cross into farmlands.
@@ -17,12 +17,12 @@ AgroTrack is a smart AgriTech solution designed to prevent and resolve historica
 
 ---
 
-## 📂 Project Architecture
+## Project Architecture
 
 The project is structured as a monorepo consisting of two primary components:
 
-*   **[`frontend`](file:///c:/xampp/htdocs/AGROTRACK/frontend)**: A React-based web dashboard built with Vite, Tailwind CSS, Leaflet, and TanStack Query.
-*   **[`backend`](file:///c:/xampp/htdocs/AGROTRACK/backend)**: A Node.js and Express REST API integrating Firebase Admin (for Realtime Database synchronization), Appwrite SDK (for database storage/files), and AI/TTS endpoints.
+*   **[`frontend`](./frontend)**: A React-based web dashboard built with Vite, Tailwind CSS, Leaflet, and TanStack Query.
+*   **[`backend`](./backend)**: A Node.js and Express REST API integrating Firebase Admin (for Realtime Database synchronization), Appwrite SDK (for database storage/files), and AI/TTS endpoints.
 
 ```
 AGROTRACK/
@@ -40,7 +40,7 @@ AGROTRACK/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 Follow these steps to set up AgroTrack on your local machine:
 
@@ -97,16 +97,16 @@ cd AGROTRACK
 
 ---
 
-## ⚙️ Environment Configuration
+## Environment Configuration
 
 Both frontend and backend folders include `.env.example` templates. **Never commit your actual `.env` files.** 
 
-*   **[`backend/.env.example`](file:///c:/xampp/htdocs/AGROTRACK/backend/.env.example)**: Used to configure your server port, Firebase Admin SDK private key, Appwrite endpoint + keys, Groq API key, Hugging Face token, and Spitch key.
-*   **[`frontend/.env.example`](file:///c:/xampp/htdocs/AGROTRACK/frontend/.env.example)**: Used to define the client-side Firebase API keys, Firebase Project IDs, and your backend API base URL (`VITE_BACKEND_API_URL`).
+*   **[`backend/.env.example`](./backend/.env.example)**: Used to configure your server port, Firebase Admin SDK private key, Appwrite endpoint + keys, Groq API key, Hugging Face token, and Spitch key.
+*   **[`frontend/.env.example`](./frontend/.env.example)**: Used to define the client-side Firebase API keys, Firebase Project IDs, and your backend API base URL (`VITE_BACKEND_API_URL`).
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions from developers, researchers, and agronomists to help scale AgroTrack!
 
@@ -118,5 +118,5 @@ We welcome contributions from developers, researchers, and agronomists to help s
 
 ---
 
-## 📜 License
+## License
 This project is licensed under the MIT License - see the `LICENSE` file for details.
