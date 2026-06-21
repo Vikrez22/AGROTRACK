@@ -1,13 +1,17 @@
 // src/components/Cowtracking/GeoTracker.js
 import { useEffect, useState, useRef, useCallback } from "react";
+import { MapPin, Maximize, Minimize } from "lucide-react";
 import {
   MapContainer,
   TileLayer,
   Marker,
   Popup,
   Polygon,
+  Circle,
   useMap,
+  LayersControl,
 } from "react-leaflet";
+const { BaseLayer } = LayersControl;
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -78,6 +82,26 @@ const alarmIcon = new L.Icon({
   iconAnchor: [16, 16],
   popupAnchor: [0, -16],
 });
+
+// Custom Blue Pin for User Location
+const userLocationIcon = new L.Icon({
+  iconUrl:
+    "data:image/svg+xml;charset=utf-8," +
+    encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="blue" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+      <circle cx="12" cy="10" r="3"></circle>
+    </svg>
+  `),
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
+const NIGERIA_BOUNDS = [
+  [4.2778, 2.6769], // Southwest
+  [13.8922, 14.6779], // Northeast
+];
 
 // Updated DrawControl component using the same structure as admin
 const DrawControl = ({ onCreated, onDeleted, drawType }) => {
@@ -167,6 +191,28 @@ const DrawControl = ({ onCreated, onDeleted, drawType }) => {
   return null;
 };
 
+// Component to handle map re-centering when props change
+const RecenterMap = ({ center, zoom }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center) {
+      map.setView(center, zoom || map.getZoom());
+    }
+  }, [center, zoom, map]);
+
+  useEffect(() => {
+    const handleRecenter = () => {
+      if (center) {
+        map.setView(center, zoom || 13);
+      }
+    };
+    window.addEventListener('recenter-map', handleRecenter);
+    return () => window.removeEventListener('recenter-map', handleRecenter);
+  }, [center, zoom, map]);
+
+  return null;
+};
+
 const GeoTracker = ({ userRole }) => {
   // State for livestock data from IoT system
   const [livestockData, setLivestockData] = useState({});
@@ -177,6 +223,8 @@ const GeoTracker = ({ userRole }) => {
   const [alarms, setAlarms] = useState([]);
   const [locationStatus, setLocationStatus] = useState("requesting"); // requesting, granted, denied, error
   const [locationError, setLocationError] = useState("");
+  const [locationPrecision, setLocationPrecision] = useState(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Point-in-polygon algorithm for geofencing
   const isPointInPolygon = useCallback((point, polygon) => {
@@ -276,20 +324,21 @@ const GeoTracker = ({ userRole }) => {
       }
 
       // Request high-accuracy position
+      // Request high-accuracy position
       const options = {
         enableHighAccuracy: true,
-        timeout: 15000, // Increased timeout
-        maximumAge: 0, // Don't use cached position
+        timeout: 45000, 
+        maximumAge: 0, 
       };
 
-      // Get current position
-      navigator.geolocation.getCurrentPosition(
+      const watchId = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude, accuracy } = position.coords;
           console.log(
-            `Location found: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`
+            `Location update: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`
           );
           setUserLocation([latitude, longitude]);
+          setLocationPrecision(accuracy);
           setLocationStatus("granted");
           setLocationError("");
         },
@@ -324,34 +373,12 @@ const GeoTracker = ({ userRole }) => {
         options
       );
 
-      // Also set up continuous watching for location changes (for herders especially)
-      if (userRole === "herder") {
-        const watchId = navigator.geolocation.watchPosition(
-          (position) => {
-            const { latitude, longitude, accuracy } = position.coords;
-            console.log(
-              `Location updated: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`
-            );
-            setUserLocation([latitude, longitude]);
-            setLocationStatus("granted");
-          },
-          (error) => {
-            console.error("Geolocation watch error:", error);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 30000, // Accept cached position up to 30 seconds old
-          }
-        );
-
-        // Cleanup watch on unmount
-        return () => {
-          if (watchId) {
-            navigator.geolocation.clearWatch(watchId);
-          }
-        };
-      }
+      // Cleanup watch on unmount
+      return () => {
+        if (watchId) {
+          navigator.geolocation.clearWatch(watchId);
+        }
+      };
     };
 
     requestLocation();
@@ -375,6 +402,7 @@ const GeoTracker = ({ userRole }) => {
           `Manual location request: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`
         );
         setUserLocation([latitude, longitude]);
+        setLocationPrecision(accuracy);
         setLocationStatus("granted");
         setLocationError("");
       },
@@ -425,9 +453,23 @@ const GeoTracker = ({ userRole }) => {
     }
   }, []);
 
+  const handleAreaDeletion = useCallback(async (id, type) => {
+    console.log(`Attempting to delete ${type} area with ID:`, id);
+    if (window.confirm(`Are you sure you want to delete this ${type} area?`)) {
+      try {
+        const areaRef = ref(iotDb, `geofencing_areas/${id}`);
+        await remove(areaRef);
+        console.log("Area removed from Firebase successfully!");
+      } catch (err) {
+        console.error("Error deleting area from Firebase:", err);
+      }
+    }
+  }, []);
+
   // Handle deleting geofencing areas (remove from Realtime Database)
   const handleDeleted = useCallback(
     async (layer) => {
+      // Fuzzy matching fallback for layers just drawn but not yet in state
       const latlngs = layer.getLatLngs()[0].map((ll) => ({
         lat: parseFloat(ll.lat.toFixed(6)),
         lng: parseFloat(ll.lng.toFixed(6)),
@@ -509,13 +551,14 @@ const GeoTracker = ({ userRole }) => {
 
   // Determine map center
   const mapCenter =
-    userLocation ||
-    (livestockData.latest_position
-      ? [
-          livestockData.latest_position.latitude,
-          livestockData.latest_position.longitude,
-        ]
-      : [9.082, 8.6753]);
+    (userLocation && (!locationPrecision || locationPrecision < 5000))
+      ? userLocation
+      : (livestockData.latest_position
+          ? [
+              livestockData.latest_position.latitude,
+              livestockData.latest_position.longitude,
+            ]
+          : [9.081999, 8.675277]); // Precise center of Nigeria
 
   return (
     <div className="p-2 sm:p-3">
@@ -584,18 +627,21 @@ const GeoTracker = ({ userRole }) => {
         <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-green-700 text-sm font-medium">
-                Location found: {userLocation[0].toFixed(4)},{" "}
-                {userLocation[1].toFixed(4)}
-              </span>
+              <div className={`w-2 h-2 rounded-full ${locationPrecision < 30 ? 'bg-green-500' : locationPrecision < 100 ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
+              <p className="text-green-700 text-sm font-medium">
+                {locationPrecision < 30 ? 'Precise Location found' : 'Acquiring Precise Location...'}
+                <span className="ml-2 text-xs font-normal opacity-75">(Precision: {locationPrecision ? locationPrecision.toFixed(0) + 'm' : 'Refitting...'})</span>
+              </p>
             </div>
-            <button
-              onClick={requestLocationPermission}
-              className="px-3 py-1 text-xs font-medium text-green-600 hover:text-green-800 transition-colors"
-            >
-              Update
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={requestLocationPermission}
+                className="px-3 py-1 text-xs font-medium bg-green-600 hover:bg-green-700 text-white rounded transition-colors"
+                title="Refresh with high precision"
+              >
+                Refresh GPS
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -631,25 +677,95 @@ const GeoTracker = ({ userRole }) => {
 
       {/* Map Container */}
       <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+      <div className={isFullscreen ? "fixed inset-0 z-[9999] bg-white" : "relative h-[500px] w-full"}>
         <MapContainer
           center={mapCenter}
-          zoom={13}
-          style={{ width: "100%" }}
-          className="w-full h-[400px]"
+          zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || animalMarkers.length > 0 ? 13 : 6}
+          minZoom={6}
+          maxBounds={NIGERIA_BOUNDS}
+          maxBoundsViscosity={0.7}
+          style={{ width: "100%", height: "100%" }}
+          className="w-full h-full"
         >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="&copy; OpenStreetMap contributors"
-          />
+          <RecenterMap center={mapCenter} zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || animalMarkers.length > 0 ? 13 : 6} />
+          
+          {/* Fullscreen Toggle Button - Positioned to avoid overlap with Draw toolbar */}
+          <div className="absolute top-[12px] left-[52px] z-[1000]">
+            <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-gray-700 flex items-center justify-center h-[34px] w-[34px]"
+              title={isFullscreen ? "Exit Fullscreen" : "View Fullscreen"}
+            >
+              {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+            </button>
+          </div>
+          <LayersControl position="topright">
+            <BaseLayer checked name="OpenStreetMap">
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; OpenStreetMap contributors"
+              />
+            </BaseLayer>
+            <BaseLayer name="Satellite View">
+              <TileLayer
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community"
+              />
+            </BaseLayer>
+          </LayersControl>
 
-          {/* User Location Marker */}
-          {userLocation && (
-            <Marker position={userLocation}>
+          {/* User Location Marker - only show pin if precision is good (< 5km) */}
+          {userLocation && (!locationPrecision || locationPrecision < 5000) && (
+            <Marker position={userLocation} icon={userLocationIcon}>
               <Popup>
-                <strong>{userRole}</strong> Location: <br />
-                {userLocation[0].toFixed(6)}, {userLocation[1].toFixed(6)}
+                <div className="text-xs">
+                  <strong className="text-sm">My Location</strong> <br />
+                  {userLocation[0].toFixed(6)}, {userLocation[1].toFixed(6) } <br />
+                  <span className="text-gray-500 italic">Accuracy: {locationPrecision ? locationPrecision.toFixed(0) + 'm' : 'Refining...'}</span>
+                </div>
               </Popup>
             </Marker>
+          )}
+
+          {/* User Coarse Location Circle - if precision is poor (> 5km) */}
+          {userLocation && locationPrecision && locationPrecision >= 5000 && (
+            <Circle
+              center={userLocation}
+              radius={locationPrecision}
+              pathOptions={{ fillColor: 'blue', fillOpacity: 0.1, color: 'blue', weight: 1, dashArray: '5, 10' }}
+            >
+              <Popup>
+                <div className="text-xs">
+                  <strong>Coarse Location</strong> <br />
+                  You are somewhere in this { (locationPrecision / 1000).toFixed(1) }km area. <br />
+                  Waiting for GPS fix...
+                </div>
+              </Popup>
+            </Circle>
+          )}
+
+          {/* Accuracy & Recenter Overlay (similar to admin) */}
+          {userLocation && locationPrecision && (
+            <div className="absolute bottom-5 left-5 z-[1000] flex flex-col gap-2">
+              <div className="bg-white px-2 py-1 rounded shadow border flex items-center gap-2 text-xs font-bold whitespace-nowrap">
+                <div className={`w-2 h-2 rounded-full ${locationPrecision < 30 ? 'bg-green-500' : locationPrecision < 100 ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
+                <span className="text-gray-700 font-bold">Precision: {(locationPrecision > 1000 ? (locationPrecision/1000).toFixed(1) + 'km' : locationPrecision.toFixed(0) + 'm')}</span>
+                <span className="text-gray-400 font-normal">
+                  ({locationPrecision < 30 ? 'GPS' : locationPrecision < 5000 ? 'Refining' : 'Coarse'})
+                </span>
+              </div>
+              
+              {(locationPrecision < 5000 || animalMarkers.length > 0) && (
+                <button 
+                  onClick={() => window.dispatchEvent(new CustomEvent('recenter-map'))}
+                  className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-blue-600 flex items-center gap-2 text-xs font-bold w-fit"
+                  title="Jump to my location"
+                >
+                  <MapPin size={14} />
+                  Recenter on Me
+                </button>
+              )}
+            </div>
           )}
 
           {/* IoT Animal Markers */}
@@ -703,7 +819,22 @@ const GeoTracker = ({ userRole }) => {
                 weight: 2,
               }}
             >
-              <Popup>Safe Grazing Area</Popup>
+              <Popup>
+                <div className="text-center">
+                  <p className="font-bold text-green-700 mb-2">Safe Grazing Area</p>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("Delete grazing area clicked:", id);
+                      handleAreaDeletion(id, "grazing");
+                    }}
+                    className="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded shadow"
+                  >
+                    Delete Area
+                  </button>
+                </div>
+              </Popup>
             </Polygon>
           ))}
 
@@ -719,12 +850,27 @@ const GeoTracker = ({ userRole }) => {
                 weight: 2,
               }}
             >
-              <Popup>Restricted Area</Popup>
+              <Popup>
+                <div className="text-center">
+                  <p className="font-bold text-red-700 mb-2">Restricted Area</p>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("Delete restricted area clicked:", id);
+                      handleAreaDeletion(id, "restricted");
+                    }}
+                    className="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded shadow"
+                  >
+                    Delete Area
+                  </button>
+                </div>
+              </Popup>
             </Polygon>
           ))}
 
-          {/* Draw Controls - only for admin/farmer roles */}
-          {(userRole === "admin" || userRole === "law-enforcement") && (
+          {/* Draw Controls - only for authorized roles */}
+          {(userRole === "admin" || userRole === "farmer" || userRole === "law-enforcement") && (
             <DrawControl
               drawType={drawType}
               onCreated={handleCreated}
@@ -732,6 +878,7 @@ const GeoTracker = ({ userRole }) => {
             />
           )}
         </MapContainer>
+      </div>
       </div>
 
       {/* Statistics */}

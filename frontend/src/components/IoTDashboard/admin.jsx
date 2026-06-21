@@ -14,6 +14,10 @@ import {
   FileText,
   Clock,
   SettingsIcon,
+  Database,
+  MapPin,
+  Maximize,
+  Minimize,
 } from "lucide-react";
 
 // Import Leaflet components
@@ -23,8 +27,11 @@ import {
   Marker,
   Popup,
   Polygon,
+  Circle,
   useMap,
+  LayersControl,
 } from "react-leaflet";
+const { BaseLayer } = LayersControl;
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -48,6 +55,7 @@ import Communications from "./Communications";
 import AiSupport from "./AiSupport";
 import Reports from "./Reports";
 import Settings from "./Settings";
+import FirebaseDataTester from "./FirebaseDataTester";
 import { useAuthMutations } from "../../hooks/useAuthMutations";
 import { usePresence } from "../../hooks/activity/usePresence";
 
@@ -106,6 +114,26 @@ const alarmIcon = new L.Icon({
   iconAnchor: [16, 16],
   popupAnchor: [0, -16],
 });
+
+// Custom Blue Pin for User Location
+const userLocationIcon = new L.Icon({
+  iconUrl:
+    "data:image/svg+xml;charset=utf-8," +
+    encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="blue" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+      <circle cx="12" cy="10" r="3"></circle>
+    </svg>
+  `),
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
+const NIGERIA_BOUNDS = [
+  [4.2778, 2.6769], // Southwest
+  [13.8922, 14.6779], // Northeast
+];
 
 // Draw Control Component (for admin/farmer roles)
 // Draw Control Component with improved synchronization
@@ -214,7 +242,28 @@ const DrawControl = ({ onCreated, onDeleted, drawType }) => {
   return null;
 };
 
-// Real Map Component with Leaflet
+// Component to handle map re-centering when props change
+const RecenterMap = ({ center, zoom }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center) {
+      map.setView(center, zoom || map.getZoom());
+    }
+  }, [center, zoom, map]);
+
+  useEffect(() => {
+    const handleRecenter = () => {
+      if (center) {
+        map.setView(center, zoom || 13);
+      }
+    };
+    window.addEventListener('recenter-map', handleRecenter);
+    return () => window.removeEventListener('recenter-map', handleRecenter);
+  }, [center, zoom, map]);
+
+  return null;
+};
+
 const LiveTrackingMap = ({
   center,
   markers,
@@ -223,17 +272,103 @@ const LiveTrackingMap = ({
   userRole,
   onCreated,
   onDeleted,
+  onDeleteArea,
   drawType,
+  userLocation,
+  locationPrecision,
+  isFullscreen,
+  onToggleFullscreen,
 }) => (
-  <MapContainer
-    center={center}
-    zoom={13}
-    style={{ height: "100%", width: "100%" }}
-  >
-    <TileLayer
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      attribution="&copy; OpenStreetMap contributors"
-    />
+  <div className={isFullscreen ? "fixed inset-0 z-[9999] bg-white" : "relative h-full w-full"}>
+    <MapContainer
+      center={center}
+      zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || markers.length > 0 ? 13 : 6}
+      minZoom={6}
+      maxBounds={NIGERIA_BOUNDS}
+      maxBoundsViscosity={0.7}
+      style={{ height: "100%", width: "100%" }}
+    >
+      <RecenterMap center={center} zoom={(userLocation && (!locationPrecision || locationPrecision < 5000)) || markers.length > 0 ? 13 : 6} />
+      
+      {/* Fullscreen Toggle Button - Positioned to the right of Zoom controls to avoid overlap with Draw toolbar */}
+      <div className="absolute top-[12px] left-[52px] z-[1000]">
+        <button
+          onClick={onToggleFullscreen}
+          className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-gray-700 flex items-center justify-center h-[34px] w-[34px]"
+          title={isFullscreen ? "Exit Fullscreen" : "View Fullscreen"}
+        >
+          {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+        </button>
+      </div>
+
+      {/* Accuracy Badge */}
+    {userLocation && locationPrecision && (
+      <div className="absolute bottom-5 left-5 z-[1000] flex flex-col gap-2">
+        <div className="bg-white px-2 py-1 rounded shadow border flex items-center gap-2 text-xs font-bold whitespace-nowrap">
+          <div className={`w-2 h-2 rounded-full ${locationPrecision < 30 ? 'bg-green-500' : locationPrecision < 100 ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
+          <span className="text-gray-700">Precision: {(locationPrecision > 1000 ? (locationPrecision/1000).toFixed(1) + 'km' : locationPrecision.toFixed(0) + 'm')}</span>
+          <span className="text-gray-400 font-normal">
+            ({locationPrecision < 30 ? 'GPS' : locationPrecision < 5000 ? 'Refining' : 'Coarse'})
+          </span>
+        </div>
+        
+        {/* Recenter Button as part of the status cluster */}
+        {(locationPrecision < 5000 || markers.length > 0) && (
+          <button 
+            onClick={() => window.dispatchEvent(new CustomEvent('recenter-map'))}
+            className="bg-white p-2 rounded shadow border hover:bg-gray-50 text-blue-600 flex items-center gap-2 text-xs font-bold"
+            title="Jump to my location"
+          >
+            <MapPin size={14} />
+            Recenter on Me
+          </button>
+        )}
+      </div>
+    )}
+    <LayersControl position="topright">
+      <BaseLayer checked name="OpenStreetMap">
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; OpenStreetMap contributors"
+        />
+      </BaseLayer>
+      <BaseLayer name="Satellite View">
+        <TileLayer
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community"
+        />
+      </BaseLayer>
+    </LayersControl>
+
+    {/* User Location Marker - only show pin if precision is good (< 5km) */}
+    {userLocation && (!locationPrecision || locationPrecision < 5000) && (
+      <Marker position={userLocation} icon={userLocationIcon}>
+        <Popup>
+          <div className="text-xs">
+            <strong className="text-sm">My Location</strong> <br />
+            {userLocation[0].toFixed(6)}, {userLocation[1].toFixed(6)} <br />
+            <span className="text-gray-500 italic">Accuracy: {locationPrecision ? locationPrecision.toFixed(0) + 'm' : 'Refining...'}</span>
+          </div>
+        </Popup>
+      </Marker>
+    )}
+
+    {/* User Coarse Location Circle - if precision is poor (> 5km) */}
+    {userLocation && locationPrecision && locationPrecision >= 5000 && (
+      <Circle
+        center={userLocation}
+        radius={locationPrecision}
+        pathOptions={{ fillColor: 'blue', fillOpacity: 0.1, color: 'blue', weight: 1, dashArray: '5, 10' }}
+      >
+        <Popup>
+          <div className="text-xs">
+            <strong>Coarse Location</strong> <br />
+            You are somewhere in this { (locationPrecision / 1000).toFixed(1) }km area. <br />
+            Waiting for GPS fix...
+          </div>
+        </Popup>
+      </Circle>
+    )}
 
     {/* Animal Markers */}
     {markers.map((animal) => (
@@ -291,7 +426,22 @@ const LiveTrackingMap = ({
           weight: 2,
         }}
       >
-        <Popup>Grazing Area</Popup>
+        <Popup>
+          <div className="text-center">
+            <p className="font-bold text-green-700 mb-2">Grazing Area</p>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Delete grazing area clicked:", id);
+                onDeleteArea && onDeleteArea(id, "grazing");
+              }}
+              className="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded shadow"
+            >
+              Delete Area
+            </button>
+          </div>
+        </Popup>
       </Polygon>
     ))}
 
@@ -307,23 +457,44 @@ const LiveTrackingMap = ({
           weight: 2,
         }}
       >
-        <Popup>Restricted Area</Popup>
+        <Popup>
+          <div className="text-center">
+            <p className="font-bold text-red-700 mb-2">Restricted Area</p>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Delete restricted area clicked:", id);
+                onDeleteArea && onDeleteArea(id, "restricted");
+              }}
+              className="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded shadow"
+            >
+              Delete Area
+            </button>
+          </div>
+        </Popup>
       </Polygon>
     ))}
 
-    {/* Draw Controls - only for admin/farmer roles */}
-    {(userRole === "law-enforcement" || userRole === "farmer") && (
+    {/* Draw Controls - only for authorized roles */}
+    {(userRole === "admin" || userRole === "farmer" || userRole === "law-enforcement") && (
       <DrawControl
         drawType={drawType}
         onCreated={onCreated}
         onDeleted={onDeleted}
       />
     )}
-  </MapContainer>
+    </MapContainer>
+  </div>
 );
 
-const IoTLivestockDashboard = ({ userRole = "law-enforcement" }) => {
+const IoTLivestockDashboard = ({
+  userRole = "law-enforcement",
+  userLocation,
+  locationPrecision,
+}) => {
   const [livestockData, setLivestockData] = useState({});
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [grazingAreas, setGrazingAreas] = useState([]);
   const [nonGrazingAreas, setNonGrazingAreas] = useState([]);
   const [drawType, setDrawType] = useState("grazing");
@@ -543,8 +714,24 @@ const IoTLivestockDashboard = ({ userRole = "law-enforcement" }) => {
     }
   }, []);
 
+  const handleAreaDeletion = useCallback(async (id, type) => {
+    console.log(`Attempting to delete ${type} area with ID:`, id);
+    if (window.confirm(`Are you sure you want to delete this ${type} area?`)) {
+      try {
+        const areaRef = ref(iotDb, `geofencing_areas/${id}`);
+        await remove(areaRef);
+        console.log("Area removed from Firebase successfully!");
+        showMessageBox("Area deleted successfully!", "success");
+      } catch (err) {
+        console.error("Error deleting area from Firebase:", err);
+        showMessageBox(`Error deleting area: ${err.message}`, "error");
+      }
+    }
+  }, []);
+
   const handleDeleted = useCallback(
     async (layer) => {
+      // Keep fuzzy matching for layers just drawn but not yet in state
       const latlngs = layer.getLatLngs()[0].map((ll) => ({
         lat: ll.lat,
         lng: ll.lng,
@@ -576,6 +763,11 @@ const IoTLivestockDashboard = ({ userRole = "law-enforcement" }) => {
   );
 
   const getMapCenter = useCallback(() => {
+    // Only use user location if it's precise enough (under 5km)
+    if (userLocation && (!locationPrecision || locationPrecision < 5000)) {
+      return userLocation;
+    }
+
     if (livestockData.latest_position) {
       return [
         livestockData.latest_position.latitude,
@@ -591,8 +783,8 @@ const IoTLivestockDashboard = ({ userRole = "law-enforcement" }) => {
       return [firstAnimalPos.latitude, firstAnimalPos.longitude];
     }
 
-    return [9.082, 8.6753]; // Default to Nigeria coordinate
-  }, [livestockData]);
+    return [9.081999, 8.675277]; // Nigeria Precise Coordinate
+  }, [livestockData, userLocation, locationPrecision]);
 
   const getAnimalMarkers = useCallback(() => {
     const markers = [];
@@ -661,12 +853,41 @@ const IoTLivestockDashboard = ({ userRole = "law-enforcement" }) => {
     setDrawType,
     handleCreated,
     handleDeleted,
+    handleAreaDeletion,
+    isFullscreen,
+    setIsFullscreen,
   };
 };
 
 const LawEnforcementDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+  const [locationPrecision, setLocationPrecision] = useState(null);
+
+  // Fetch user location for precise monitoring
+  useEffect(() => {
+    let watchId = null;
+    if (navigator.geolocation) {
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude, accuracy } = position.coords;
+          console.log(`Updated location: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
+          setUserLocation([latitude, longitude]);
+          setLocationPrecision(accuracy);
+        },
+        (error) => console.error("Error watching location:", error),
+        { 
+          enableHighAccuracy: true, 
+          timeout: 45000, 
+          maximumAge: 0 
+        }
+      );
+    }
+    return () => {
+      if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+    };
+  }, []);
 
   const { signOut } = useAuthMutations();
   usePresence();
@@ -686,7 +907,14 @@ const LawEnforcementDashboard = () => {
     setDrawType,
     handleCreated,
     handleDeleted,
-  } = IoTLivestockDashboard({ userRole: "law-enforcement" });
+    handleAreaDeletion,
+    isFullscreen,
+    setIsFullscreen,
+  } = IoTLivestockDashboard({ 
+    userRole: "law-enforcement", 
+    userLocation, 
+    locationPrecision 
+  });
 
   // Calculate statistics from real data
   const stats = {
@@ -707,6 +935,7 @@ const LawEnforcementDashboard = () => {
     { id: "communications", label: "Communications", icon: Radio },
     { id: "ai-support", label: "AI Support", icon: Bot },
     { id: "reports", label: "Reports", icon: FileText },
+    { id: "data-tester", label: "Firebase Tester", icon: Database },
     { id: "settings", label: "Settings", icon: SettingsIcon },
   ];
 
@@ -851,7 +1080,12 @@ const LawEnforcementDashboard = () => {
                     userRole="law-enforcement"
                     onCreated={handleCreated}
                     onDeleted={handleDeleted}
+                    onDeleteArea={handleAreaDeletion}
                     drawType={drawType}
+                    userLocation={userLocation}
+                    locationPrecision={locationPrecision}
+                    isFullscreen={isFullscreen}
+                    onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
                   />
                 </div>
               </div>
@@ -1032,7 +1266,12 @@ const LawEnforcementDashboard = () => {
                   userRole="law-enforcement"
                   onCreated={handleCreated}
                   onDeleted={handleDeleted}
+                  onDeleteArea={handleAreaDeletion}
                   drawType={drawType}
+                  userLocation={userLocation}
+                  locationPrecision={locationPrecision}
+                  isFullscreen={isFullscreen}
+                  onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
                 />
               </div>
             </div>
@@ -1050,6 +1289,9 @@ const LawEnforcementDashboard = () => {
 
       case "reports":
         return <Reports />;
+
+      case "data-tester":
+        return <FirebaseDataTester />;
 
       case "settings":
         return <Settings />;

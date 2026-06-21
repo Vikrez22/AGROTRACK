@@ -18,8 +18,6 @@ import Marketplace from "./components/Marketplace/marketplace";
 
 import NotFound from "./NotFound";
 
-// const HerderDashboardWithUser = withUserId(HerderDashboard);
-// const FarmerDashboardWithUser = withUserId(FarmerDashboard);
 
 const queryClient = new QueryClient({
   defaultOptions: {
